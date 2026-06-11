@@ -96,3 +96,59 @@
   - `worklogs/kemal_worklog.md` (updated)
 * **Screenshot**: N/A
 * **Commit**: None (per user instruction)
+
+---
+
+## Session 4 — 2026-06-11
+
+### Action: Wave 2 UI Components Implementation
+
+* **AI Agent Used**: Cursor (Auto)
+* **Prompt Given**: "Wave 1 has been completed, committed, and pushed. Now implement Wave 2 only. Read AGENTS.md, docs/member-plans/kemal_plan.md, existing Wave 1 files. Create 8 components in src/components/projects/. Reuse existing database types, Wave 1 validation schemas, and recommendation engine. Keep UI simple. Use TypeScript. Update worklogs/kemal_worklog.md. Do not create pages yet. Do not commit. Do not push. After implementation, run npm run build and show me the result."
+* **Result**: Created all 8 Wave 2 components using Tailwind CSS only (no Shadcn/UI or react-hook-form added — neither is installed). `ProjectForm` validates with `createProjectSchema`/`updateProjectSchema` on submit. `SkillRequirementInput` manages per-skill proficiency and worker count. `WorkerRecommendationList` applies client-side filtering (F11) via `AssignmentFilters`, reusing `meetsProficiency` from the recommendation engine. `WorkerCard` displays match score, skills, availability, and `ConflictWarning` for scheduling overlaps. `npm run build` passes with no TypeScript errors.
+* **Decision Made**:
+  - Used controlled React state + Zod validation on submit instead of react-hook-form (not in dependencies).
+  - Simple Tailwind styling consistent with existing scaffold (zinc palette, no new UI library).
+  - `WorkerRecommendationList` filters fetched results client-side per kemal_plan.md F11 requirement.
+  - `ProjectCard` supports optional `href` for future list page navigation.
+* **Files Changed**:
+  - `src/components/projects/ProjectForm.tsx` (created)
+  - `src/components/projects/ProjectCard.tsx` (created)
+  - `src/components/projects/ProjectStatusBadge.tsx` (created)
+  - `src/components/projects/SkillRequirementInput.tsx` (created)
+  - `src/components/projects/WorkerRecommendationList.tsx` (created)
+  - `src/components/projects/WorkerCard.tsx` (created)
+  - `src/components/projects/ConflictWarning.tsx` (created)
+  - `src/components/projects/AssignmentFilters.tsx` (created)
+  - `worklogs/kemal_worklog.md` (updated)
+* **Screenshot**: N/A
+* **Commit**: None (per user instruction)
+
+---
+
+## Session 5 — 2026-06-11
+
+### Action: Wave 3 Dashboard Pages Implementation
+
+* **AI Agent Used**: Cursor (Auto)
+* **Prompt Given**: "Wave 2 is complete. Now implement Wave 3. Create 4 pages under src/app/(dashboard)/projects/. Use Wave 1 server actions and Wave 2 components. Keep simple. Show loading, empty, and error states. Update worklog. Do not commit or push. Run npm run build and show output."
+* **Result**: Created all 4 Wave 3 pages with Suspense-based loading states, error banners, and empty states. Added `CreateProjectPanel` and `AssignWorkersPanel` client glue components to wire forms/actions. Extracted `meetsProficiency` to `src/lib/queries/proficiency.ts` to fix client/server boundary build error. Fixed route links to `/projects/*` (route group `(dashboard)` does not add URL segment). `npm run build` passes; routes: `/projects`, `/projects/create`, `/projects/[id]`, `/projects/[id]/assign`.
+* **Decision Made**:
+  - Server pages fetch data; client panels handle form submit and assignment confirmation.
+  - Assign page loads recommendations with `availability: 'all'` so client-side filters can narrow results.
+  - Assignment page includes override-conflicts checkbox when selected workers have scheduling conflicts.
+  - Detail page fetches assignments via Supabase server client (no dedicated Wave 1 action for read).
+* **Files Changed**:
+  - `src/app/(dashboard)/projects/page.tsx` (created)
+  - `src/app/(dashboard)/projects/create/page.tsx` (created)
+  - `src/app/(dashboard)/projects/[id]/page.tsx` (created)
+  - `src/app/(dashboard)/projects/[id]/assign/page.tsx` (created)
+  - `src/components/projects/CreateProjectPanel.tsx` (created)
+  - `src/components/projects/AssignWorkersPanel.tsx` (created)
+  - `src/lib/queries/proficiency.ts` (created — client-safe proficiency helper)
+  - `src/lib/queries/recommendations.ts` (updated — import proficiency helper)
+  - `src/components/projects/WorkerRecommendationList.tsx` (updated — client-safe import)
+  - `src/lib/actions/projects.ts` (updated — notification link path)
+  - `worklogs/kemal_worklog.md` (updated)
+* **Screenshot**: N/A
+* **Commit**: None (per user instruction)

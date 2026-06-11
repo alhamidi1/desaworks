@@ -511,7 +511,7 @@ export async function confirmAssignments(
     user_id: assignment.resident_id,
     title: 'New Project Assignment',
     message: `You have been assigned to project "${project.name}".`,
-    link: `/dashboard/projects/${project_id}`,
+    link: `/projects/${project_id}`,
   }));
 
   const { error: notificationError } = await supabase
