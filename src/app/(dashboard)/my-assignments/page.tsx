@@ -35,7 +35,7 @@ export default async function MyAssignmentsPage() {
   // BYPASS AUTH FOR LOCAL TESTING
   // Since Abdullah's /login page is not yet merged, redirecting to /login causes a 404 error.
   // We mock a dummy user so the page can still render.
-  const mockUser = user || { id: "dummy-resident-id-123" };
+  const mockUser = user || { id: "00000000-0000-0000-0000-000000000000" };
 
 
   const { data: assignments, error: assignmentsError } = await supabase
