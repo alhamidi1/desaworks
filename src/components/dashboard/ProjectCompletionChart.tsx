@@ -57,7 +57,7 @@ export function ProjectCompletionChart({ data, title = 'Project completion', sub
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" vertical={false} />
-            <XAxis dataKey="projectName" tickLine={false} axisLine={false} stroke="#64748b" interval={0} height={52} />
+            <XAxis dataKey="projectName" tickLine={false} axisLine={false} stroke="#64748b" interval={0} height={90} tick={{ fontSize: 11 }} angle={-25} textAnchor="end" />
             <YAxis tickLine={false} axisLine={false} stroke="#64748b" tickFormatter={formatPercent} />
             <Tooltip
               cursor={{ fill: 'rgba(15, 23, 42, 0.04)' }}

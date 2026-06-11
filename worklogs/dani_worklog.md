@@ -170,3 +170,13 @@
 - **Decision Made**: The 404 error was caused because the /login page is supposed to be built by Abdullah (Phase 1) but it's not yet merged into our branch. By mocking the user, Dani can test the UI without needing the login page to exist.
 - **Files Changed**: src/app/(dashboard)/my-assignments/page.tsx, worklogs/dani_worklog.md
 - **Commit**: Not yet committed
+
+## Session 12 - 2026-06-11
+
+### Action: Fix UI/UX overlapping text on ProjectCompletionChart
+- **AI Agent Used**: Antigravity
+- **Prompt Given**: "perbaiki tanpa mengubah kode yang sudah ada, hanya perbaiki bagian ui ux teks tersebut saja"
+- **Result**: Updated the XAxis of the ProjectCompletionChart to tilt the text (ngle={-25}), align it (	extAnchor="end"), reduce the font size (ontSize: 11), and increase the axis height (height={90}). This prevents long project names from horizontally overlapping each other.
+- **Decision Made**: Kept the underlying chart data and logic the same, only modifying Recharts styling props for better readability.
+- **Files Changed**: src/components/dashboard/ProjectCompletionChart.tsx, worklogs/dani_worklog.md
+- **Commit**: Not yet committed
