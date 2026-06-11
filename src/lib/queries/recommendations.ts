@@ -3,20 +3,16 @@ import {
   recommendationFiltersSchema,
   type RecommendationFilters,
 } from '@/lib/validations/project';
+import { meetsProficiency } from '@/lib/queries/proficiency';
 import type {
   Profile,
-  ProficiencyLevel,
   Project,
   ProjectSkillRequirement,
   ResidentSkill,
   Skill,
 } from '@/lib/types/database';
 
-const PROFICIENCY_RANK: Record<ProficiencyLevel, number> = {
-  beginner: 0,
-  intermediate: 1,
-  advanced: 2,
-};
+export { meetsProficiency } from '@/lib/queries/proficiency';
 
 const ACTIVE_ASSIGNMENT_STATUSES = ['pending', 'confirmed', 'active'] as const;
 
@@ -41,14 +37,6 @@ export interface RecommendedWorker {
   total_experience_years: number;
   has_scheduling_conflict: boolean;
   scheduling_conflicts: SchedulingConflict[];
-}
-
-export function meetsProficiency(
-  residentLevel: ProficiencyLevel | null,
-  requiredLevel: ProficiencyLevel
-): boolean {
-  if (residentLevel === null) return false;
-  return PROFICIENCY_RANK[residentLevel] >= PROFICIENCY_RANK[requiredLevel];
 }
 
 export function calculateMatchScore(
