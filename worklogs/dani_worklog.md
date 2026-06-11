@@ -150,3 +150,13 @@
 - **Decision Made**: The application builds cleanly and Wave 3 is completely finished. Ready for Wave 4 (Testing) or PR review.
 - **Files Changed**: src/app/(dashboard)/projects/[id]/page.tsx, worklogs/dani_worklog.md
 - **Commit**: Not yet committed
+
+## Session 10 - 2026-06-11
+
+### Action: Fix hydration mismatch warning caused by browser extensions
+- **AI Agent Used**: Antigravity
+- **Prompt Given**: "ini bro issue yang ada ketika sy membuka localhostnya" (Hydration mismatch due to bis_register attributes)
+- **Result**: Added suppressHydrationWarning to the <body> tag in src/app/layout.tsx to prevent React from throwing errors when browser extensions (like IDM or ad-blockers) inject custom attributes into the DOM.
+- **Decision Made**: Suppressing hydration warnings on the <body> tag is the recommended Next.js approach for dealing with uncontrolled extension injections.
+- **Files Changed**: src/app/layout.tsx, worklogs/dani_worklog.md
+- **Commit**: Not yet committed
