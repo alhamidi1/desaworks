@@ -2,8 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import SkillSelector from './SkillSelector';
-
-type Skill = { id: string; name: string; category: string };
+import type { Skill } from '@/lib/types/database';
 
 export default function RegistrationForm({ residentId }: { residentId?: string | null }) {
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -17,8 +16,9 @@ export default function RegistrationForm({ residentId }: { residentId?: string |
   useEffect(() => {
     fetch('/api/skills')
       .then((r) => r.json())
-      .then((data) => setSkills(data || []));
+      .then((data) => setSkills((data || []) as Skill[]));
   }, []);
+
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
