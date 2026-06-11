@@ -2,12 +2,19 @@
 
 import React, { useEffect, useState } from 'react';
 import SkillSelector from './SkillSelector';
+import type { Skill as DBSkill } from '@/lib/types/database';
 
-type Skill = { id: string; name: string; category: string };
+type SelectedSkill = {
+  skill_id: string;
+  name: string;
+  experience_years?: number;
+  proficiency_level?: 'beginner' | 'intermediate' | 'advanced' | null;
+  notes?: string | null;
+};
 
 export default function RegistrationForm({ residentId }: { residentId?: string | null }) {
-  const [skills, setSkills] = useState<Skill[]>([]);
-  const [selected, setSelected] = useState<any[]>([]);
+  const [skills, setSkills] = useState<DBSkill[]>([]);
+  const [selected, setSelected] = useState<SelectedSkill[]>([]);
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
