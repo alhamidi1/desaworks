@@ -61,3 +61,23 @@
 - **Decision Made**: Kept the Wave 1 scope unchanged after validation; no follow-up edits were needed because the data layer compiled and linted cleanly.
 - **Files Changed**: worklogs/dani_worklog.md
 - **Commit**: Not yet committed
+
+## Session 3 — 2026-06-11
+
+### Action: Build Wave 2 chart components
+- **AI Agent Used**: GitHub Copilot
+- **Prompt Given**: "Wave 1 is done and successfully committed locally. Let's start implementing Wave 2 based on my plan in docs/member-plans/dani_plan.md. ⚠️ Critical: You must continue to automatically append your progress to my worklog file in worklogs/dani_worklog.md just like you did for Wave 1."
+- **Result**: Installed Recharts and created the initial Wave 2 chart primitives for project completion, progress over time, status distribution, and revenue trend visualization. The components are client-side, accessible, and render polished empty states when no data is available.
+- **Decision Made**: Kept Wave 2 focused on reusable chart components only, matching the plan's wave breakdown and leaving the dashboard pages for the next wave.
+- **Files Changed**: package.json, package-lock.json, src/components/dashboard/ProjectCompletionChart.tsx, src/components/dashboard/ProgressOverTimeChart.tsx, src/components/dashboard/StatusDistributionChart.tsx, src/components/reports/RevenueChart.tsx, worklogs/dani_worklog.md
+- **Commit**: Not yet committed
+
+## Session 4 — 2026-06-11
+
+### Action: Validate and fix Wave 2 chart typings
+- **AI Agent Used**: GitHub Copilot
+- **Prompt Given**: "Wave 1 is done and successfully committed locally. Let's start implementing Wave 2 based on my plan in docs/member-plans/dani_plan.md. ⚠️ Critical: You must continue to automatically append your progress to my worklog file in worklogs/dani_worklog.md just like you did for Wave 1."
+- **Result**: The first production build exposed a Recharts tooltip formatter type mismatch. I relaxed the formatter signatures to accept Recharts' broader value types, then reran the build successfully.
+- **Decision Made**: Kept the chart components functionally unchanged and fixed only the formatter typings so the UI API stays stable.
+- **Files Changed**: src/components/dashboard/ProjectCompletionChart.tsx, src/components/dashboard/ProgressOverTimeChart.tsx, src/components/dashboard/StatusDistributionChart.tsx, src/components/reports/RevenueChart.tsx, worklogs/dani_worklog.md
+- **Commit**: Not yet committed
