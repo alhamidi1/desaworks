@@ -160,3 +160,13 @@
 - **Decision Made**: Suppressing hydration warnings on the <body> tag is the recommended Next.js approach for dealing with uncontrolled extension injections.
 - **Files Changed**: src/app/layout.tsx, worklogs/dani_worklog.md
 - **Commit**: Not yet committed
+
+## Session 11 - 2026-06-11
+
+### Action: Bypass auth redirect for local testing
+- **AI Agent Used**: Antigravity
+- **Prompt Given**: "oke jadi di bagian my assihnments itu ada masalah 404, apa arti dari masalah ini bro dan bisakah kamu bantu menyelesaikannya"
+- **Result**: Disabled the edirect('/login') in src/app/(dashboard)/my-assignments/page.tsx and used a mocked user.id. 
+- **Decision Made**: The 404 error was caused because the /login page is supposed to be built by Abdullah (Phase 1) but it's not yet merged into our branch. By mocking the user, Dani can test the UI without needing the login page to exist.
+- **Files Changed**: src/app/(dashboard)/my-assignments/page.tsx, worklogs/dani_worklog.md
+- **Commit**: Not yet committed

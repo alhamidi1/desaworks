@@ -32,9 +32,11 @@ export default async function MyAssignmentsPage() {
     error: authError,
   } = await supabase.auth.getUser();
 
-  if (authError || !user) {
-    redirect("/login");
-  }
+  // BYPASS AUTH FOR LOCAL TESTING
+  // Since Abdullah's /login page is not yet merged, redirecting to /login causes a 404 error.
+  // We mock a dummy user so the page can still render.
+  const mockUser = user || { id: "dummy-resident-id-123" };
+
 
   const { data: assignments, error: assignmentsError } = await supabase
     .from("assignments")
@@ -47,7 +49,7 @@ export default async function MyAssignmentsPage() {
       projects ( name, start_date, end_date, status )
     `
     )
-    .eq("resident_id", user.id)
+    .eq("resident_id", mockUser.id)
     .order("assigned_at", { ascending: false });
 
   if (assignmentsError) {
