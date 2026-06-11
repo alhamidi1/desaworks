@@ -109,7 +109,7 @@ export function SkillRequirementInput({
                 onChange={(e) =>
                   updateRequirement(index, { skill_id: e.target.value })
                 }
-                className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
               >
                 {Object.entries(groupedSkills).map(([category, categorySkills]) => (
                   <optgroup key={category} label={category}>
@@ -139,7 +139,7 @@ export function SkillRequirementInput({
                     min_proficiency: e.target.value as ProficiencyLevel,
                   })
                 }
-                className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
               >
                 {PROFICIENCY_OPTIONS.map((level) => (
                   <option key={level} value={level}>
@@ -163,7 +163,7 @@ export function SkillRequirementInput({
                     workers_needed: Math.max(1, Number(e.target.value) || 1),
                   })
                 }
-                className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
               />
             </div>
 

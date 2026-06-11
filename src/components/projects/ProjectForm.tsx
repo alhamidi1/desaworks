@@ -118,7 +118,7 @@ export function ProjectForm({
             value={form.name}
             disabled={isSubmitting}
             onChange={(e) => updateField('name', e.target.value)}
-            className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
             placeholder="e.g. Village irrigation repair"
           />
           {errors.name && (
@@ -139,7 +139,7 @@ export function ProjectForm({
             value={form.description}
             disabled={isSubmitting}
             onChange={(e) => updateField('description', e.target.value)}
-            className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
             placeholder="Describe the project goals and scope"
           />
           {errors.description && (
@@ -161,7 +161,7 @@ export function ProjectForm({
               value={form.start_date}
               disabled={isSubmitting}
               onChange={(e) => updateField('start_date', e.target.value)}
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
             />
             {errors.start_date && (
               <p className="mt-1 text-sm text-red-600">{errors.start_date}</p>
@@ -181,7 +181,7 @@ export function ProjectForm({
               value={form.end_date}
               disabled={isSubmitting}
               onChange={(e) => updateField('end_date', e.target.value)}
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
             />
             {errors.end_date && (
               <p className="mt-1 text-sm text-red-600">{errors.end_date}</p>
@@ -204,7 +204,7 @@ export function ProjectForm({
               value={form.workers_needed}
               disabled={isSubmitting}
               onChange={(e) => updateField('workers_needed', e.target.value)}
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
             />
             {errors.workers_needed && (
               <p className="mt-1 text-sm text-red-600">{errors.workers_needed}</p>
@@ -225,7 +225,7 @@ export function ProjectForm({
               value={form.budget}
               disabled={isSubmitting}
               onChange={(e) => updateField('budget', e.target.value)}
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
             />
             {errors.budget && (
               <p className="mt-1 text-sm text-red-600">{errors.budget}</p>

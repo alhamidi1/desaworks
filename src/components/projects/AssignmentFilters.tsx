@@ -64,7 +64,7 @@ export function AssignmentFilters({
                 availability: e.target.value as RecommendationFilters['availability'],
               })
             }
-            className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm"
+            className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
           >
             <option value="available">Available only</option>
             <option value="unavailable">Unavailable only</option>
@@ -90,7 +90,7 @@ export function AssignmentFilters({
                   : undefined,
               })
             }
-            className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm"
+            className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
           >
             <option value="">Any</option>
             {PROFICIENCY_OPTIONS.map((level) => (
@@ -122,7 +122,7 @@ export function AssignmentFilters({
               })
             }
             placeholder="Any"
-            className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm"
+            className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
           />
         </div>
 

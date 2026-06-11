@@ -152,3 +152,30 @@
   - `worklogs/kemal_worklog.md` (updated)
 * **Screenshot**: N/A
 * **Commit**: None (per user instruction)
+
+---
+
+## Session 6 — 2026-06-11
+
+### Action: Task A — Input Contrast Fix & Task B — Minimal Login Page
+
+* **AI Agent Used**: Antigravity (Google DeepMind)
+* **Prompt Given**: "Task A — Fix white-on-white input readability across project form components. Task B — Create minimal login page using existing Supabase client. signInWithPassword with manager@desaworks.test / Manager123!. On success redirect to /projects. No new dependencies."
+* **Result**:
+  - **Task A**: Identified three components where `<input>`, `<textarea>`, and `<select>` elements had no explicit `color` or `background-color` specified — relying on browser defaults which can render white text on white in certain OS/dark-mode configurations. Added `bg-white text-zinc-900` to every affected control. Zero structural or logic changes.
+  - **Task B**: Created `src/app/login/page.tsx` (Client Component — needs `useState` for error/pending state) and `src/app/login/actions.ts` (Server Action following the same `'use server'` + `createClient()` pattern as `projects.ts`). Login form pre-fills the test email, calls `signInWithPassword`, and redirects to `/projects` on success via `redirect()`. On failure the error message is displayed inline. `requireManager()` is untouched.
+  - `npm run build` passes (exit code 0). All 7 routes compile: `/`, `/_not-found`, `/login`, `/projects`, `/projects/[id]`, `/projects/[id]/assign`, `/projects/create`.
+* **Decision Made**:
+  - Login page is a Client Component (not a Server Component) because it manages `isPending` and `error` state locally; this avoids adding a separate `useFormState` / `useActionState` dependency.
+  - Server Action redirects on success — the page-level state setter for `isPending` is never reached after a successful redirect, which is the expected behaviour.
+  - Pre-filled email field is a convenience for local testing only; the user can still type any credential.
+  - No middleware added — login is opt-in navigation, not a route guard.
+* **Files Changed**:
+  - `src/components/projects/ProjectForm.tsx` (modified — `bg-white text-zinc-900` added to all 5 inputs + 1 textarea)
+  - `src/components/projects/SkillRequirementInput.tsx` (modified — `text-zinc-900` added to 2 selects + 1 input)
+  - `src/components/projects/AssignmentFilters.tsx` (modified — `text-zinc-900` added to 2 selects + 1 input)
+  - `src/app/login/page.tsx` (created)
+  - `src/app/login/actions.ts` (created)
+  - `worklogs/kemal_worklog.md` (updated)
+* **Screenshot**: N/A
+* **Commit**: None (per user instruction)
