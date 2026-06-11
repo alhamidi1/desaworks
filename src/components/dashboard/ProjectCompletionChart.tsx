@@ -35,6 +35,20 @@ function ChartEmptyState({ title, subtitle }: Pick<ProjectCompletionChartProps, 
   );
 }
 
+const CustomXAxisTick = ({ x, y, payload }: any) => {
+  const fullName = payload.value as string;
+  const truncatedName = fullName.length > 15 ? fullName.substring(0, 15) + '...' : fullName;
+  
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text x={0} y={0} dy={16} textAnchor="middle" fill="#64748b" fontSize={11}>
+        <title>{fullName}</title>
+        {truncatedName}
+      </text>
+    </g>
+  );
+};
+
 export function ProjectCompletionChart({ data, title = 'Project completion', subtitle = 'Compare how far each active project has progressed.' }: ProjectCompletionChartProps) {
   if (data.length === 0) {
     return <ChartEmptyState title={title} subtitle={subtitle} />;
@@ -57,7 +71,15 @@ export function ProjectCompletionChart({ data, title = 'Project completion', sub
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" vertical={false} />
-            <XAxis dataKey="projectName" tickLine={false} axisLine={false} stroke="#64748b" interval={0} height={90} tick={{ fontSize: 11 }} angle={-25} textAnchor="end" />
+            <XAxis 
+              dataKey="projectName" 
+              tickLine={false} 
+              axisLine={false} 
+              stroke="#64748b" 
+              interval={0} 
+              height={52} 
+              tick={<CustomXAxisTick />} 
+            />
             <YAxis tickLine={false} axisLine={false} stroke="#64748b" tickFormatter={formatPercent} />
             <Tooltip
               cursor={{ fill: 'rgba(15, 23, 42, 0.04)' }}

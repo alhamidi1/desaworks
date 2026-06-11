@@ -180,3 +180,13 @@
 - **Decision Made**: Kept the underlying chart data and logic the same, only modifying Recharts styling props for better readability.
 - **Files Changed**: src/components/dashboard/ProjectCompletionChart.tsx, worklogs/dani_worklog.md
 - **Commit**: Not yet committed
+
+## Session 13 - 2026-06-11
+
+### Action: Improve XAxis label UI/UX on ProjectCompletionChart
+- **AI Agent Used**: Antigravity
+- **Prompt Given**: "sy ingin teks nya lurus sejajar saja... tambahkan ketika cursornya mengarah ke teks yang terpotong tersebut teks nya akan muncul jelas"
+- **Result**: Replaced the tilted XAxis labels with horizontal text. Created a CustomXAxisTick component to truncate labels longer than 15 characters, appending .... Added a native <title> SVG tag inside the tick so that hovering over the truncated text displays the full project name as a tooltip.
+- **Decision Made**: Customized Recharts XAxis tick rendering without modifying the core data mapping.
+- **Files Changed**: src/components/dashboard/ProjectCompletionChart.tsx, worklogs/dani_worklog.md
+- **Commit**: Not yet committed
