@@ -28,3 +28,24 @@ the format below. Do not delete previous entries. This log is part of the assign
 ---
 
 <!-- Add new entries below this line -->
+
+## Session 2 — 2026-06-11
+
+### Action: Feature Integration, Routing Fixes, Data Seeding, and Report Generation
+- **AI Agent Used**: Antigravity (Google Gemini)
+- **Prompt Given**: "dani made new commit pull it and compine it to the main" (along with earlier instructions for merges and report generation)
+- **Result**:
+  - Merged Aldi's `feature/aldi-workforce-registration` branch and fixed Next.js 15 routing (moving routes to `src/app/` and resolving async params).
+  - Merged Kemal's `feature/kemal-project-assignment` branch, resolving conflicts in `src/app/(dashboard)/projects/[id]/page.tsx` and adding the secure login redirect page.
+  - Set up a full PostgreSQL database seed script (`supabase/seed.sql`) containing high-fidelity mock data.
+  - Fetched and merged Dani's latest styling fixes on the project completion chart (truncation and hover tooltips for overlapping X-axis labels).
+  - Verified local compilation with `npm run build` passing cleanly.
+  - Pushed all merged changes to remote `main` branch to trigger Vercel deployment.
+  - Formatted and compiled the final academic report (`DesaWorks_Final_Report.docx`) based on the lecturer's template.
+- **Decisions Made**:
+  - Preferred Kemal's `projects/[id]/page.tsx` containing the interactive worker assignment flow over Dani's analytics preview, integrating Dani's analytics tools into the dashboard.
+  - Chose to truncate project labels in the bar chart to 15 characters with tooltips to maintain chart aesthetics without wrapping.
+- **Files Changed**:
+  - [ProjectCompletionChart.tsx](file:///Users/abdullah/Desktop/DesaWorks/main_abdul/src/components/dashboard/ProjectCompletionChart.tsx)
+  - [abdullah_worklog.md](file:///Users/abdullah/Desktop/DesaWorks/main_abdul/worklogs/abdullah_worklog.md)
+- **Commit**: `09dfa51` (merge: Dani's latest monitoring fixes)
