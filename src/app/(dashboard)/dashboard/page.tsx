@@ -6,6 +6,7 @@ import { StatusDistributionChart } from '@/components/dashboard/StatusDistributi
 import { ProgressOverTimeChart } from '@/components/dashboard/ProgressOverTimeChart';
 import { ProgressTimeline } from '@/components/monitoring/ProgressTimeline';
 import { ActivityFeed } from '@/components/monitoring/ActivityFeed';
+import Link from 'next/link';
 
 export const metadata = {
   title: 'Dashboard — DesaWorks',
@@ -104,6 +105,33 @@ export default async function DashboardPage() {
           trendValue={recentUpdates > 0 ? 'New' : 'None'}
         />
       </div>
+
+      {/* Project Quick Links */}
+      {report.projects.length > 0 && (
+        <DashboardSection title="Projects">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {report.projects.map((p) => (
+              <Link
+                key={p.project.id}
+                href={`/projects/${p.project.id}`}
+                className="group flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4 shadow-sm hover:border-blue-300 hover:shadow-md transition-all"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+                    {p.project.name}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    {p.assignedWorkers} workers · {p.completionPercentage}% done
+                  </p>
+                </div>
+                <svg className="h-4 w-4 text-gray-400 group-hover:text-blue-500 shrink-0 ml-2 transition-colors" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                </svg>
+              </Link>
+            ))}
+          </div>
+        </DashboardSection>
+      )}
 
       {/* Charts row: completion + status distribution */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

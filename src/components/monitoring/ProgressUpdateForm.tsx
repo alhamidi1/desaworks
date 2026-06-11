@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -19,6 +19,53 @@ interface ProgressUpdateFormProps {
   onSuccess?: () => void;
 }
 
+const DRAFT_KEY_PREFIX = "desaworks_draft_progress_";
+
+function getDraftKey(assignmentId: string) {
+  return `${DRAFT_KEY_PREFIX}${assignmentId}`;
+}
+
+interface DraftData {
+  progressPercentage: number;
+  status: string;
+  description: string;
+  hoursWorked: number;
+  savedAt: string;
+}
+
+function saveDraft(assignmentId: string, data: Partial<ProgressUpdateInput>) {
+  try {
+    const draft: DraftData = {
+      progressPercentage: data.progressPercentage ?? 0,
+      status: data.status ?? "not_started",
+      description: data.description ?? "",
+      hoursWorked: data.hoursWorked ?? 0,
+      savedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(getDraftKey(assignmentId), JSON.stringify(draft));
+  } catch {
+    // localStorage might be full or unavailable — silently ignore
+  }
+}
+
+function loadDraft(assignmentId: string): DraftData | null {
+  try {
+    const raw = localStorage.getItem(getDraftKey(assignmentId));
+    if (!raw) return null;
+    return JSON.parse(raw) as DraftData;
+  } catch {
+    return null;
+  }
+}
+
+function clearDraft(assignmentId: string) {
+  try {
+    localStorage.removeItem(getDraftKey(assignmentId));
+  } catch {
+    // silently ignore
+  }
+}
+
 export default function ProgressUpdateForm({
   assignmentId,
   currentProgress = 0,
@@ -28,12 +75,15 @@ export default function ProgressUpdateForm({
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [duplicateWarning, setDuplicateWarning] = useState<ProgressDuplicateWarning | null>(null);
+  const [draftRestored, setDraftRestored] = useState(false);
+  const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const {
     register,
     handleSubmit,
     reset,
     watch,
+    setValue,
     setError,
     formState: { errors },
   } = useForm<ProgressUpdateInput>({
@@ -46,6 +96,43 @@ export default function ProgressUpdateForm({
       hoursWorked: 0,
     },
   });
+
+  // Restore draft from localStorage on mount
+  useEffect(() => {
+    const draft = loadDraft(assignmentId);
+    if (draft && draft.description) {
+      setValue("progressPercentage", draft.progressPercentage);
+      setValue("status", draft.status as ProgressUpdateInput["status"]);
+      setValue("description", draft.description);
+      setValue("hoursWorked", draft.hoursWorked);
+      setDraftRestored(true);
+      // Auto-dismiss the restored indicator after 5s
+      const timer = setTimeout(() => setDraftRestored(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [assignmentId, setValue]);
+
+  // Auto-save draft on form value changes (debounced 1s)
+  const formValues = watch();
+  const debouncedSave = useCallback(
+    (data: ProgressUpdateInput) => {
+      if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+      autoSaveTimer.current = setTimeout(() => {
+        // Only save if the user has entered some content
+        if (data.description || data.hoursWorked > 0 || data.progressPercentage !== currentProgress) {
+          saveDraft(assignmentId, data);
+        }
+      }, 1000);
+    },
+    [assignmentId, currentProgress]
+  );
+
+  useEffect(() => {
+    debouncedSave(formValues);
+    return () => {
+      if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+    };
+  }, [formValues, debouncedSave]);
 
   const progressValue = watch("progressPercentage");
 
@@ -63,6 +150,8 @@ export default function ProgressUpdateForm({
       setSuccessMessage(msg);
       setErrorMessage(null);
       setDuplicateWarning(null);
+      setDraftRestored(false);
+      clearDraft(assignmentId);
       reset({
         assignmentId,
         progressPercentage: result.update.progress_percentage,
@@ -120,7 +209,9 @@ export default function ProgressUpdateForm({
       const result = await submitProgressUpdate(data, { forceDuplicate });
       handleResult(result, forceDuplicate);
     } catch {
-      setErrorMessage("An unexpected error occurred. Please try again.");
+      // Save draft on error for offline resilience
+      saveDraft(assignmentId, data);
+      setErrorMessage("An unexpected error occurred. Your draft has been saved locally — try again later.");
     } finally {
       setIsSubmitting(false);
     }
@@ -138,6 +229,34 @@ export default function ProgressUpdateForm({
       onSubmit={handleSubmit((data) => onSubmit(data, false))}
       className="space-y-5 pt-5"
     >
+      {/* Draft Restored Indicator */}
+      {draftRestored && (
+        <div className="rounded-lg bg-blue-50 border border-blue-200 p-3">
+          <div className="flex items-center gap-2">
+            <svg className="h-4 w-4 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182" />
+            </svg>
+            <p className="text-xs font-medium text-blue-700">Draft restored from previous session</p>
+            <button
+              type="button"
+              onClick={() => {
+                setDraftRestored(false);
+                clearDraft(assignmentId);
+                reset({
+                  assignmentId,
+                  progressPercentage: currentProgress,
+                  status: currentProgress === 0 ? "not_started" : "in_progress",
+                  description: "",
+                  hoursWorked: 0,
+                });
+              }}
+              className="ml-auto text-xs text-blue-600 hover:text-blue-800 underline"
+            >
+              Discard
+            </button>
+          </div>
+        </div>
+      )}
       {/* Success Message */}
       {successMessage && (
         <div className="rounded-lg bg-green-50 border border-green-200 p-4">
