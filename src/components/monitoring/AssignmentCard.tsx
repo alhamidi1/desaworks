@@ -20,11 +20,11 @@ export interface AssignmentCardProps {
 }
 
 const STATUS_STYLES: Record<string, { bg: string; text: string; label: string }> = {
-  active: { bg: "bg-green-100", text: "text-green-800", label: "Active" },
-  confirmed: { bg: "bg-blue-100", text: "text-blue-800", label: "Confirmed" },
-  pending: { bg: "bg-yellow-100", text: "text-yellow-800", label: "Pending" },
-  completed: { bg: "bg-gray-100", text: "text-gray-700", label: "Completed" },
-  void: { bg: "bg-red-100", text: "text-red-700", label: "Void" },
+  active: { bg: "bg-green-100", text: "text-green-800", label: "Aktif" },
+  confirmed: { bg: "bg-blue-100", text: "text-blue-800", label: "Dikonfirmasi" },
+  pending: { bg: "bg-yellow-100", text: "text-yellow-800", label: "Menunggu" },
+  completed: { bg: "bg-gray-100", text: "text-gray-700", label: "Selesai" },
+  void: { bg: "bg-red-100", text: "text-red-700", label: "Dibatalkan" },
 };
 
 function formatDate(dateStr: string | null): string {
@@ -49,14 +49,12 @@ function getProgressColor(pct: number): string {
 
 export default function AssignmentCard({ assignment }: AssignmentCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [currentProgress, setCurrentProgress] = useState(assignment.current_progress);
+  const [currentProgress] = useState(assignment.current_progress);
 
   const statusStyle = STATUS_STYLES[assignment.status] ?? STATUS_STYLES.pending;
   const isCompleted = assignment.status === "completed" || assignment.status === "void";
 
   const handleUpdateSuccess = useCallback(() => {
-    // We don't have the exact new value, but the form submitted successfully
-    // In a real app you'd revalidate. For now, just close the form.
     setIsExpanded(false);
   }, []);
 
@@ -81,24 +79,24 @@ export default function AssignmentCard({ assignment }: AssignmentCardProps) {
         </div>
 
         {/* Dates Row */}
-        <div className="flex flex-wrap gap-x-6 gap-y-1 mt-3 text-sm text-gray-500">
+        <div className="flex flex-wrap gap-x-6 gap-y-2 mt-3 text-sm text-gray-500">
           <span className="inline-flex items-center gap-1.5">
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+            <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
             </svg>
-            Start: {formatDate(assignment.project_start_date)}
+            Mulai: {formatDate(assignment.project_start_date)}
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+            <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
-            End: {formatDate(assignment.project_end_date)}
+            Selesai: {formatDate(assignment.project_end_date)}
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+            <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
-            {assignment.total_hours_worked.toFixed(1)}h worked
+            {assignment.total_hours_worked.toFixed(1)} jam kerja
           </span>
         </div>
       </div>
@@ -106,7 +104,7 @@ export default function AssignmentCard({ assignment }: AssignmentCardProps) {
       {/* Progress Section */}
       <div className="px-5 py-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-700">Progress</span>
+          <span className="text-sm font-medium text-gray-700 font-semibold">Kemajuan</span>
           <span className="text-sm font-semibold text-gray-900">{currentProgress}%</span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
@@ -119,7 +117,7 @@ export default function AssignmentCard({ assignment }: AssignmentCardProps) {
         {/* Latest Update */}
         {assignment.latest_description && (
           <div className="mt-3 rounded-lg bg-gray-50 p-3">
-            <p className="text-xs font-medium text-gray-500 mb-1">Latest update</p>
+            <p className="text-xs font-medium text-gray-500 mb-1">Laporan terakhir</p>
             <p className="text-sm text-gray-700 line-clamp-2">{assignment.latest_description}</p>
           </div>
         )}
@@ -131,21 +129,22 @@ export default function AssignmentCard({ assignment }: AssignmentCardProps) {
           <button
             type="button"
             onClick={() => setIsExpanded((prev) => !prev)}
-            className="w-full flex items-center justify-center gap-2 px-5 py-3 text-sm font-medium text-blue-600 hover:bg-blue-50 transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-5 py-4 text-sm font-semibold text-blue-600 hover:bg-blue-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            style={{ minHeight: "48px" }} // Mobile touch targets optimization
           >
             {isExpanded ? (
               <>
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
                 </svg>
-                Hide Update Form
+                Sembunyikan Formulir
               </>
             ) : (
               <>
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-                Submit Progress Update
+                Laporkan Kemajuan Kerja
               </>
             )}
           </button>

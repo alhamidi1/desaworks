@@ -138,7 +138,7 @@ export async function submitProgressUpdate(
     return {
       ok: false,
       code: 'VALIDATION_ERROR',
-      message: 'Please correct the highlighted fields and try again.',
+      message: 'Silakan perbaiki kolom yang salah dan coba lagi.',
       validationErrors: parseValidationError(parsedInput.error),
     };
   }
@@ -150,7 +150,7 @@ export async function submitProgressUpdate(
     return {
       ok: false,
       code: 'UNAUTHENTICATED',
-      message: 'You must be signed in to submit progress updates.',
+      message: 'Anda harus masuk/login untuk melaporkan kemajuan kerja.',
     };
   }
 
@@ -160,7 +160,7 @@ export async function submitProgressUpdate(
     return {
       ok: false,
       code: 'FORBIDDEN',
-      message: 'Your profile could not be loaded.',
+      message: 'Profil Anda tidak dapat dimuat.',
     };
   }
 
@@ -170,7 +170,7 @@ export async function submitProgressUpdate(
     return {
       ok: false,
       code: 'NOT_FOUND',
-      message: 'The assignment was not found.',
+      message: 'Tugas pekerjaan tidak ditemukan.',
     };
   }
 
@@ -180,7 +180,7 @@ export async function submitProgressUpdate(
     return {
       ok: false,
       code: 'FORBIDDEN',
-      message: 'You can only submit updates for your own assignments.',
+      message: 'Anda hanya dapat melaporkan kemajuan untuk tugas pekerjaan Anda sendiri.',
     };
   }
 
@@ -193,7 +193,7 @@ export async function submitProgressUpdate(
     return {
       ok: false,
       code: 'DATABASE_ERROR',
-      message: 'Unable to read the latest progress entry.',
+      message: 'Gagal membaca riwayat kemajuan terakhir.',
     };
   }
 
@@ -201,7 +201,7 @@ export async function submitProgressUpdate(
     return {
       ok: false,
       code: 'BACKWARD_PROGRESS',
-      message: 'Progress cannot move backwards.',
+      message: 'Kemajuan kerja tidak boleh berkurang dari sebelumnya.',
     };
   }
 
@@ -217,7 +217,7 @@ export async function submitProgressUpdate(
     return {
       ok: false,
       code: 'DATABASE_ERROR',
-      message: 'Unable to check for duplicate submissions.',
+      message: 'Gagal memeriksa duplikasi laporan.',
     };
   }
 
@@ -225,7 +225,7 @@ export async function submitProgressUpdate(
     return {
       ok: false,
       code: 'DUPLICATE_SUBMISSION',
-      message: 'A matching progress update already exists for today.',
+      message: 'Laporan kemajuan yang sama sudah dikirimkan hari ini.',
       duplicateWarning: {
         existingUpdate: duplicateProgress,
         submittedPercentage: parsedInput.data.progressPercentage,
@@ -251,7 +251,7 @@ export async function submitProgressUpdate(
     return {
       ok: false,
       code: 'DATABASE_ERROR',
-      message: 'The progress update could not be saved.',
+      message: 'Kemajuan kerja gagal disimpan.',
     };
   }
 

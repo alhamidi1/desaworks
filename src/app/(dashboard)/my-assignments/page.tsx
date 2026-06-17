@@ -64,9 +64,9 @@ export default async function MyAssignmentsPage() {
   if (assignmentsError) {
     return (
       <div className="p-6 max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold mb-4">My Assignments</h1>
+        <h1 className="text-2xl font-bold mb-4">Pekerjaan Saya</h1>
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
-          <p className="font-medium">Failed to load assignments</p>
+          <p className="font-medium">Gagal memuat tugas pekerjaan</p>
           <p className="text-sm mt-1">{assignmentsError.message}</p>
         </div>
       </div>
@@ -84,8 +84,7 @@ export default async function MyAssignmentsPage() {
   }
 
   // Fetch latest progress update per assignment using a single query
-  // We get all progress updates for these assignments, then pick the latest per assignment in JS
-  let progressMap: Record<
+  const progressMap: Record<
     string,
     { progress_percentage: number; hours_worked: number; description: string | null }
   > = {};
@@ -98,7 +97,6 @@ export default async function MyAssignmentsPage() {
       .order("created_at", { ascending: false });
 
     if (progressRows) {
-      // Group by assignment_id and pick first (latest) for each
       const seen = new Set<string>();
       for (const row of progressRows as (ProgressRow & { created_at: string })[]) {
         if (!seen.has(row.assignment_id)) {
@@ -123,7 +121,6 @@ export default async function MyAssignmentsPage() {
       for (const row of hoursRows as { assignment_id: string; hours_worked: number }[]) {
         hoursTotals[row.assignment_id] = (hoursTotals[row.assignment_id] ?? 0) + row.hours_worked;
       }
-      // Merge totals into progressMap
       for (const [aid, total] of Object.entries(hoursTotals)) {
         if (progressMap[aid]) {
           progressMap[aid].hours_worked = total;
@@ -147,7 +144,7 @@ export default async function MyAssignmentsPage() {
       status: a.status,
       assigned_at: a.assigned_at,
       notes: a.notes,
-      project_name: proj?.name ?? "Unknown Project",
+      project_name: proj?.name ?? "Proyek Tidak Diketahui",
       project_start_date: proj?.start_date ?? null,
       project_end_date: proj?.end_date ?? null,
       project_status: proj?.status ?? "draft",
@@ -164,30 +161,30 @@ export default async function MyAssignmentsPage() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold text-gray-900">My Assignments</h1>
+      <h1 className="text-2xl font-bold text-gray-900">Pekerjaan Saya</h1>
       <p className="text-gray-500 mt-1 mb-6">
-        Track your project assignments and submit progress updates.
+        Pantau tugas proyek Anda dan laporkan kemajuan kerja di bawah ini.
       </p>
 
       {/* Summary Banner */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
         <div className="rounded-lg bg-blue-50 border border-blue-200 p-4 text-center">
           <p className="text-2xl font-bold text-blue-700">{cardData.length}</p>
-          <p className="text-xs text-blue-600 mt-1">Total</p>
+          <p className="text-xs text-blue-600 mt-1">Semua</p>
         </div>
         <div className="rounded-lg bg-green-50 border border-green-200 p-4 text-center">
           <p className="text-2xl font-bold text-green-700">{activeCount}</p>
-          <p className="text-xs text-green-600 mt-1">Active</p>
+          <p className="text-xs text-green-600 mt-1">Aktif</p>
         </div>
         <div className="rounded-lg bg-gray-50 border border-gray-200 p-4 text-center">
           <p className="text-2xl font-bold text-gray-700">{completedCount}</p>
-          <p className="text-xs text-gray-500 mt-1">Completed</p>
+          <p className="text-xs text-gray-500 mt-1">Selesai</p>
         </div>
         <div className="rounded-lg bg-amber-50 border border-amber-200 p-4 text-center">
           <p className="text-2xl font-bold text-amber-700">
             {cardData.filter((c) => c.status === "pending").length}
           </p>
-          <p className="text-xs text-amber-600 mt-1">Pending</p>
+          <p className="text-xs text-amber-600 mt-1">Menunggu</p>
         </div>
       </div>
 
@@ -207,10 +204,9 @@ export default async function MyAssignmentsPage() {
               d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15a2.251 2.251 0 0 1 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25Z"
             />
           </svg>
-          <h3 className="mt-4 text-lg font-medium text-gray-900">No assignments yet</h3>
+          <h3 className="mt-4 text-lg font-medium text-gray-900">Belum ada tugas pekerjaan</h3>
           <p className="mt-2 text-sm text-gray-500">
-            You haven&apos;t been assigned to any projects. Check back later or contact your
-            manager.
+            Anda belum terdaftar di proyek kegiatan mana pun. Silakan hubungi pengelola BUMDes Anda.
           </p>
         </div>
       ) : (

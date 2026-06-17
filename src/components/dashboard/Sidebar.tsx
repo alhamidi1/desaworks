@@ -26,7 +26,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
 
   const navItems: NavItem[] = [
     {
-      label: 'Dashboard',
+      label: 'Beranda Utama',
       href: '/dashboard',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
@@ -37,7 +37,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
     ...(isManager
       ? [
           {
-            label: 'Projects',
+            label: 'Kegiatan Proyek',
             href: '/projects',
             icon: (
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
@@ -46,7 +46,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
             ),
           },
           {
-            label: 'Reports',
+            label: 'Laporan Keuangan',
             href: '/reports',
             icon: (
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
@@ -55,7 +55,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
             ),
           },
           {
-            label: 'Register Resident',
+            label: 'Daftarkan Warga',
             href: '/dashboard/residents/register',
             icon: (
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
@@ -66,7 +66,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
         ]
       : [
           {
-            label: 'My Assignments',
+            label: 'Pekerjaan Saya',
             href: '/my-assignments',
             icon: (
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5">
@@ -181,7 +181,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
               <span className={`inline-block text-[10px] font-bold uppercase tracking-wider mt-1 px-1.5 py-0.5 rounded-md ${
                 isManager ? 'bg-teal-500/15 text-teal-400 border border-teal-500/25' : 'bg-blue-500/15 text-blue-400 border border-blue-500/25'
               }`}>
-                {role}
+                {role === 'manager' ? 'Pengelola BUMDes' : role === 'resident' ? 'Warga Desa' : role}
               </span>
             </div>
           </div>
@@ -192,13 +192,13 @@ export default function Sidebar({ role, userName }: SidebarProps) {
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-800 hover:border-slate-700 bg-slate-800/40 hover:bg-slate-800 py-2.5 text-xs font-semibold text-slate-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoggingOut ? (
-              <span>Logging out...</span>
+              <span>Keluar...</span>
             ) : (
               <>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
                 </svg>
-                Sign Out
+                Keluar
               </>
             )}
           </button>

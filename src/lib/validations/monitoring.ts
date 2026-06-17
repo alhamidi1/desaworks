@@ -5,11 +5,12 @@ export const revenueDatePattern = /^\d{4}-\d{2}-\d{2}$/;
 
 export const progressStatusSchema = z.enum(progressStatusValues);
 
-const uuidSchema = z.string().uuid('Must be a valid UUID');
-const requiredTextSchema = z.string().trim().min(1, 'This field is required');
-const percentageSchema = z.number().int('Progress must be a whole number').min(0).max(100);
-const hoursWorkedSchema = z.number().min(0, 'Hours worked cannot be negative');
-const amountSchema = z.number().positive('Amount must be greater than zero');
+const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+const uuidSchema = z.string().regex(uuidRegex, 'Format ID tidak valid');
+const requiredTextSchema = z.string().trim().min(1, 'Kolom ini wajib diisi');
+const percentageSchema = z.number().int('Kemajuan harus berupa angka bulat').min(0, 'Minimal kemajuan adalah 0%').max(100, 'Maksimal kemajuan adalah 100%');
+const hoursWorkedSchema = z.number().min(0, 'Jumlah jam kerja tidak boleh negatif');
+const amountSchema = z.number().positive('Jumlah uang harus lebih besar dari nol');
 
 export const progressUpdateSchema = z.object({
   assignmentId: uuidSchema,
@@ -25,7 +26,7 @@ export const revenueRecordSchema = z.object({
   description: requiredTextSchema,
   recordDate: z
     .string()
-    .regex(revenueDatePattern, 'Record date must use YYYY-MM-DD format')
+    .regex(revenueDatePattern, 'Format tanggal pencatatan harus YYYY-MM-DD')
     .optional(),
 });
 

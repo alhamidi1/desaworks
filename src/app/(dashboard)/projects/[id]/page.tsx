@@ -42,7 +42,7 @@ async function fetchAssignments(
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('assignments')
-    .select('*, resident:profiles(*)')
+    .select('*, resident:profiles!resident_id(*)')
     .eq('project_id', projectId)
     .neq('status', 'void')
     .order('assigned_at', { ascending: false });
@@ -145,12 +145,14 @@ async function ProjectDetailContent({ id }: { id: string }) {
           <h2 className="text-lg font-semibold text-zinc-900">
             Assigned workers
           </h2>
-          <Link
-            href={`/projects/${project.id}/assign`}
-            className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
-          >
-            Assign workers
-          </Link>
+          {project.status === 'open' && (
+            <Link
+              href={`/projects/${project.id}/assign`}
+              className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+            >
+              Assign workers
+            </Link>
+          )}
         </div>
 
         {assignments.length === 0 ? (

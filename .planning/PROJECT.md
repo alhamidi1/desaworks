@@ -11,7 +11,7 @@ BUMDes (Badan Usaha Milik Desa) management cannot efficiently manage and allocat
 ## Target Users
 
 - **BUMDes Manager** — Creates village projects, assigns workers based on skill matching, monitors project progress, generates revenue reports, and manages workforce allocation.
-- **Village Resident** — Registers skills and availability, receives project assignment notifications, updates work progress and contribution details.
+- **Village Resident** — Registers skills and availability (optionally assisted by proxy/RT/RW), receives project assignment notifications (via Email or WhatsApp), and updates work progress.
 - **Village Head (Stakeholder)** — Views high-level reports on economic impact and project outcomes (read-only dashboard).
 
 ## Key Features
@@ -29,6 +29,11 @@ BUMDes (Badan Usaha Milik Desa) management cannot efficiently manage and allocat
 | F09 | Revenue & Performance Reports | System generates project performance and revenue reports automatically | Must |
 | F10 | Conflict Detection | System flags workers already assigned to overlapping projects | Should |
 | F11 | Manager Worker Filtering | Manager can filter workers by skills and availability during assignment | Should |
+| F12 | Indonesian Localization | Clean, simplified Bahasa Indonesia default copy throughout the app UI | Must |
+| F13 | Proxy Profile Registration | Staff/RT/RW can register and edit resident profiles on behalf of offline residents | Must |
+| F14 | WhatsApp Notification Gateway | Automatic WhatsApp messaging for project assignments with direct confirm links | Should |
+| F15 | Offline Progress Cache (PWA) | Local progress save & queue for background sync in poor cellular spots | Should |
+| F16 | Mobile-First UI/UX | Optimized layouts, touch targets, and low-bandwidth assets for mobile screens | Must |
 
 ## Non-Functional Requirements
 

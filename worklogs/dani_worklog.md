@@ -190,3 +190,40 @@
 - **Decision Made**: Customized Recharts XAxis tick rendering without modifying the core data mapping.
 - **Files Changed**: src/components/dashboard/ProjectCompletionChart.tsx, worklogs/dani_worklog.md
 - **Commit**: Not yet committed
+
+## Session 14 — 2026-06-17
+
+### Action: Convert and Refine PRD for Villager Accessibility (Indonesian-First & Mobile-First)
+- **AI Agent Used**: Antigravity (Gemini 3.5 Flash)
+- **Prompt Given**: "give us revocmendation , what we can refine and add to this project, and make it adjustable, able to acomodate villagers and people who are less tecch savvy. think longer and double check on everything. work on prd file" & "update the prd so the ui for the villagers mobile first"
+- **Result**: Converted the binary `specs/PRD.pdf` to a clean, well-formatted `specs/PRD.md` in the workspace. Extended the PRD and project specifications with a new accessibility architecture: default Bahasa Indonesia localization, visual icon grids for skills, proxy profile creation, WhatsApp notification gateways, local-storage offline caching, and mobile-first UI patterns (single-column structures, bottom nav, large touch targets, optimized low-bandwidth assets). Updated `.planning/PROJECT.md` and `.planning/REQUIREMENTS.md` to trace and map these features (`F12`–`F16`) across development phases.
+- **Decision Made**: Formulated the mobile-first requirements as a concrete functional requirement (`F16`) and assigned it to Phase 2 (Workforce Registration - Aldi) and Phase 4 (Monitoring - Dani) to ensure native responsive implementations in the resident interfaces.
+- **Files Changed**: specs/PRD.md, .planning/PROJECT.md, .planning/REQUIREMENTS.md, src/app/(dashboard)/my-assignments/page.tsx, src/components/dashboard/Sidebar.tsx, src/components/monitoring/AssignmentCard.tsx, src/components/monitoring/ProgressUpdateForm.tsx, src/lib/actions/progress.ts, src/lib/validations/monitoring.ts, worklogs/dani_worklog.md
+- **Commit**: Not yet committed
+
+## Session 15 — 2026-06-17
+
+### Action: Fixed invalid project ID validation error for seed data
+- **AI Agent Used**: Antigravity (Gemini 3.5 Flash)
+- **Prompt Given**: "on this menu its still not working bro" (with screenshot of "Failed to load project: Invalid project ID")
+- **Result**: Diagnosed that the custom seed UUIDs (e.g. `b1000000-...` with version 0) were failing Zod 4's strict `.uuid()` check which requires version numbers `1-8`. Replaced strict `.uuid()` checks with a looser UUID regex matching in `src/lib/validations/project.ts` and `src/lib/validations/monitoring.ts`. Verified the fix resolves detail page loading via a browser subagent checking `/projects/b1000000-0000-0000-0000-000000000001` (Renovasi Balai Desa).
+- **Decision Made**: Replaced `.uuid()` with regex-based validation rather than renaming mock IDs in database seed files, which preserves backward compatibility with all existing migrations, queries, and seed data.
+- **Files Changed**: src/lib/validations/project.ts, src/lib/validations/monitoring.ts, worklogs/dani_worklog.md
+- **Commit**: Not yet committed
+
+## Session 16 — 2026-06-17
+
+### Action: Fixed assigned workers list query ambiguity and status-based worker allocation controls
+- **AI Agent Used**: Antigravity (Gemini 3.5 Flash)
+- **Prompt Given**: "so if the project is on progress, it should be exist wroker and we cannot assign the worker because its already exist, and for the open prohject we can assign wrokers, but when i try to assign it it not exist in assiguned workers menu"
+- **Result**: 
+  - Fixed relationship ambiguity in `fetchAssignments` within `src/app/(dashboard)/projects/[id]/page.tsx` by specifying the foreign key: `.select('*, resident:profiles!resident_id(*)')`.
+  - Added conditional check `project.status === 'open'` to only render the "Assign workers" link when the project is in the recruitment phase.
+- **Decision Made**: Disambiguated query columns and restricted worker allocation to the `open` status, matching the BUMDes workflow requirement.
+- **Files Changed**: src/app/(dashboard)/projects/[id]/page.tsx, worklogs/dani_worklog.md
+- **Commit**: Not yet committed
+
+
+
+
+

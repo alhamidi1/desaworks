@@ -106,7 +106,6 @@ export default function ProgressUpdateForm({
       setValue("description", draft.description);
       setValue("hoursWorked", draft.hoursWorked);
       setDraftRestored(true);
-      // Auto-dismiss the restored indicator after 5s
       const timer = setTimeout(() => setDraftRestored(false), 5000);
       return () => clearTimeout(timer);
     }
@@ -118,7 +117,6 @@ export default function ProgressUpdateForm({
     (data: ProgressUpdateInput) => {
       if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
       autoSaveTimer.current = setTimeout(() => {
-        // Only save if the user has entered some content
         if (data.description || data.hoursWorked > 0 || data.progressPercentage !== currentProgress) {
           saveDraft(assignmentId, data);
         }
@@ -142,11 +140,22 @@ export default function ProgressUpdateForm({
     setDuplicateWarning(null);
   }
 
-  function handleResult(result: ProgressActionResult, wasForceDuplicate: boolean) {
+  const handleStatusAndProgressAutoSet = useCallback((pct: number) => {
+    setValue("progressPercentage", pct);
+    if (pct === 100) {
+      setValue("status", "completed");
+    } else if (pct > 0) {
+      setValue("status", "in_progress");
+    } else {
+      setValue("status", "not_started");
+    }
+  }, [setValue]);
+
+  function handleResult(result: ProgressActionResult) {
     if (result.ok) {
       const msg = result.duplicateDetected
-        ? "Progress update saved (duplicate override)."
-        : "Progress update saved successfully!";
+        ? "Laporan kemajuan disimpan (mengabaikan duplikasi)."
+        : "Laporan kemajuan berhasil disimpan!";
       setSuccessMessage(msg);
       setErrorMessage(null);
       setDuplicateWarning(null);
@@ -186,7 +195,7 @@ export default function ProgressUpdateForm({
 
       case "BACKWARD_PROGRESS":
         setError("progressPercentage", {
-          message: `Progress cannot go below current value (${currentProgress}%).`,
+          message: `Kemajuan kerja tidak boleh kurang dari nilai saat ini (${currentProgress}%).`,
         });
         setErrorMessage(result.message);
         break;
@@ -207,11 +216,10 @@ export default function ProgressUpdateForm({
     setIsSubmitting(true);
     try {
       const result = await submitProgressUpdate(data, { forceDuplicate });
-      handleResult(result, forceDuplicate);
+      handleResult(result);
     } catch {
-      // Save draft on error for offline resilience
       saveDraft(assignmentId, data);
-      setErrorMessage("An unexpected error occurred. Your draft has been saved locally — try again later.");
+      setErrorMessage("Koneksi bermasalah. Draf laporan Anda telah disimpan secara lokal di hp — silakan coba kirim ulang nanti.");
     } finally {
       setIsSubmitting(false);
     }
@@ -219,7 +227,6 @@ export default function ProgressUpdateForm({
 
   async function handleForceDuplicate() {
     const values = watch() as ProgressUpdateInput;
-    // Ensure assignmentId is set (watch() may not return hidden fields reliably)
     values.assignmentId = assignmentId;
     await onSubmit(values, true);
   }
@@ -236,7 +243,7 @@ export default function ProgressUpdateForm({
             <svg className="h-4 w-4 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182" />
             </svg>
-            <p className="text-xs font-medium text-blue-700">Draft restored from previous session</p>
+            <p className="text-xs font-medium text-blue-700">Draf laporan dipulihkan dari sesi sebelumnya</p>
             <button
               type="button"
               onClick={() => {
@@ -252,7 +259,7 @@ export default function ProgressUpdateForm({
               }}
               className="ml-auto text-xs text-blue-600 hover:text-blue-800 underline"
             >
-              Discard
+              Buang draf
             </button>
           </div>
         </div>
@@ -289,10 +296,9 @@ export default function ProgressUpdateForm({
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
             </svg>
             <div>
-              <p className="text-sm font-medium text-amber-800">Duplicate update detected</p>
+              <p className="text-sm font-medium text-amber-800">Ditemukan laporan yang sama</p>
               <p className="text-sm text-amber-700 mt-1">
-                A progress update with {duplicateWarning.submittedPercentage}% was already
-                submitted today. Do you want to submit anyway?
+                Laporan kemajuan sebesar {duplicateWarning.submittedPercentage}% sudah dikirimkan hari ini. Apakah Anda yakin ingin mengirimkannya lagi?
               </p>
             </div>
           </div>
@@ -301,9 +307,10 @@ export default function ProgressUpdateForm({
               type="button"
               onClick={handleForceDuplicate}
               disabled={isSubmitting}
-              className="inline-flex items-center rounded-md bg-amber-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-50 transition-colors"
+              className="inline-flex items-center justify-center rounded-lg bg-amber-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-amber-700 disabled:opacity-50 transition-colors"
+              style={{ minHeight: "48px" }}
             >
-              {isSubmitting ? "Submitting..." : "Submit Anyway"}
+              {isSubmitting ? "Mengirim..." : "Tetap Kirim"}
             </button>
             <button
               type="button"
@@ -311,9 +318,10 @@ export default function ProgressUpdateForm({
                 setDuplicateWarning(null);
                 setErrorMessage(null);
               }}
-              className="inline-flex items-center rounded-md bg-white border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center justify-center rounded-lg bg-white border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+              style={{ minHeight: "48px" }}
             >
-              Cancel
+              Batalkan
             </button>
           </div>
         </div>
@@ -322,9 +330,9 @@ export default function ProgressUpdateForm({
       <input type="hidden" {...register("assignmentId")} />
 
       {/* Progress Percentage */}
-      <div>
-        <label htmlFor="progressPercentage" className="block text-sm font-medium text-gray-700 mb-1">
-          Progress (%)
+      <div className="space-y-2">
+        <label htmlFor="progressPercentage" className="block text-sm font-semibold text-gray-700">
+          Kemajuan Kerja (%)
         </label>
         <div className="flex items-center gap-4">
           <input
@@ -337,12 +345,57 @@ export default function ProgressUpdateForm({
             className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
             disabled={isSubmitting}
           />
-          <span className="w-12 text-center text-sm font-semibold text-gray-900 tabular-nums">
+          <span className="w-12 text-center text-sm font-bold text-gray-900 tabular-nums">
             {progressValue ?? 0}%
           </span>
         </div>
+        
+        {/* Mobile preset quick-select buttons for touch screens */}
+        <div className="flex flex-wrap gap-2 pt-1">
+          <button
+            type="button"
+            disabled={isSubmitting}
+            onClick={() => {
+              const current = Number(progressValue ?? 0);
+              handleStatusAndProgressAutoSet(Math.max(0, current - 10));
+            }}
+            className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-bold text-gray-700 hover:bg-gray-50 active:bg-gray-100 transition-colors"
+            style={{ minHeight: "48px", minWidth: "48px" }}
+          >
+            -10%
+          </button>
+          <button
+            type="button"
+            disabled={isSubmitting}
+            onClick={() => {
+              const current = Number(progressValue ?? 0);
+              handleStatusAndProgressAutoSet(Math.min(100, current + 10));
+            }}
+            className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-bold text-gray-700 hover:bg-gray-50 active:bg-gray-100 transition-colors"
+            style={{ minHeight: "48px", minWidth: "48px" }}
+          >
+            +10%
+          </button>
+          <div className="h-8 w-px bg-gray-200 self-center mx-1" />
+          {[25, 50, 75, 100].map((pct) => (
+            <button
+              key={pct}
+              type="button"
+              disabled={isSubmitting}
+              onClick={() => handleStatusAndProgressAutoSet(pct)}
+              className={`inline-flex items-center justify-center rounded-lg border px-3.5 py-2 text-xs font-bold transition-colors ${
+                progressValue === pct
+                  ? "bg-blue-600 border-blue-600 text-white hover:bg-blue-700"
+                  : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50 active:bg-gray-100"
+              }`}
+              style={{ minHeight: "48px", minWidth: "48px" }}
+            >
+              {pct}%
+            </button>
+          ))}
+        </div>
         {currentProgress > 0 && (
-          <p className="text-xs text-gray-500 mt-1">Current progress: {currentProgress}%</p>
+          <p className="text-xs text-gray-500">Kemajuan kerja sebelumnya: {currentProgress}%</p>
         )}
         {errors.progressPercentage && (
           <p className="text-sm text-red-600 mt-1">{errors.progressPercentage.message}</p>
@@ -351,18 +404,19 @@ export default function ProgressUpdateForm({
 
       {/* Status */}
       <div>
-        <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
-          Status
+        <label htmlFor="status" className="block text-sm font-semibold text-gray-700 mb-1">
+          Status Pekerjaan
         </label>
         <select
           id="status"
           {...register("status")}
           disabled={isSubmitting}
-          className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500 transition-colors"
+          className="w-full rounded-lg border border-gray-300 bg-white px-3 py-3 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500 transition-colors"
+          style={{ minHeight: "48px" }}
         >
-          <option value="not_started">Not Started</option>
-          <option value="in_progress">In Progress</option>
-          <option value="completed">Completed</option>
+          <option value="not_started">Belum Dimulai</option>
+          <option value="in_progress">Sedang Dikerjakan</option>
+          <option value="completed">Selesai</option>
         </select>
         {errors.status && (
           <p className="text-sm text-red-600 mt-1">{errors.status.message}</p>
@@ -371,18 +425,20 @@ export default function ProgressUpdateForm({
 
       {/* Hours Worked */}
       <div>
-        <label htmlFor="hoursWorked" className="block text-sm font-medium text-gray-700 mb-1">
-          Hours Worked
+        <label htmlFor="hoursWorked" className="block text-sm font-semibold text-gray-700 mb-1">
+          Jumlah Jam Kerja
         </label>
         <input
           id="hoursWorked"
           type="number"
           step="0.5"
           min="0"
+          inputMode="decimal" // Mobile numeric/decimal keyboard layout trigger
           {...register("hoursWorked", { valueAsNumber: true })}
           disabled={isSubmitting}
-          placeholder="e.g. 2.5"
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500 transition-colors"
+          placeholder="Contoh: 4"
+          className="w-full rounded-lg border border-gray-300 px-3 py-3 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500 transition-colors"
+          style={{ minHeight: "48px" }}
         />
         {errors.hoursWorked && (
           <p className="text-sm text-red-600 mt-1">{errors.hoursWorked.message}</p>
@@ -391,16 +447,16 @@ export default function ProgressUpdateForm({
 
       {/* Description */}
       <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-          Description <span className="text-red-500">*</span>
+        <label htmlFor="description" className="block text-sm font-semibold text-gray-700 mb-1">
+          Deskripsi Kegiatan (Penjelasan Pekerjaan) <span className="text-red-500">*</span>
         </label>
         <textarea
           id="description"
           rows={3}
           {...register("description")}
           disabled={isSubmitting}
-          placeholder="Describe what you worked on..."
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500 transition-colors resize-none"
+          placeholder="Tuliskan apa saja yang Anda kerjakan hari ini..."
+          className="w-full rounded-lg border border-gray-300 px-3 py-3 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500 transition-colors resize-none"
         />
         {errors.description && (
           <p className="text-sm text-red-600 mt-1">{errors.description.message}</p>
@@ -411,7 +467,8 @@ export default function ProgressUpdateForm({
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        style={{ minHeight: "48px" }}
       >
         {isSubmitting && (
           <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
@@ -419,7 +476,7 @@ export default function ProgressUpdateForm({
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
           </svg>
         )}
-        {isSubmitting ? "Submitting..." : "Submit Update"}
+        {isSubmitting ? "Menyimpan..." : "Kirim Laporan Kerja"}
       </button>
     </form>
   );
