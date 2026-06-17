@@ -18,5 +18,5 @@ export async function loginAction(formData: FormData): Promise<{ error: string }
     return { error: error.message };
   }
 
-  redirect('/projects');
+  redirect('/dashboard');
 }
