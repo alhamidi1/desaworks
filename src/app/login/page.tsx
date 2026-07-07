@@ -24,7 +24,7 @@ export default function LoginPage() {
     setIsPending(false);
   }
 
-  const showTestCredentials = process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_SHOW_TEST_CREDENTIALS === 'true';
+  const showTestCredentials = process.env.NEXT_PUBLIC_HIDE_TEST_CREDENTIALS !== 'true';
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-4 relative overflow-hidden bg-gradient-to-br from-[#f0fdfa] via-[#f7f8fa] to-[#eff6ff]">
