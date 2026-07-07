@@ -5,7 +5,10 @@ export const revenueDatePattern = /^\d{4}-\d{2}-\d{2}$/;
 
 export const progressStatusSchema = z.enum(progressStatusValues);
 
-const uuidSchema = z.string().uuid('Must be a valid UUID');
+const uuidSchema = z.string().regex(
+  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/,
+  'Must be a valid UUID'
+);
 const requiredTextSchema = z.string().trim().min(1, 'This field is required');
 const percentageSchema = z.number().int('Progress must be a whole number').min(0).max(100);
 const hoursWorkedSchema = z.number().min(0, 'Hours worked cannot be negative');

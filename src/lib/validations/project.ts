@@ -1,6 +1,11 @@
 import { z } from 'zod';
 import type { ProjectStatus } from '@/lib/types/database';
 
+export const uuidSchema = z.string().regex(
+  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/,
+  'Invalid UUID format'
+);
+
 export const proficiencyLevelSchema = z.enum([
   'beginner',
   'intermediate',
@@ -8,7 +13,7 @@ export const proficiencyLevelSchema = z.enum([
 ]);
 
 export const skillRequirementSchema = z.object({
-  skill_id: z.string().uuid(),
+  skill_id: uuidSchema,
   min_proficiency: proficiencyLevelSchema.default('beginner'),
   workers_needed: z.number().int().min(1).default(1),
 });
@@ -90,20 +95,20 @@ export function isValidStatusTransition(
 }
 
 export const updateProjectStatusSchema = z.object({
-  project_id: z.string().uuid(),
+  project_id: uuidSchema,
   status: projectStatusSchema,
 });
 
 export const confirmAssignmentsSchema = z.object({
-  project_id: z.string().uuid(),
+  project_id: uuidSchema,
   resident_ids: z
-    .array(z.string().uuid())
+    .array(uuidSchema)
     .min(1, 'At least one worker must be selected'),
   override_conflicts: z.boolean().optional().default(false),
 });
 
 export const voidAssignmentSchema = z.object({
-  assignment_id: z.string().uuid(),
+  assignment_id: uuidSchema,
 });
 
 export const listProjectsFilterSchema = z.object({
@@ -111,7 +116,7 @@ export const listProjectsFilterSchema = z.object({
 });
 
 export const recommendationFiltersSchema = z.object({
-  skill_ids: z.array(z.string().uuid()).optional(),
+  skill_ids: z.array(uuidSchema).optional(),
   availability: z.enum(['available', 'unavailable', 'all']).default('available'),
   min_proficiency: proficiencyLevelSchema.optional(),
   min_experience_years: z.number().int().min(0).optional(),
