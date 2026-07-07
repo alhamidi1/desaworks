@@ -5,8 +5,8 @@ import { ManagerDashboard } from '@/components/dashboard/ManagerDashboard';
 import ResidentDashboard, { ResidentAssignment } from '@/components/dashboard/ResidentDashboard';
 
 export const metadata = {
-  title: 'Dashboard — DesaWorks',
-  description: 'Village Community Resource Management System Dashboard',
+  title: 'Beranda — DesaWorks',
+  description: 'Sistem Pengelolaan Sumber Daya Masyarakat Desa',
 };
 
 export default async function DashboardPage() {
@@ -39,7 +39,6 @@ export default async function DashboardPage() {
   }
 
   // Render Resident Dashboard
-  // Fetch assignments, progress updates, and notifications for this resident
   const { data: assignmentsRaw, error: assignmentsError } = await supabase
     .from('assignments')
     .select(`
@@ -73,7 +72,6 @@ export default async function DashboardPage() {
   const typedAssignmentsRaw = assignmentsRaw ?? [];
   const assignmentIds = typedAssignmentsRaw.map((a: any) => a.id);
 
-  // Fetch progress updates for active calculation
   let progressUpdates: any[] = [];
   if (assignmentIds.length > 0) {
     const { data } = await supabase
@@ -84,7 +82,6 @@ export default async function DashboardPage() {
     progressUpdates = data ?? [];
   }
 
-  // Group latest progress and sum total hours worked per assignment
   const latestProgressMap = new Map<string, any>();
   const hoursWorkedMap = new Map<string, number>();
 

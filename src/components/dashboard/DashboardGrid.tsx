@@ -9,7 +9,7 @@ export interface DashboardSectionProps {
 
 export function DashboardGrid({ children }: DashboardGridProps) {
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
       {children}
     </div>
   );
@@ -18,7 +18,7 @@ export function DashboardGrid({ children }: DashboardGridProps) {
 export function DashboardSection({ title, children }: DashboardSectionProps) {
   return (
     <section className="space-y-4">
-      <h2 className="text-lg font-semibold tracking-tight text-slate-900">{title}</h2>
+      <h2 className="text-base sm:text-lg font-bold tracking-tight text-[#1a1d23]">{title}</h2>
       {children}
     </section>
   );

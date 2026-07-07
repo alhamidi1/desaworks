@@ -34,13 +34,13 @@ BUMDes (Badan Usaha Milik Desa) management cannot efficiently manage and allocat
 
 | NF-ID | Requirement | Target / Measure |
 |-------|-------------|-----------------|
-| NF01 | Security — Data encryption | Personal data encrypted at rest (Supabase RLS + column encryption) |
+| NF01 | Security — Data access control | Personal data protected via Supabase Row-Level Security (RLS) policies. Column-level encryption planned for production adoption. |
 | NF02 | Security — Password hashing | bcrypt via Supabase Auth (cost factor ≥ 10) |
 | NF03 | Security — Data in transit | HTTPS/TLS 1.2+ (Vercel default) |
 | NF04 | Security — User consent | Privacy policy + Terms of Service agreement during registration |
 | NF05 | Performance | API responses < 2 seconds under normal load |
 | NF06 | Usability | Responsive UI, mobile-friendly (375px and wider) |
-| NF07 | Legal compliance | UU PDP No. 27/2022 compliant data handling |
+| NF07 | Legal compliance | UU PDP No. 27/2022 compliance planned for production adoption. Current university prototype implements data minimization and access control via RLS. |
 
 ## Out of Scope
 
@@ -85,3 +85,18 @@ BUMDes (Badan Usaha Milik Desa) management cannot efficiently manage and allocat
 | Aldi (24523023) | Developer | `feature/aldi-workforce-registration` | Workforce Skills Registration (F01, F02, F06) |
 | Kemal (24523123) | Developer | `feature/kemal-project-assignment` | Project Assignment & Allocation (F03, F04, F05, F10, F11) |
 | Dani (24523207) | Developer | `feature/dani-monitoring-reports` | Monitoring & Revenue Tracking (F07, F08, F09) |
+
+## Current Status
+
+This project is a **university prototype** developed for academic demonstration at the expo. It is not yet deployed for real BUMDes operations.
+
+## Future Improvements (for Production Adoption)
+
+| Priority | Improvement | Description |
+|----------|-------------|-------------|
+| High | Full UU PDP compliance | Data Protection Officer, breach notification, user consent flow, data deletion rights |
+| High | Column-level encryption | Encrypt sensitive fields (phone, address) using `pgcrypto` |
+| High | Comprehensive testing | Unit, integration, and E2E tests |
+| Medium | Offline support | Service worker for rural areas with poor connectivity |
+| Medium | Push notifications | FCM/APNs for mobile assignment alerts |
+| Low | National ID integration | Dukcapil API for resident verification |
