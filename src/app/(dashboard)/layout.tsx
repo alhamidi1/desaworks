@@ -32,7 +32,7 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-[#f7f8fa]">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-[#f7f8fa]">
       {/* Sidebar with role-based navigation */}
       <Sidebar role={profile.role} userName={profile.full_name} />
 
