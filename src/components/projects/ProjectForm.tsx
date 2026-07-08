@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 import {
   createProjectSchema,
   updateProjectSchema,
@@ -38,6 +39,7 @@ export function ProjectForm({
   onSubmit,
   isSubmitting = false,
 }: ProjectFormProps) {
+  const { t } = useLanguage();
   const [form, setForm] = useState({
     name: initialData?.name ?? defaultFormState.name,
     description: initialData?.description ?? defaultFormState.description,
@@ -105,12 +107,12 @@ export function ProjectForm({
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4 rounded-lg border border-zinc-200 bg-white p-5">
         <h2 className="text-lg font-semibold text-zinc-900">
-          {mode === 'create' ? 'Create project' : 'Edit project'}
+          {mode === 'create' ? t('project.createProject') : t('project.editProject')}
         </h2>
 
         <div>
           <label htmlFor="name" className="mb-1 block text-sm font-medium text-zinc-700">
-            Project name *
+            {t('project.nameLabel')}
           </label>
           <input
             id="name"
@@ -119,7 +121,7 @@ export function ProjectForm({
             disabled={isSubmitting}
             onChange={(e) => updateField('name', e.target.value)}
             className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
-            placeholder="e.g. Village irrigation repair"
+            placeholder={t('project.namePlaceholder')}
           />
           {errors.name && (
             <p className="mt-1 text-sm text-red-600">{errors.name}</p>
@@ -131,7 +133,7 @@ export function ProjectForm({
             htmlFor="description"
             className="mb-1 block text-sm font-medium text-zinc-700"
           >
-            Description
+            {t('project.descriptionLabel')}
           </label>
           <textarea
             id="description"
@@ -140,7 +142,7 @@ export function ProjectForm({
             disabled={isSubmitting}
             onChange={(e) => updateField('description', e.target.value)}
             className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
-            placeholder="Describe the project goals and scope"
+            placeholder={t('project.descriptionPlaceholder')}
           />
           {errors.description && (
             <p className="mt-1 text-sm text-red-600">{errors.description}</p>
@@ -153,7 +155,7 @@ export function ProjectForm({
               htmlFor="start_date"
               className="mb-1 block text-sm font-medium text-zinc-700"
             >
-              Start date
+              {t('project.startDateLabel')}
             </label>
             <input
               id="start_date"
@@ -173,7 +175,7 @@ export function ProjectForm({
               htmlFor="end_date"
               className="mb-1 block text-sm font-medium text-zinc-700"
             >
-              End date
+              {t('project.endDateLabel')}
             </label>
             <input
               id="end_date"
@@ -195,7 +197,7 @@ export function ProjectForm({
               htmlFor="workers_needed"
               className="mb-1 block text-sm font-medium text-zinc-700"
             >
-              Total workers needed
+              {t('project.workersNeededLabel')}
             </label>
             <input
               id="workers_needed"
@@ -216,7 +218,7 @@ export function ProjectForm({
               htmlFor="budget"
               className="mb-1 block text-sm font-medium text-zinc-700"
             >
-              Budget estimate (IDR)
+              {t('project.budgetLabel')}
             </label>
             <input
               id="budget"
@@ -226,6 +228,7 @@ export function ProjectForm({
               disabled={isSubmitting}
               onChange={(e) => updateField('budget', e.target.value)}
               className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
+              placeholder={t('project.budgetPlaceholder')}
             />
             {errors.budget && (
               <p className="mt-1 text-sm text-red-600">{errors.budget}</p>
@@ -258,10 +261,10 @@ export function ProjectForm({
         className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isSubmitting
-          ? 'Saving...'
+          ? t('progress.submitting')
           : mode === 'create'
-            ? 'Create project'
-            : 'Save changes'}
+            ? t('project.createProject')
+            : t('project.saveChangesBtn')}
       </button>
     </form>
   );

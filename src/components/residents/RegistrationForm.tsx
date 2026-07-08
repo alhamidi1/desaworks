@@ -2,9 +2,17 @@
 
 import React, { useEffect, useState } from 'react';
 import SkillSelector from './SkillSelector';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 import type { Skill } from '@/lib/types/database';
 
-export default function RegistrationForm({ residentId }: { residentId?: string | null }) {
+interface RegistrationFormProps {
+  residentId?: string | null;
+  // When true, shows a simpler version suitable for the public self-registration page
+  isPublic?: boolean;
+}
+
+export default function RegistrationForm({ residentId, isPublic = false }: RegistrationFormProps) {
+  const { t } = useLanguage();
   const [skills, setSkills] = useState<Skill[]>([]);
   const [selected, setSelected] = useState<any[]>([]);
   const [fullName, setFullName] = useState('');
@@ -12,6 +20,8 @@ export default function RegistrationForm({ residentId }: { residentId?: string |
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     fetch('/api/skills')
@@ -19,10 +29,11 @@ export default function RegistrationForm({ residentId }: { residentId?: string |
       .then((data) => setSkills((data || []) as Skill[]));
   }, []);
 
-
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
     setLoading(true);
+
     try {
       const payload = {
         full_name: fullName,
@@ -31,7 +42,12 @@ export default function RegistrationForm({ residentId }: { residentId?: string |
         address,
         agreed_to_tos: true,
         agreed_to_privacy: true,
-        skills: selected.map((s) => ({ skill_id: s.skill_id, experience_years: s.experience_years, proficiency_level: s.proficiency_level, notes: s.notes })),
+        skills: selected.map((s) => ({
+          skill_id: s.skill_id,
+          experience_years: s.experience_years,
+          proficiency_level: s.proficiency_level,
+          notes: s.notes,
+        })),
       };
 
       const url = residentId ? `/api/residents/${residentId}/update` : '/api/residents/register';
@@ -42,50 +58,144 @@ export default function RegistrationForm({ residentId }: { residentId?: string |
       });
 
       if (!res.ok) {
-        const err = await res.text();
-        alert('Error: ' + err);
-        return;
+        const body = await res.json().catch(() => ({ error: t('register.formError') }));
+        throw new Error(body?.error || t('register.formError'));
       }
 
-      alert('Profile saved');
+      setSuccess(true);
+      if (!residentId) {
+        // Reset form for new registrations
+        setFullName('');
+        setEmail('');
+        setPhone('');
+        setAddress('');
+        setSelected([]);
+      }
+    } catch (err: any) {
+      setError(err.message || t('register.formError'));
     } finally {
       setLoading(false);
     }
   }
 
+  if (success) {
+    return (
+      <div className="flex flex-col items-center justify-center py-10 text-center gap-4">
+        <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-[#05c8ae] to-[#058074] flex items-center justify-center shadow-lg shadow-[#05c8ae]/25">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-8 w-8 text-white">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+          </svg>
+        </div>
+        <div>
+          <h3 className="text-lg font-bold text-[#1a1d23]">
+            {isPublic ? t('register.successTitle') : t('register.saveSuccessTitle')}
+          </h3>
+          <p className="mt-1 text-sm text-[#868e96]">
+            {isPublic
+              ? t('register.publicSuccessDesc')
+              : t('register.managerSuccessDesc')}
+          </p>
+        </div>
+        {!isPublic && (
+          <button
+            onClick={() => setSuccess(false)}
+            className="rounded-xl border border-[#e9ecef] px-5 py-2.5 text-sm font-semibold text-[#495057] hover:border-[#05c8ae] hover:text-[#05c8ae] transition-colors"
+          >
+            {t('register.registerAnother')}
+          </button>
+        )}
+      </div>
+    );
+  }
+
   return (
-    <form onSubmit={submit} className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium">Full name</label>
-        <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full border rounded px-2 py-1" />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium">Email</label>
-        <input value={email} onChange={(e) => setEmail(e.target.value)} className="w-full border rounded px-2 py-1" />
-      </div>
-
-      <div className="grid grid-cols-2 gap-2">
-        <div>
-          <label className="block text-sm font-medium">Phone</label>
-          <input value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full border rounded px-2 py-1" />
+    <form onSubmit={submit} className="space-y-5">
+      {error && (
+        <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+          </svg>
+          <p className="text-sm text-red-700">{error}</p>
         </div>
-        <div>
-          <label className="block text-sm font-medium">Address</label>
-          <input value={address} onChange={(e) => setAddress(e.target.value)} className="w-full border rounded px-2 py-1" />
+      )}
+
+      {/* Full name */}
+      <div className="space-y-1.5">
+        <label className="block text-sm font-semibold text-[#1a1d23]">
+          {t('register.fullName')} <span className="text-red-500">*</span>
+        </label>
+        <input
+          required
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          placeholder={t('register.fullNamePlaceholder')}
+          className="w-full rounded-xl border border-[#e9ecef] bg-white px-4 py-3 text-sm text-[#1a1d23] placeholder:text-[#adb5bd] focus:border-[#05c8ae] focus:outline-none focus:ring-2 focus:ring-[#05c8ae]/20 transition-colors"
+        />
+      </div>
+
+      {/* Email */}
+      <div className="space-y-1.5">
+        <label className="block text-sm font-semibold text-[#1a1d23]">
+          {t('register.email')} <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder={t('register.emailPlaceholder')}
+          className="w-full rounded-xl border border-[#e9ecef] bg-white px-4 py-3 text-sm text-[#1a1d23] placeholder:text-[#adb5bd] focus:border-[#05c8ae] focus:outline-none focus:ring-2 focus:ring-[#05c8ae]/20 transition-colors"
+        />
+      </div>
+
+      {/* Phone + Address */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-1.5">
+          <label className="block text-sm font-semibold text-[#1a1d23]">{t('register.phone')}</label>
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder={t('register.phonePlaceholder')}
+            className="w-full rounded-xl border border-[#e9ecef] bg-white px-4 py-3 text-sm text-[#1a1d23] placeholder:text-[#adb5bd] focus:border-[#05c8ae] focus:outline-none focus:ring-2 focus:ring-[#05c8ae]/20 transition-colors"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <label className="block text-sm font-semibold text-[#1a1d23]">{t('register.address')}</label>
+          <input
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder={t('register.addressPlaceholder')}
+            className="w-full rounded-xl border border-[#e9ecef] bg-white px-4 py-3 text-sm text-[#1a1d23] placeholder:text-[#adb5bd] focus:border-[#05c8ae] focus:outline-none focus:ring-2 focus:ring-[#05c8ae]/20 transition-colors"
+          />
         </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium">Skills</label>
+      {/* Skills */}
+      <div className="space-y-1.5">
+        <label className="block text-sm font-semibold text-[#1a1d23]">{t('register.skills')}</label>
+        <p className="text-xs text-[#868e96]">{t('register.skillsDesc')}</p>
         <SkillSelector availableSkills={skills} value={selected} onChange={setSelected} />
       </div>
 
-      <div>
-        <button type="submit" disabled={loading} className="px-4 py-2 bg-blue-600 text-white rounded">
-          {loading ? 'Saving...' : 'Save Profile'}
-        </button>
-      </div>
+      {/* Submit */}
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full rounded-xl bg-gradient-to-r from-[#05c8ae] to-[#058074] px-6 py-3.5 text-sm font-bold text-white shadow-md shadow-[#05c8ae]/20 hover:shadow-lg hover:shadow-[#05c8ae]/30 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
+      >
+        {loading ? (
+          <span className="flex items-center justify-center gap-2">
+            <svg className="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            {t('register.saving')}
+          </span>
+        ) : (
+          residentId ? t('register.saveChanges') : t('register.submit')
+        )}
+      </button>
     </form>
   );
 }

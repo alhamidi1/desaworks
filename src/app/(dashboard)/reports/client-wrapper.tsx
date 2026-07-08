@@ -40,9 +40,10 @@ export function ReportsPageClient({ totalProjects, activeProjects, projectNames 
     {
       title: t('report.projectAnalytics'),
       description: t('report.analyticsDesc'),
-      href: '#',
+      href: null, // handled separately
       iconColor: 'text-[#3b82f6]',
       iconBg: 'bg-[#3b82f6]/10',
+      projectNames,
       icon: (
         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z" />
@@ -89,54 +90,63 @@ export function ReportsPageClient({ totalProjects, activeProjects, projectNames 
       {/* Report cards */}
       <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {reportCards.map((card) => {
-          const isLink = card.href !== '#';
-
-          const content = (
-            <div className="group flex h-full flex-col rounded-2xl border border-[#e9ecef] bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:border-[#c7fff4] hover:-translate-y-0.5">
-              <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${card.iconBg} ${card.iconColor}`}>
-                {card.icon}
-              </div>
-              <h2 className="mt-4 text-base sm:text-lg font-bold text-[#1a1d23] group-hover:text-[#05c8ae] transition-colors">
-                {card.title}
-              </h2>
-              <p className="mt-2 flex-1 text-sm leading-6 text-[#868e96]">
-                {card.description}
-              </p>
-              <div className="mt-4 flex items-center gap-1 text-sm font-semibold text-[#05c8ae]">
-                {isLink ? t('report.viewReport') : t('report.selectProject')}
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                </svg>
-              </div>
-            </div>
-          );
-
-          if (isLink) {
+          // Project Analytics card — render project links INSIDE the card
+          if (card.projectNames !== undefined) {
             return (
-              <Link key={card.title} href={card.href} className="block">
-                {content}
-              </Link>
+              <div key={card.title} className="flex flex-col rounded-2xl border border-[#e9ecef] bg-white p-6 shadow-sm">
+                <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${card.iconBg} ${card.iconColor}`}>
+                  {card.icon}
+                </div>
+                <h2 className="mt-4 text-base sm:text-lg font-bold text-[#1a1d23]">{card.title}</h2>
+                <p className="mt-2 text-sm leading-6 text-[#868e96]">{card.description}</p>
+
+                {card.projectNames.length === 0 ? (
+                  <p className="mt-4 text-xs text-[#adb5bd] italic">Belum ada proyek tersedia.</p>
+                ) : (
+                  <ul className="mt-4 space-y-1.5 flex-1">
+                    {card.projectNames.slice(0, 5).map((p) => (
+                      <li key={p.id}>
+                        <Link
+                          href={`/projects/${p.id}`}
+                          className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-[#495057] transition-colors hover:bg-[#effefb] hover:text-[#05c8ae] group"
+                        >
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#05c8ae] opacity-50 group-hover:opacity-100 flex-shrink-0" />
+                          <span className="truncate">{p.name}</span>
+                        </Link>
+                      </li>
+                    ))}
+                    {card.projectNames.length > 5 && (
+                      <li className="px-3 py-1 text-xs text-[#adb5bd]">
+                        +{card.projectNames.length - 5} proyek lainnya
+                      </li>
+                    )}
+                  </ul>
+                )}
+              </div>
             );
           }
 
+          // Regular report cards with href
           return (
-            <div key={card.title}>
-              {content}
-              {projectNames.length > 0 && (
-                <ul className="mt-3 space-y-1">
-                  {projectNames.map((p) => (
-                    <li key={p.id}>
-                      <Link
-                        href="/reports/performance"
-                        className="block rounded-xl px-3 py-2 text-sm text-[#495057] transition-colors hover:bg-[#effefb] hover:text-[#05c8ae] touch-target"
-                      >
-                        {p.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+            <Link key={card.title} href={card.href!} className="block">
+              <div className="group flex h-full flex-col rounded-2xl border border-[#e9ecef] bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:border-[#c7fff4] hover:-translate-y-0.5">
+                <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${card.iconBg} ${card.iconColor}`}>
+                  {card.icon}
+                </div>
+                <h2 className="mt-4 text-base sm:text-lg font-bold text-[#1a1d23] group-hover:text-[#05c8ae] transition-colors">
+                  {card.title}
+                </h2>
+                <p className="mt-2 flex-1 text-sm leading-6 text-[#868e96]">
+                  {card.description}
+                </p>
+                <div className="mt-4 flex items-center gap-1 text-sm font-semibold text-[#05c8ae]">
+                  {t('report.viewReport')}
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                  </svg>
+                </div>
+              </div>
+            </Link>
           );
         })}
       </div>

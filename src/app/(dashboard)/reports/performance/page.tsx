@@ -1,3 +1,4 @@
+import { cookies } from 'next/headers';
 import {
   getManagerDashboardReport,
   getProjectAnalyticsReport,
@@ -7,6 +8,7 @@ import { WorkerContributionTable } from '@/components/reports/WorkerContribution
 import { ExportButton } from '@/components/reports/ExportButton';
 import { ProjectCompletionChart } from '@/components/dashboard/ProjectCompletionChart';
 import { ProgressOverTimeChart } from '@/components/dashboard/ProgressOverTimeChart';
+import { createT, type Locale } from '@/lib/i18n';
 
 export const metadata = {
   title: 'Performance Report — DesaWorks',
@@ -14,6 +16,10 @@ export const metadata = {
 };
 
 export default async function PerformanceReportPage() {
+  const cookieStore = await cookies();
+  const locale = (cookieStore.get('desaworks_locale')?.value as Locale) || 'id';
+  const t = createT(locale);
+
   const dashboard = await getManagerDashboardReport();
 
   // Build performance table data from dashboard metrics
@@ -60,73 +66,68 @@ export default async function PerformanceReportPage() {
     for (const workerRow of analytics.workers) {
       const key = workerRow.worker.id;
       const existing = workerMap.get(key);
+      const hours = workerRow.totalHoursWorked;
+      const progress = workerRow.latestProgress?.progress_percentage ?? null;
+      const isActive = workerRow.assignment.status === 'active';
 
       if (existing) {
-        existing.totalHoursWorked += workerRow.totalHoursWorked;
+        existing.totalHoursWorked += hours;
         existing.taskCount += workerRow.taskCount;
-        // Keep the most recent progress
-        if (
-          workerRow.latestProgress &&
-          (existing.latestProgress === null ||
-            workerRow.latestProgress.progress_percentage > existing.latestProgress)
-        ) {
-          existing.latestProgress = workerRow.latestProgress.progress_percentage;
+        if (progress !== null) {
+          existing.latestProgress =
+            existing.latestProgress !== null
+              ? Math.max(existing.latestProgress, progress)
+              : progress;
         }
-        // Prefer active status over others
-        if (
-          workerRow.assignment.status === 'active' ||
-          workerRow.assignment.status === 'confirmed'
-        ) {
-          existing.assignmentStatus = workerRow.assignment.status;
+        if (isActive) {
+          existing.assignmentStatus = 'active';
         }
       } else {
         workerMap.set(key, {
           workerName: workerRow.worker.full_name,
           email: workerRow.worker.email,
-          totalHoursWorked: workerRow.totalHoursWorked,
+          totalHoursWorked: hours,
           taskCount: workerRow.taskCount,
-          latestProgress: workerRow.latestProgress?.progress_percentage ?? null,
+          latestProgress: progress,
           assignmentStatus: workerRow.assignment.status,
         });
       }
     }
   }
 
-  const workerData = Array.from(workerMap.values()).sort(
-    (a, b) => b.totalHoursWorked - a.totalHoursWorked
-  );
+  const workerData = Array.from(workerMap.values());
 
-  // Build CSV export data
-  const performanceExportData = performanceData.map((row) => ({
-    Project: row.projectName,
-    'Completion (%)': row.completionPercentage,
-    'Assigned Workers': row.assignedWorkers,
-    'Active Assignments': row.activeAssignments,
-    Status: row.status,
+  // Prepare CSV export formats
+  const performanceExportData = performanceData.map((p) => ({
+    'Project Name': p.projectName,
+    'Completion %': p.completionPercentage,
+    'Assigned Workers': p.assignedWorkers,
+    'Active Tasks': p.activeAssignments,
+    Status: p.status,
   }));
 
-  const workerExportData = workerData.map((row) => ({
-    Worker: row.workerName,
-    Email: row.email,
-    'Total Hours': row.totalHoursWorked,
-    Tasks: row.taskCount,
-    'Latest Progress (%)': row.latestProgress ?? 'N/A',
-    Status: row.assignmentStatus,
+  const workerExportData = workerData.map((w) => ({
+    Name: w.workerName,
+    Email: w.email,
+    'Total Hours Worked': w.totalHoursWorked,
+    'Tasks Count': w.taskCount,
+    'Latest Progress %': w.latestProgress ?? 0,
+    Status: w.assignmentStatus,
   }));
 
-  // Aggregate progress history for ProgressOverTimeChart
-  const allProgressHistory = analyticsResults.flatMap(
-    (a) => a.progressHistory
-  );
-  const progressByDate = new Map<string, number[]>();
+  // Progress trend data (aggregate from project analytics history)
+  const dateProgressMap = new Map<string, number[]>();
 
-  for (const point of allProgressHistory) {
-    const values = progressByDate.get(point.date) ?? [];
-    values.push(point.averageProgress);
-    progressByDate.set(point.date, values);
+  for (const analytics of analyticsResults) {
+    for (const history of analytics.progressHistory) {
+      const date = history.date;
+      const current = dateProgressMap.get(date) ?? [];
+      current.push(history.averageProgress);
+      dateProgressMap.set(date, current);
+    }
   }
 
-  const progressTrendData = Array.from(progressByDate.entries())
+  const progressTrendData = Array.from(dateProgressMap.entries())
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([date, values]) => ({
       date,
@@ -141,14 +142,13 @@ export default async function PerformanceReportPage() {
       {/* Page header */}
       <div className="mb-8">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-teal-700">
-          Reports
+          {t('nav.reports')}
         </p>
         <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-950">
-          Performance Report
+          {t('performanceReport.title')}
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
-          Overview of project completion, worker contributions, and progress
-          trends across all managed projects.
+          {t('performanceReport.subtitle')}
         </p>
       </div>
 
@@ -156,7 +156,7 @@ export default async function PerformanceReportPage() {
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
-            Total Projects
+            {t('stats.totalProjects')}
           </p>
           <p className="mt-1 text-2xl font-bold text-slate-900">
             {dashboard.projects.length}
@@ -164,7 +164,7 @@ export default async function PerformanceReportPage() {
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
-            Active Workers
+            {t('stats.activeWorkers')}
           </p>
           <p className="mt-1 text-2xl font-bold text-blue-600">
             {workerData.length}
@@ -172,7 +172,7 @@ export default async function PerformanceReportPage() {
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
-            Avg. Completion
+            {t('stats.avgCompletion')}
           </p>
           <p className="mt-1 text-2xl font-bold text-teal-600">
             {performanceData.length > 0
@@ -188,7 +188,7 @@ export default async function PerformanceReportPage() {
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
-            Total Hours Logged
+            {t('stats.totalHoursLogged')}
           </p>
           <p className="mt-1 text-2xl font-bold text-amber-600">
             {workerData
@@ -210,16 +210,16 @@ export default async function PerformanceReportPage() {
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-xl font-semibold text-slate-900">
-              Project Performance
+              {t('performanceReport.projectPerformance')}
             </h2>
             <p className="mt-1 text-sm text-slate-500">
-              Completion, workers, and status for each project.
+              {t('performanceReport.projectPerformanceDesc')}
             </p>
           </div>
           <ExportButton
             data={performanceExportData}
             filename="performance-report"
-            label="Export Performance"
+            label={t('performanceReport.exportPerformance')}
           />
         </div>
         <PerformanceTable data={performanceData} />
@@ -230,16 +230,16 @@ export default async function PerformanceReportPage() {
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-xl font-semibold text-slate-900">
-              Worker Contributions
+              {t('performanceReport.workerContributions')}
             </h2>
             <p className="mt-1 text-sm text-slate-500">
-              Aggregated hours, tasks, and progress for all assigned workers.
+              {t('performanceReport.workerContributionsDesc')}
             </p>
           </div>
           <ExportButton
             data={workerExportData}
             filename="worker-contributions"
-            label="Export Workers"
+            label={t('performanceReport.exportWorkers')}
           />
         </div>
         <WorkerContributionTable data={workerData} />

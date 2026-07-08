@@ -1,3 +1,4 @@
+import { cookies } from 'next/headers';
 import {
   getRevenueReport,
   getManagerDashboardReport,
@@ -5,6 +6,7 @@ import {
 import { RevenueChart } from '@/components/reports/RevenueChart';
 import { RevenueForm } from '@/components/reports/RevenueForm';
 import { ExportButton } from '@/components/reports/ExportButton';
+import { createT, type Locale } from '@/lib/i18n';
 
 export const metadata = {
   title: 'Revenue Report — DesaWorks',
@@ -20,6 +22,10 @@ function formatIDR(amount: number) {
 }
 
 export default async function RevenueReportPage() {
+  const cookieStore = await cookies();
+  const locale = (cookieStore.get('desaworks_locale')?.value as Locale) || 'id';
+  const t = createT(locale);
+
   const [revenueReport, dashboard] = await Promise.all([
     getRevenueReport(),
     getManagerDashboardReport(),
@@ -70,14 +76,13 @@ export default async function RevenueReportPage() {
       {/* Page header */}
       <div className="mb-8">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-rose-700">
-          Reports
+          {t('nav.reports')}
         </p>
         <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-950">
-          Revenue Report
+          {t('revenueReport.title')}
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
-          Monitor revenue records, budget utilization, and monthly trends across
-          all projects.
+          {t('revenueReport.subtitle')}
         </p>
       </div>
 
@@ -85,7 +90,7 @@ export default async function RevenueReportPage() {
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
-            Total Revenue
+            {t('revenueReport.totalRevenue')}
           </p>
           <p className="mt-1 text-2xl font-bold text-slate-900">
             {formatIDR(totalRevenue)}
@@ -93,7 +98,7 @@ export default async function RevenueReportPage() {
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
-            Projects with Revenue
+            {t('revenueReport.projectsWithRevenue')}
           </p>
           <p className="mt-1 text-2xl font-bold text-teal-600">
             {projectsWithRevenue}
@@ -101,7 +106,7 @@ export default async function RevenueReportPage() {
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
-            Avg. Budget Utilization
+            {t('revenueReport.avgBudgetUtilization')}
           </p>
           <p className="mt-1 text-2xl font-bold text-blue-600">
             {avgBudgetUtilization}%
@@ -154,16 +159,16 @@ export default async function RevenueReportPage() {
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-xl font-semibold text-slate-900">
-              Revenue Records
+              {t('revenueReport.revenueRecords')}
             </h2>
             <p className="mt-1 text-sm text-slate-500">
-              All recorded revenue entries across projects.
+              {t('revenueReport.revenueRecordsDesc')}
             </p>
           </div>
           <ExportButton
             data={recordsExportData}
             filename="revenue-records"
-            label="Export Revenue"
+            label={t('revenueReport.exportRevenue')}
           />
         </div>
 
@@ -183,10 +188,10 @@ export default async function RevenueReportPage() {
               />
             </svg>
             <p className="mt-3 text-sm font-medium text-slate-500">
-              No revenue records yet
+              {t('revenueReport.noRecords')}
             </p>
             <p className="mt-1 text-xs text-slate-400">
-              Use the form below to record your first revenue entry.
+              {t('revenueReport.noRecordsDesc')}
             </p>
           </div>
         ) : (
@@ -195,19 +200,19 @@ export default async function RevenueReportPage() {
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50">
                   <th className="px-4 py-3 text-left font-semibold text-slate-700">
-                    Project
+                    {t('revenueReport.projectHeader')}
                   </th>
                   <th className="px-4 py-3 text-right font-semibold text-slate-700">
-                    Amount
+                    {t('revenueReport.amountHeader')}
                   </th>
                   <th className="px-4 py-3 text-left font-semibold text-slate-700">
-                    Description
+                    {t('revenueReport.descriptionHeader')}
                   </th>
                   <th className="px-4 py-3 text-left font-semibold text-slate-700">
-                    Date
+                    {t('revenueReport.dateHeader')}
                   </th>
                   <th className="px-4 py-3 text-left font-semibold text-slate-700">
-                    Recorded By
+                    {t('revenueReport.recordedByHeader')}
                   </th>
                 </tr>
               </thead>

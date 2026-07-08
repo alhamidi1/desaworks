@@ -1,5 +1,7 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
+
 import { createClient } from '@/lib/supabase/server';
 import {
   confirmAssignmentsSchema,
@@ -157,6 +159,7 @@ export async function createProject(
     return { success: false, error: reqError.message };
   }
 
+  revalidatePath('/projects');
   return { success: true, data: project as Project };
 }
 
@@ -522,7 +525,14 @@ export async function confirmAssignments(
     return { success: false, error: notificationError.message };
   }
 
-  return { success: true, data: { assignments, conflicts_skipped } };
+  revalidatePath('/projects');
+  revalidatePath(`/projects/${project_id}`);
+  revalidatePath(`/projects/${project_id}/assign`);
+  
+  return {
+    success: true,
+    data: { assignments, conflicts_skipped },
+  };
 }
 
 export async function voidAssignment(
@@ -580,5 +590,9 @@ export async function voidAssignment(
     };
   }
 
+  revalidatePath('/projects');
+  revalidatePath(`/projects/${assignment.project_id}`);
+  revalidatePath(`/projects/${assignment.project_id}/assign`);
+  
   return { success: true, data: assignment as Assignment };
 }

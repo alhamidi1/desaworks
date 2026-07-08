@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { type Locale, DEFAULT_LOCALE, createT, localeNames } from '@/lib/i18n';
 
 interface LanguageContextType {
@@ -17,15 +18,26 @@ const STORAGE_KEY = 'desaworks_locale';
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(DEFAULT_LOCALE);
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY) as Locale | null;
+      // Check cookie first (important for server side hydration alignment)
+      const cookies = document.cookie.split(';');
+      const localeCookie = cookies.find(c => c.trim().startsWith('desaworks_locale='));
+      let saved = localeCookie ? localeCookie.split('=')[1].trim() as Locale : null;
+
+      if (!saved) {
+        saved = localStorage.getItem(STORAGE_KEY) as Locale | null;
+      }
+
       if (saved === 'id' || saved === 'en') {
         setLocaleState(saved);
+        // Ensure cookie is set
+        document.cookie = `desaworks_locale=${saved}; path=/; max-age=31536000; SameSite=Lax`;
       }
     } catch {
-      // localStorage unavailable
+      // Storage/document unavailable during SSR
     }
     setMounted(true);
   }, []);
@@ -34,6 +46,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     setLocaleState(newLocale);
     try {
       localStorage.setItem(STORAGE_KEY, newLocale);
+      document.cookie = `desaworks_locale=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
     } catch {
       // localStorage unavailable
     }
@@ -41,7 +54,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     if (typeof document !== 'undefined') {
       document.documentElement.lang = newLocale;
     }
-  }, []);
+    // Trigger Server Components refresh
+    router.refresh();
+  }, [router]);
 
   const t = useCallback(
     (key: string, params?: Record<string, string | number>) => {

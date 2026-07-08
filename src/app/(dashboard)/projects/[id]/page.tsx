@@ -1,138 +1,138 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
-import { getProject } from '@/lib/actions/projects';
+import { cookies } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 import { ProjectStatusBadge } from '@/components/projects/ProjectStatusBadge';
-import type { Assignment, Profile } from '@/lib/types/database';
+import { AssignedWorkers } from '@/components/projects/AssignedWorkers';
+import { createT, formatDate, formatCurrency, type Locale } from '@/lib/i18n';
+import type { Assignment, Profile, Project, ProjectSkillRequirement, Skill } from '@/lib/types/database';
 
 interface ProjectDetailPageProps {
   params: Promise<{ id: string }>;
 }
 
+const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+
 function ProjectDetailLoading() {
   return (
-    <div className="space-y-4">
-      <div className="h-48 animate-pulse rounded-lg border border-zinc-200 bg-zinc-100" />
-      <p className="text-sm text-zinc-500">Loading project...</p>
+    <div className="space-y-4 animate-pulse">
+      <div className="h-48 rounded-2xl border border-[#e9ecef] bg-[#f1f3f5]" />
+      <div className="h-32 rounded-2xl border border-[#e9ecef] bg-[#f1f3f5]" />
     </div>
   );
 }
 
-function ProjectDetailError({ message }: { message: string }) {
+function ProjectDetailError({ message, locale }: { message: string; locale: Locale }) {
+  const t = createT(locale);
   return (
-    <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
-      <p className="font-medium text-red-800">Failed to load project</p>
+    <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center">
+      <p className="font-semibold text-red-800">{t('common.error')}</p>
       <p className="mt-1 text-sm text-red-600">{message}</p>
-      <Link
-        href="/projects"
-        className="mt-4 inline-block text-sm text-red-700 underline"
-      >
-        Back to projects
+      <Link href="/projects" className="mt-4 inline-block text-sm font-medium text-red-700 underline">
+        {t('project.backToProjects')}
       </Link>
     </div>
   );
 }
 
 type AssignmentWithResident = Assignment & { resident: Profile };
+type ProjectWithFull = Project & {
+  skill_requirements: (ProjectSkillRequirement & { skill: Skill })[];
+  creator: Profile | null;
+};
 
-async function fetchAssignments(
-  projectId: string
-): Promise<AssignmentWithResident[]> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from('assignments')
-    .select('*, resident:profiles(*)')
-    .eq('project_id', projectId)
-    .neq('status', 'void')
-    .order('assigned_at', { ascending: false });
-
-  if (error || !data) return [];
-  return data as AssignmentWithResident[];
-}
-
-async function ProjectDetailContent({ id }: { id: string }) {
-  const [projectResult, assignments] = await Promise.all([
-    getProject(id),
-    fetchAssignments(id),
-  ]);
-
-  if (!projectResult.success) {
-    if (projectResult.error.toLowerCase().includes('not found')) {
-      notFound();
-    }
-    return <ProjectDetailError message={projectResult.error} />;
+async function ProjectDetailContent({ id, locale }: { id: string; locale: Locale }) {
+  const t = createT(locale);
+  
+  if (!uuidRegex.test(id)) {
+    return <ProjectDetailError message="ID proyek tidak valid" locale={locale} />;
   }
 
-  const project = projectResult.data;
+  // Use a single supabase client for both queries to ensure consistent auth context
+  const supabase = await createClient();
+
+  // Auth check
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return <ProjectDetailError message="Sesi tidak ditemukan, silakan masuk kembali." locale={locale} />;
+
+  const [projectRes, assignmentsRes] = await Promise.all([
+    supabase
+      .from('projects')
+      .select(`
+        *,
+        skill_requirements:project_skill_requirements(*, skill:skills(*)),
+        creator:profiles!projects_created_by_fkey(*)
+      `)
+      .eq('id', id)
+      .single(),
+    supabase
+      .from('assignments')
+      .select('*, resident:profiles!resident_id(*)')
+      .eq('project_id', id)
+      .neq('status', 'void')
+      .order('assigned_at', { ascending: false }),
+  ]);
+
+  if (projectRes.error || !projectRes.data) {
+    if (projectRes.error?.code === 'PGRST116') notFound();
+    return <ProjectDetailError message={projectRes.error?.message ?? 'Proyek tidak ditemukan'} locale={locale} />;
+  }
+
+  const project = projectRes.data as ProjectWithFull;
+  const assignments = (assignmentsRes.data ?? []) as AssignmentWithResident[];
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-lg border border-zinc-200 bg-white p-5">
+    <div className="space-y-5">
+      {/* Project header */}
+      <section className="rounded-2xl border border-[#e9ecef] bg-white p-6 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-semibold text-zinc-900">
-              {project.name}
-            </h1>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold text-[#1a1d23] leading-snug">{project.name}</h1>
             {project.description && (
-              <p className="mt-2 text-sm text-zinc-600">{project.description}</p>
+              <p className="mt-2 text-sm leading-6 text-[#868e96]">{project.description}</p>
             )}
           </div>
           <ProjectStatusBadge status={project.status} />
         </div>
 
-        <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+        <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2">
           <div>
-            <dt className="text-zinc-500">Timeline</dt>
-            <dd className="font-medium text-zinc-800">
-              {project.start_date ?? '—'} → {project.end_date ?? '—'}
+            <dt className="text-[10px] font-bold uppercase tracking-wider text-[#adb5bd]">{t('project.schedule')}</dt>
+            <dd className="mt-1 font-medium text-[#1a1d23]">
+              {formatDate(project.start_date, locale)} → {formatDate(project.end_date, locale)}
             </dd>
           </div>
           <div>
-            <dt className="text-zinc-500">Workers needed</dt>
-            <dd className="font-medium text-zinc-800">
-              {project.workers_needed}
-            </dd>
+            <dt className="text-[10px] font-bold uppercase tracking-wider text-[#adb5bd]">{t('project.workersNeeded')}</dt>
+            <dd className="mt-1 font-bold text-[#1a1d23] text-lg">{project.workers_needed}</dd>
           </div>
           <div>
-            <dt className="text-zinc-500">Budget</dt>
-            <dd className="font-medium text-zinc-800">
-              {new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                maximumFractionDigits: 0,
-              }).format(project.budget)}
-            </dd>
+            <dt className="text-[10px] font-bold uppercase tracking-wider text-[#adb5bd]">{t('project.budget')}</dt>
+            <dd className="mt-1 font-medium text-[#1a1d23]">{formatCurrency(project.budget)}</dd>
           </div>
           <div>
-            <dt className="text-zinc-500">Created by</dt>
-            <dd className="font-medium text-zinc-800">
-              {project.creator?.full_name ?? '—'}
-            </dd>
+            <dt className="text-[10px] font-bold uppercase tracking-wider text-[#adb5bd]">{t('project.createdBy')}</dt>
+            <dd className="mt-1 font-medium text-[#1a1d23]">{project.creator?.full_name ?? '—'}</dd>
           </div>
         </dl>
       </section>
 
-      <section className="rounded-lg border border-zinc-200 bg-white p-5">
-        <h2 className="text-lg font-semibold text-zinc-900">
-          Skill requirements
-        </h2>
+      {/* Skill requirements */}
+      <section className="rounded-2xl border border-[#e9ecef] bg-white p-6 shadow-sm">
+        <h2 className="text-base font-bold text-[#1a1d23]">{t('project.skillRequirements')}</h2>
         {project.skill_requirements.length === 0 ? (
-          <p className="mt-3 text-sm text-zinc-500">
-            No skill requirements defined.
-          </p>
+          <p className="mt-3 text-sm text-[#868e96]">{t('project.noRequirements')}</p>
         ) : (
           <ul className="mt-3 space-y-2">
             {project.skill_requirements.map((req) => (
               <li
                 key={req.id}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-zinc-50 px-3 py-2 text-sm"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#f8f9fa] px-4 py-3 text-sm"
               >
-                <span className="font-medium text-zinc-800">
-                  {req.skill.name}
-                </span>
-                <span className="text-zinc-600">
-                  Min. {req.min_proficiency} · {req.workers_needed} worker(s)
+                <span className="font-semibold text-[#1a1d23]">{req.skill.name}</span>
+                <span className="text-[#868e96]">
+                  {t('project.min')} {req.min_proficiency} · {req.workers_needed} {t('project.workers')}
                 </span>
               </li>
             ))}
@@ -140,67 +140,54 @@ async function ProjectDetailContent({ id }: { id: string }) {
         )}
       </section>
 
-      <section className="rounded-lg border border-zinc-200 bg-white p-5">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-zinc-900">
-            Assigned workers
-          </h2>
+      {/* Assigned workers */}
+      <section className="rounded-2xl border border-[#e9ecef] bg-white p-6 shadow-sm">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h2 className="text-base font-bold text-[#1a1d23]">{t('project.assignedWorkers')}</h2>
+            {assignments.length > 0 && (
+              <p className="text-xs text-[#868e96] mt-0.5">
+                {t('project.positionsFilled', { filled: assignments.length, total: project.workers_needed })}
+              </p>
+            )}
+          </div>
           <Link
             href={`/projects/${project.id}/assign`}
-            className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+            className="rounded-xl border border-[#e9ecef] bg-white px-4 py-2 text-sm font-semibold text-[#495057] hover:border-[#05c8ae] hover:text-[#05c8ae] transition-colors shadow-sm"
           >
-            Assign workers
+            {t('project.assignWorkerBtn')}
           </Link>
         </div>
 
-        {assignments.length === 0 ? (
-          <p className="mt-3 text-sm text-zinc-500">
-            No workers assigned yet. Use &quot;Assign workers&quot; to match
-            residents to this project.
-          </p>
-        ) : (
-          <ul className="mt-3 space-y-2">
-            {assignments.map((assignment) => (
-              <li
-                key={assignment.id}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-zinc-100 px-3 py-2 text-sm"
-              >
-                <div>
-                  <p className="font-medium text-zinc-800">
-                    {assignment.resident.full_name}
-                  </p>
-                  <p className="text-zinc-500">{assignment.resident.email}</p>
-                </div>
-                <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-700">
-                  {assignment.status}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
+        <AssignedWorkers
+          projectId={project.id}
+          assignments={assignments}
+          workersNeeded={project.workers_needed}
+        />
       </section>
     </div>
   );
 }
 
-export default async function ProjectDetailPage({
-  params,
-}: ProjectDetailPageProps) {
+export default async function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   const { id } = await params;
+  const cookieStore = await cookies();
+  const locale = (cookieStore.get('desaworks_locale')?.value as Locale) || 'id';
+  const t = createT(locale);
 
   return (
-    <main className="mx-auto max-w-4xl p-6">
+    <main className="mx-auto max-w-4xl animate-fade-in">
       <header className="mb-6">
-        <Link
-          href="/projects"
-          className="text-sm text-zinc-600 hover:text-zinc-900"
-        >
-          ← Back to projects
+        <Link href="/projects" className="inline-flex items-center gap-1.5 text-sm text-[#868e96] hover:text-[#05c8ae] transition-colors font-medium">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+          </svg>
+          {t('project.backToProjects')}
         </Link>
       </header>
 
       <Suspense fallback={<ProjectDetailLoading />}>
-        <ProjectDetailContent id={id} />
+        <ProjectDetailContent id={id} locale={locale} />
       </Suspense>
     </main>
   );

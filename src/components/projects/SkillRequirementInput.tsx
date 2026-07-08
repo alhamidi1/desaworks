@@ -1,5 +1,6 @@
 'use client';
 
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 import type { ProficiencyLevel, Skill } from '@/lib/types/database';
 
 export interface SkillRequirementValue {
@@ -36,6 +37,7 @@ export function SkillRequirementInput({
   onChange,
   disabled = false,
 }: SkillRequirementInputProps) {
+  const { t } = useLanguage();
   const groupedSkills = groupSkillsByCategory(skills);
   const usedSkillIds = new Set(value.map((req) => req.skill_id));
 
@@ -69,8 +71,8 @@ export function SkillRequirementInput({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-zinc-800">
-          Skill requirements
+        <label className="text-sm font-semibold text-zinc-800">
+          {t('project.requiredSkillsTitle')}
         </label>
         <button
           type="button"
@@ -78,13 +80,13 @@ export function SkillRequirementInput({
           disabled={disabled || value.length >= skills.length}
           className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Add skill
+          {t('project.addSkillBtn')}
         </button>
       </div>
 
       {value.length === 0 && (
         <p className="rounded-md border border-dashed border-zinc-300 p-4 text-sm text-zinc-500">
-          No skill requirements added yet. Click &quot;Add skill&quot; to begin.
+          {t('project.noRequirementsDesc')}
         </p>
       )}
 
@@ -100,8 +102,8 @@ export function SkillRequirementInput({
             className="grid gap-3 rounded-md border border-zinc-200 bg-zinc-50 p-4 sm:grid-cols-[1fr_auto_auto_auto]"
           >
             <div>
-              <label className="mb-1 block text-xs font-medium text-zinc-600">
-                Skill
+              <label className="mb-1 block text-xs font-semibold text-zinc-600">
+                {t('project.skillLabel')}
               </label>
               <select
                 value={requirement.skill_id}
@@ -128,8 +130,8 @@ export function SkillRequirementInput({
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-zinc-600">
-                Min. proficiency
+              <label className="mb-1 block text-xs font-semibold text-zinc-600">
+                {t('project.minProficiencyLabel')}
               </label>
               <select
                 value={requirement.min_proficiency}
@@ -143,15 +145,15 @@ export function SkillRequirementInput({
               >
                 {PROFICIENCY_OPTIONS.map((level) => (
                   <option key={level} value={level}>
-                    {level.charAt(0).toUpperCase() + level.slice(1)}
+                    {t('proficiency.' + level)}
                   </option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-zinc-600">
-                Workers
+              <label className="mb-1 block text-xs font-semibold text-zinc-600">
+                {t('project.workersCountLabel')}
               </label>
               <input
                 type="number"
@@ -174,7 +176,7 @@ export function SkillRequirementInput({
                 disabled={disabled}
                 className="rounded-md border border-red-200 px-3 py-2 text-sm text-red-700 hover:bg-red-50 disabled:opacity-50"
               >
-                Remove
+                {t('common.delete')}
               </button>
             </div>
           </div>
