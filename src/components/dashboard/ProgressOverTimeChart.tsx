@@ -1,76 +1,51 @@
-"use client";
+'use client';
 
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { formatDateShort } from '@/lib/i18n';
+
+const GRID = '#dbe0e6';
+const AXIS = '#59626f';
+
+const tooltipStyle = {
+  borderRadius: '12px',
+  border: '1px solid #dee2e6',
+  background: '#ffffff',
+  boxShadow: '0 12px 32px rgba(15,23,42,0.12)',
+  fontSize: '12px',
+} as const;
 
 export interface ProgressTrendDatum {
   date: string;
   averageProgress: number;
 }
 
-export interface ProgressOverTimeChartProps {
-  data: ProgressTrendDatum[];
-  title?: string;
-  subtitle?: string;
-}
+export function ProgressOverTimeChart({ data }: { data: ProgressTrendDatum[] }) {
+  const { t, locale } = useLanguage();
 
-function formatPercent(value: number) {
-  return `${Math.max(0, Math.min(100, value)).toFixed(0)}%`;
-}
-
-function ChartEmptyState({ title, subtitle }: Pick<ProgressOverTimeChartProps, 'title' | 'subtitle'>) {
-  return (
-    <div className="flex min-h-[280px] flex-col justify-center rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-slate-500">
-      <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-400">{title ?? 'Progress over time'}</p>
-      <p className="mt-3 max-w-sm text-sm leading-6">{subtitle ?? 'No progress trend data is available yet.'}</p>
-    </div>
-  );
-}
-
-export function ProgressOverTimeChart({ data, title = 'Progress over time', subtitle = 'Track how average completion changes across the project timeline.' }: ProgressOverTimeChartProps) {
-  if (data.length === 0) {
-    return <ChartEmptyState title={title} subtitle={subtitle} />;
+  if (!data.length) {
+    return <div className="nm-raised grid min-h-[240px] place-items-center p-6 text-sm text-ink-soft">{t('chart.noData')}</div>;
   }
 
   return (
-    <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_12px_40px_rgba(15,23,42,0.08)]">
-      <div className="mb-5 flex flex-col gap-1">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-700">Trend</p>
-        <h2 className="text-2xl font-semibold tracking-tight text-slate-950">{title}</h2>
-        <p className="max-w-2xl text-sm leading-6 text-slate-500">{subtitle}</p>
-      </div>
-      <div className="h-[320px]">
+    <div className="nm-raised p-4 sm:p-5">
+      <div className="h-[280px]">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 8 }}>
+          <AreaChart data={data} margin={{ top: 8, right: 8, left: -14, bottom: 4 }}>
             <defs>
-              <linearGradient id="progressTrendFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#0ea5e9" stopOpacity={0.45} />
-                <stop offset="100%" stopColor="#0ea5e9" stopOpacity={0.02} />
+              <linearGradient id="ptFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#00a18f" stopOpacity={0.4} />
+                <stop offset="100%" stopColor="#00a18f" stopOpacity={0.02} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" vertical={false} />
-            <XAxis dataKey="date" tickLine={false} axisLine={false} stroke="#64748b" minTickGap={24} />
-            <YAxis tickLine={false} axisLine={false} stroke="#64748b" tickFormatter={formatPercent} />
-            <Tooltip
-              contentStyle={{
-                borderRadius: '16px',
-                border: '1px solid #e2e8f0',
-                background: '#ffffff',
-                boxShadow: '0 16px 40px rgba(15, 23, 42, 0.14)',
-              }}
-              formatter={(value: any) => [formatPercent(Number(value ?? 0)), 'Average progress']}
-            />
-            <Area type="monotone" dataKey="averageProgress" stroke="#0284c7" strokeWidth={3} fill="url(#progressTrendFill)" />
+            <CartesianGrid strokeDasharray="4 4" stroke={GRID} vertical={false} />
+            <XAxis dataKey="date" tickLine={false} axisLine={false} stroke={AXIS} fontSize={11} minTickGap={28} tickFormatter={(d: unknown) => formatDateShort(String(d), locale)} />
+            <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tickLine={false} axisLine={false} stroke={AXIS} fontSize={11} width={42} tickFormatter={(v) => `${v}%`} />
+            <Tooltip contentStyle={tooltipStyle} labelFormatter={(label: unknown) => formatDateShort(String(label), locale)} formatter={(v: unknown) => [`${Math.round(Number(v))}%`, t('chart.avgProgress')]} />
+            <Area type="monotone" dataKey="averageProgress" stroke="#00a18f" strokeWidth={3} fill="url(#ptFill)" />
           </AreaChart>
         </ResponsiveContainer>
       </div>
-    </section>
+    </div>
   );
 }

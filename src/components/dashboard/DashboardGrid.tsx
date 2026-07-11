@@ -18,7 +18,7 @@ export function DashboardGrid({ children }: DashboardGridProps) {
 export function DashboardSection({ title, children }: DashboardSectionProps) {
   return (
     <section className="space-y-4">
-      <h2 className="text-base sm:text-lg font-bold tracking-tight text-[#1a1d23]">{title}</h2>
+      <h2 className="text-base sm:text-lg font-bold tracking-tight text-ink">{title}</h2>
       {children}
     </section>
   );

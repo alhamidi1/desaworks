@@ -1,71 +1,74 @@
 @import "tailwindcss";
 
-/* ============================================
-   DESAWORKS DESIGN SYSTEM
-   Premium, mobile-first design tokens
-   ============================================ */
+/* ============================================================
+   DESAWORKS — Soft-UI / Neumorphism-lite design system
+   Soft, tactile surfaces + high-contrast content (WCAG AA).
+   ============================================================ */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-geist-mono);
-}
+@theme {
+  --font-sans: var(--font-inter), 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
 
-:root {
-  --background: #f7f8fa;
-  --foreground: #1a1d23;
+  /* Surfaces + text (promoted so bg-surface / text-ink / etc. exist) */
+  --color-surface: #e9edf2;   /* page background (mid-light so both shadows read) */
+  --color-card: #f3f6f9;      /* raised card surface (lighter than the page) */
+  --color-ink: #1a1d23;       /* primary text — AA on card/surface */
+  --color-ink-soft: #59626f;  /* secondary text — AA on card/surface */
+  --color-background: var(--color-surface);
+  --color-foreground: var(--color-ink);
 
-  /* Primary — Warm Teal */
-  --primary-50: #effefb;
-  --primary-100: #c7fff4;
-  --primary-200: #90ffe9;
-  --primary-300: #51f7db;
-  --primary-400: #1de4c8;
-  --primary-500: #05c8ae;
-  --primary-600: #00a18f;
-  --primary-700: #058074;
-  --primary-800: #0a655d;
-  --primary-900: #0d534d;
+  /* Primary — warm teal */
+  --color-primary-50: #effefb;
+  --color-primary-100: #c7fff4;
+  --color-primary-200: #90ffe9;
+  --color-primary-300: #51f7db;
+  --color-primary-400: #1de4c8;
+  --color-primary-500: #05c8ae;
+  --color-primary-600: #00a18f;
+  --color-primary-700: #058074;
+  --color-primary-800: #0a655d;
+  --color-primary-900: #0d534d;
 
-  /* Neutral — Warm Gray */
-  --neutral-50: #f8f9fa;
-  --neutral-100: #f1f3f5;
-  --neutral-200: #e9ecef;
-  --neutral-300: #dee2e6;
-  --neutral-400: #adb5bd;
-  --neutral-500: #868e96;
-  --neutral-600: #495057;
-  --neutral-700: #343a40;
-  --neutral-800: #212529;
-  --neutral-900: #16191d;
+  /* Neutral — warm gray */
+  --color-neutral-50: #f8f9fa;
+  --color-neutral-100: #f1f3f5;
+  --color-neutral-200: #e9ecef;
+  --color-neutral-300: #dee2e6;
+  --color-neutral-400: #adb5bd;
+  --color-neutral-500: #868e96;
+  --color-neutral-600: #59626f;
+  --color-neutral-700: #343a40;
+  --color-neutral-800: #212529;
+  --color-neutral-900: #16191d;
 
-  /* Accent */
-  --accent-amber: #f59e0b;
-  --accent-rose: #f43f5e;
-  --accent-blue: #3b82f6;
-  --accent-emerald: #10b981;
+  /* Semantic — AA-contrast on light surfaces (for text + solid fills) */
+  --color-success: #0f9d76;
+  --color-success-soft: #d9f5ec;
+  --color-warning: #b8690a;
+  --color-warning-soft: #fbecd3;
+  --color-danger: #d11d43;
+  --color-danger-soft: #fbdfe6;
+  --color-info: #2563eb;
+  --color-info-soft: #dbe7fe;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.08);
-  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.1);
-  --shadow-glow: 0 0 24px rgba(5, 200, 174, 0.15);
-
-  /* Border Radius */
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
   --radius-xl: 1.25rem;
   --radius-2xl: 1.5rem;
-  --radius-full: 9999px;
 }
 
-/* ============================================
-   BASE STYLES
-   ============================================ */
+:root {
+  /* Neumorphic dual shadows (light top-left, soft cool-gray bottom-right) */
+  --nm-raised: 6px 6px 14px rgba(174, 187, 205, 0.55), -6px -6px 14px rgba(255, 255, 255, 0.9);
+  --nm-raised-sm: 3px 3px 8px rgba(174, 187, 205, 0.5), -3px -3px 8px rgba(255, 255, 255, 0.9);
+  --nm-inset: inset 4px 4px 8px rgba(174, 187, 205, 0.55), inset -4px -4px 8px rgba(255, 255, 255, 0.95);
+  --nm-inset-sm: inset 2px 2px 5px rgba(174, 187, 205, 0.5), inset -2px -2px 5px rgba(255, 255, 255, 0.95);
+  --nm-glow: 0 0 0 3px rgba(5, 200, 174, 0.18);
+}
 
+/* ============================================================
+   BASE
+   ============================================================ */
 * {
   -webkit-tap-highlight-color: transparent;
 }
@@ -76,147 +79,154 @@ html {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-inter), 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ============================================
-   SCROLLBAR
-   ============================================ */
+/* ============================================================
+   NEUMORPHIC SURFACE UTILITIES
+   ============================================================ */
+.nm-raised {
+  background: var(--color-card);
+  box-shadow: var(--nm-raised);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+}
+.nm-raised-sm {
+  background: var(--color-card);
+  box-shadow: var(--nm-raised-sm);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.nm-inset {
+  background: var(--color-surface);
+  box-shadow: var(--nm-inset);
+  border-radius: var(--radius-md);
+}
+.nm-inset-sm {
+  background: var(--color-surface);
+  box-shadow: var(--nm-inset-sm);
+  border-radius: var(--radius-sm);
+}
+/* Tactile press feedback for buttons/links */
+.nm-pressable {
+  transition: box-shadow 0.12s ease, transform 0.12s ease;
+}
+.nm-pressable:active {
+  box-shadow: var(--nm-inset-sm);
+  transform: translateY(1px);
+}
 
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: var(--neutral-300);
-  border-radius: var(--radius-full);
+  background: var(--color-neutral-300);
+  border-radius: 9999px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--neutral-400);
+  background: var(--color-neutral-400);
 }
 
-/* ============================================
-   ANIMATIONS
-   ============================================ */
-
+/* ============================================================
+   ANIMATIONS (respect reduced-motion)
+   ============================================================ */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
-
-@keyframes pulse-gentle {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
-}
-
-.animate-slide-up {
-  animation: slideUp 0.4s ease-out forwards;
-}
-
+.animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+.animate-slide-up { animation: slideUp 0.4s ease-out forwards; }
 .animate-shimmer {
-  background: linear-gradient(90deg, var(--neutral-100) 25%, var(--neutral-200) 50%, var(--neutral-100) 75%);
+  background: linear-gradient(90deg, var(--color-neutral-100) 25%, var(--color-neutral-200) 50%, var(--color-neutral-100) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
 
-/* ============================================
-   GLASS EFFECT
-   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
+/* ============================================================
+   FORM CONTROLS
+   ============================================================ */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  box-shadow: var(--nm-glow);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-primary-600);
+  cursor: pointer;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-primary-600);
+  cursor: pointer;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================================
+   MOBILE HELPERS
+   ============================================================ */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+  }
+}
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+button, [role="button"] {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Legacy glass helpers — retained until the sidebar is restyled (D3), then removed. */
 .glass {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
-
 .glass-dark {
   background: rgba(22, 25, 29, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* ============================================
-   MOBILE SAFE AREAS
-   ============================================ */
-
-@supports (padding: env(safe-area-inset-bottom)) {
-  .safe-bottom {
-    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
-  }
-}
-
-/* ============================================
-   INPUT FOCUS STYLES
-   ============================================ */
-
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-  border-color: var(--primary-500);
-  box-shadow: 0 0 0 3px rgba(5, 200, 174, 0.15);
-}
-
-/* Range slider thumb */
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--primary-600);
-  cursor: pointer;
-  border: 3px solid white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-input[type="range"]::-moz-range-thumb {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--primary-600);
-  cursor: pointer;
-  border: 3px solid white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* ============================================
-   MOBILE-FIRST HELPERS
-   ============================================ */
-
-/* Minimum touch target size */
-.touch-target {
-  min-height: 44px;
-  min-width: 44px;
-}
-
-/* No text selection on buttons */
-button, [role="button"] {
-  user-select: none;
-  -webkit-user-select: none;
 }

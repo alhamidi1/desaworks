@@ -1,154 +1,98 @@
 'use client';
 
+import Link from 'next/link';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { DashboardSection } from '@/components/dashboard/DashboardGrid';
+import { AlertsPanel } from '@/components/dashboard/AlertsPanel';
+import { HealthBadge } from '@/components/dashboard/HealthBadge';
+import { TimeframeSelector } from '@/components/dashboard/TimeframeSelector';
 import { ProjectCompletionChart } from '@/components/dashboard/ProjectCompletionChart';
 import { StatusDistributionChart } from '@/components/dashboard/StatusDistributionChart';
 import { ProgressOverTimeChart } from '@/components/dashboard/ProgressOverTimeChart';
-import { ProgressTimeline } from '@/components/monitoring/ProgressTimeline';
+import { ImpactDashboard } from '@/components/dashboard/ImpactDashboard';
 import { ActivityFeed } from '@/components/monitoring/ActivityFeed';
-import Link from 'next/link';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
-import type { ManagerDashboardReport } from '@/lib/queries/reports';
+import type { ImpactReport, ManagerDashboardReport } from '@/lib/queries/reports';
 
 interface ManagerDashboardProps {
   report: ManagerDashboardReport;
+  impact?: ImpactReport | null;
 }
 
-export function ManagerDashboard({ report }: ManagerDashboardProps) {
+export function ManagerDashboard({ report, impact }: ManagerDashboardProps) {
   const { t } = useLanguage();
+  const k = report.kpis;
 
-  // KPIs now come from the corrected metrics engine (distinct workers, weighted completion).
-  const totalProjects = report.kpis.totalProjects;
-
-  const activeWorkers = report.kpis.activeWorkersDistinct;
-
-  const averageCompletion = Math.round(report.kpis.portfolioCompletion);
-
-  const recentUpdates = report.recentActivity.length;
-
-  // Top-N most decision-relevant projects (keeps the chart readable at scale).
-  const completionChartData = report.topProjects.map((p) => ({
+  const completionData = report.topProjects.map((p) => ({
     projectName: p.project.name,
     completionPercentage: p.completionPercentage,
     assignedWorkers: p.assignedWorkers,
   }));
 
-  const statusChartData = report.projectStatusDistribution.map((d) => ({
-    status: d.status,
-    count: d.count,
-  }));
-
-  const timelineData = report.timeline.map((tl) => ({
-    projectName: tl.projectName,
-    startDate: tl.startDate,
-    endDate: tl.endDate,
-    currentProgress: tl.currentProgress,
-  }));
-
   return (
-    <div className="space-y-6 sm:space-y-8 animate-fade-in">
-      {/* Page header */}
-      <div>
-        <h1 className="text-xl font-bold tracking-tight text-[#1a1d23] sm:text-2xl lg:text-3xl">
-          {t('dashboard.managerTitle')}
-        </h1>
-        <p className="mt-1 text-sm text-[#868e96]">
-          {t('dashboard.managerSubtitle')}
-        </p>
+    <div className="animate-fade-in space-y-6">
+      {/* Header + timeframe */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-xl font-bold tracking-tight text-ink sm:text-2xl lg:text-3xl">{t('dashboard.managerTitle')}</h1>
+          <p className="mt-1 text-sm text-ink-soft">{t('dashboard.managerSubtitle')}</p>
+        </div>
+        <TimeframeSelector current={report.range} />
       </div>
 
-      {/* Stats cards row */}
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-        <StatsCard
-          title={t('stats.totalProjects')}
-          value={totalProjects}
-          description={t('stats.allRegistered')}
-          trend={totalProjects > 0 ? 'up' : 'neutral'}
-          trendValue={totalProjects > 0 ? t('stats.active', { count: totalProjects }) : t('stats.none')}
-        />
-        <StatsCard
-          title={t('stats.activeWorkers')}
-          value={activeWorkers}
-          description={t('stats.currentlyAssigned')}
-          trend={activeWorkers > 0 ? 'up' : 'neutral'}
-          trendValue={activeWorkers > 0 ? t('stats.assigned') : t('stats.none')}
-        />
-        <StatsCard
-          title={t('stats.avgCompletion')}
-          value={`${averageCompletion}%`}
-          description={t('stats.avgAcrossProjects')}
-          trend={averageCompletion >= 50 ? 'up' : 'neutral'}
-          trendValue={
-            averageCompletion >= 75
-              ? t('stats.onTrack')
-              : averageCompletion >= 50
-                ? t('stats.progressing')
-                : averageCompletion > 0
-                  ? t('stats.earlyStage')
-                  : t('stats.noData')
-          }
-        />
-        <StatsCard
-          title={t('stats.recentUpdates')}
-          value={recentUpdates}
-          description={t('stats.latestReports')}
-          trend={recentUpdates > 0 ? 'up' : 'neutral'}
-          trendValue={recentUpdates > 0 ? t('stats.new') : t('stats.none')}
-        />
+      {/* KPI row */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <StatsCard title={t('stats.totalProjects')} value={k.totalProjects} accent="primary" hint={t('stats.active', { count: k.activeProjects })} />
+        <StatsCard title={t('stats.utilization')} value={`${k.utilizationRate}%`} accent="info" hint={t('stats.ofResidents', { active: k.activeWorkersDistinct, total: k.totalResidents })} />
+        <StatsCard title={t('stats.portfolioCompletion')} value={`${Math.round(k.portfolioCompletion)}%`} accent="success" hint={t('stats.weighted')} />
+        <StatsCard title={t('stats.delayedProjects')} value={k.delayedCount} accent={k.delayedCount > 0 ? 'danger' : 'neutral'} hint={`${t('stats.understaffed')}: ${k.understaffedCount}`} />
       </div>
 
-      {/* Project Quick Links */}
-      {report.projects.length > 0 && (
-        <DashboardSection title={t('nav.projects')}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {report.projects.map((p) => (
-              <Link
-                key={p.project.id}
-                href={`/projects/${p.project.id}`}
-                className="group flex items-center justify-between rounded-2xl border border-[#e9ecef] bg-white p-4 shadow-sm hover:border-[#c7fff4] hover:shadow-md transition-all duration-200"
-              >
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-[#1a1d23] truncate group-hover:text-[#05c8ae] transition-colors">
-                    {p.project.name}
-                  </p>
-                  <p className="text-xs text-[#868e96] mt-1">
-                    {p.assignedWorkers} {t('project.workers')} · {p.completionPercentage}% {t('project.done')}
-                  </p>
-                </div>
-                <svg className="h-4 w-4 text-[#adb5bd] group-hover:text-[#05c8ae] shrink-0 ml-2 transition-colors" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                </svg>
-              </Link>
-            ))}
-          </div>
-        </DashboardSection>
-      )}
-
-      {/* Charts row: completion + status distribution */}
-      <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
-        <DashboardSection title={t('chart.projectCompletion')}>
-          <ProjectCompletionChart data={completionChartData} />
-        </DashboardSection>
+      {/* Alerts + status distribution */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <AlertsPanel alerts={report.alerts} />
         <DashboardSection title={t('chart.statusDistribution')}>
-          <StatusDistributionChart data={statusChartData} />
+          <StatusDistributionChart data={report.projectStatusDistribution} />
         </DashboardSection>
       </div>
 
-      {/* Progress over time (full width) */}
+      {/* Completion (Top-N) */}
+      <DashboardSection title={t('chart.projectCompletion')}>
+        {report.projects.length > report.topProjects.length ? (
+          <p className="-mt-2 text-xs text-ink-soft">{t('chart.showingTop', { shown: report.topProjects.length, total: report.projects.length })}</p>
+        ) : null}
+        <ProjectCompletionChart data={completionData} />
+      </DashboardSection>
+
+      {/* Progress trend */}
       <DashboardSection title={t('chart.progressOverTime')}>
         <ProgressOverTimeChart data={report.progressTrend} />
       </DashboardSection>
 
-      {/* Timeline + Activity feed */}
-      <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
-        <DashboardSection title={t('chart.projectTimelines')}>
-          <ProgressTimeline data={timelineData} />
-        </DashboardSection>
+      {/* Activity + project health quick links */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <DashboardSection title={t('chart.recentActivity')}>
           <ActivityFeed items={report.recentActivity} />
         </DashboardSection>
+        <DashboardSection title={t('nav.projects')}>
+          <div className="nm-raised divide-y divide-neutral-200/70 p-2">
+            {report.topProjects.slice(0, 6).map((p) => (
+              <Link key={p.project.id} href={`/projects/${p.project.id}`} className="flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 transition hover:bg-surface">
+                <span className="min-w-0">
+                  <span className="block truncate text-sm font-semibold text-ink">{p.project.name}</span>
+                  <span className="text-xs text-ink-soft">
+                    {p.completionPercentage}% · {p.assignedWorkers} {t('project.workers')}
+                  </span>
+                </span>
+                <HealthBadge health={p.health} />
+              </Link>
+            ))}
+          </div>
+        </DashboardSection>
       </div>
+
+      {/* Village impact */}
+      {impact ? <ImpactDashboard impact={impact} /> : null}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { getManagerDashboardReport } from '@/lib/queries/reports';
+import { getManagerDashboardReport, getImpactReport, type RangeKey } from '@/lib/queries/reports';
 import { ManagerDashboard } from '@/components/dashboard/ManagerDashboard';
 import ResidentDashboard, { ResidentAssignment } from '@/components/dashboard/ResidentDashboard';
 
@@ -9,7 +9,13 @@ export const metadata = {
   description: 'Sistem Pengelolaan Sumber Daya Masyarakat Desa',
 };
 
-export default async function DashboardPage() {
+const VALID_RANGES: RangeKey[] = ['7d', '30d', '90d', '365d', 'all'];
+
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ range?: string }>;
+}) {
   const supabase = await createClient();
 
   const {
@@ -34,8 +40,13 @@ export default async function DashboardPage() {
 
   // Render Manager Dashboard
   if (profile.role === 'manager' || profile.role === 'admin') {
-    const report = await getManagerDashboardReport();
-    return <ManagerDashboard report={report} />;
+    const sp = await searchParams;
+    const range = VALID_RANGES.includes(sp?.range as RangeKey) ? (sp!.range as RangeKey) : undefined;
+    const [report, impact] = await Promise.all([
+      getManagerDashboardReport(range ? { range } : {}),
+      getImpactReport(),
+    ]);
+    return <ManagerDashboard report={report} impact={impact} />;
   }
 
   // Render Resident Dashboard

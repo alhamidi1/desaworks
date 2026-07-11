@@ -1,14 +1,27 @@
-"use client";
+'use client';
 
 import {
   Bar,
   BarChart,
   CartesianGrid,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from 'recharts';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
+
+const GRID = '#dbe0e6';
+const AXIS = '#59626f';
+
+const tooltipStyle = {
+  borderRadius: '12px',
+  border: '1px solid #dee2e6',
+  background: '#ffffff',
+  boxShadow: '0 12px 32px rgba(15,23,42,0.12)',
+  fontSize: '12px',
+} as const;
 
 export interface ProjectCompletionDatum {
   projectName: string;
@@ -16,102 +29,46 @@ export interface ProjectCompletionDatum {
   assignedWorkers?: number;
 }
 
-export interface ProjectCompletionChartProps {
-  data: ProjectCompletionDatum[];
-  title?: string;
-  subtitle?: string;
-}
-
-function formatPercent(value: number) {
-  return `${Math.max(0, Math.min(100, value)).toFixed(0)}%`;
-}
-
-function ChartEmptyState({ title, subtitle }: Pick<ProjectCompletionChartProps, 'title' | 'subtitle'>) {
-  return (
-    <div className="flex min-h-[280px] flex-col justify-center rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-slate-500">
-      <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-400">{title ?? 'Project completion'}</p>
-      <p className="mt-3 max-w-sm text-sm leading-6">{subtitle ?? 'No project completion data is available yet.'}</p>
-    </div>
-  );
-}
-
-const CustomXAxisTick = ({ x, y, payload }: any) => {
-  const fullName = payload.value as string;
-  const truncatedName = fullName.length > 15 ? fullName.substring(0, 15) + '...' : fullName;
-  
+function AxisTick({ x, y, payload }: { x?: number; y?: number; payload?: { value: string } }) {
+  const name = String(payload?.value ?? '');
+  const short = name.length > 14 ? `${name.slice(0, 14)}…` : name;
   return (
     <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={16} textAnchor="middle" fill="#64748b" fontSize={11}>
-        <title>{fullName}</title>
-        {truncatedName}
+      <text x={0} y={0} dy={14} textAnchor="middle" fill={AXIS} fontSize={11}>
+        <title>{name}</title>
+        {short}
       </text>
     </g>
   );
-};
+}
 
-export function ProjectCompletionChart({ data, title = 'Project completion', subtitle = 'Compare how far each active project has progressed.' }: ProjectCompletionChartProps) {
-  if (data.length === 0) {
-    return <ChartEmptyState title={title} subtitle={subtitle} />;
+export function ProjectCompletionChart({ data }: { data: ProjectCompletionDatum[] }) {
+  const { t } = useLanguage();
+
+  if (!data.length) {
+    return <div className="nm-raised grid min-h-[240px] place-items-center p-6 text-sm text-ink-soft">{t('chart.noData')}</div>;
   }
 
   return (
-    <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_12px_40px_rgba(15,23,42,0.08)]">
-      <div className="mb-5 flex flex-col gap-1">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-600">Analytics</p>
-        <h2 className="text-2xl font-semibold tracking-tight text-slate-950">{title}</h2>
-        <p className="max-w-2xl text-sm leading-6 text-slate-500">{subtitle}</p>
-      </div>
-      <div className="h-[320px]">
+    <div className="nm-raised p-4 sm:p-5">
+      <div className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 8 }}>
+          <BarChart data={data} margin={{ top: 8, right: 8, left: -14, bottom: 4 }}>
             <defs>
-              <linearGradient id="projectCompletionFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#0f766e" stopOpacity={0.95} />
-                <stop offset="100%" stopColor="#14b8a6" stopOpacity={0.55} />
+              <linearGradient id="pcFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#00a18f" stopOpacity={0.95} />
+                <stop offset="100%" stopColor="#51f7db" stopOpacity={0.75} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" vertical={false} />
-            <XAxis 
-              dataKey="projectName" 
-              tickLine={false} 
-              axisLine={false} 
-              stroke="#64748b" 
-              interval={0} 
-              height={52} 
-              tick={<CustomXAxisTick />} 
-            />
-            <YAxis tickLine={false} axisLine={false} stroke="#64748b" tickFormatter={formatPercent} />
-            <Tooltip
-              cursor={{ fill: 'rgba(15, 23, 42, 0.04)' }}
-              contentStyle={{
-                borderRadius: '16px',
-                border: '1px solid #e2e8f0',
-                background: '#ffffff',
-                boxShadow: '0 16px 40px rgba(15, 23, 42, 0.14)',
-              }}
-              formatter={(value: any, name: any) => {
-                if (name === 'completionPercentage') {
-                  return [formatPercent(Number(value ?? 0)), 'Completion'];
-                }
-
-                return [value, name];
-              }}
-            />
-            <Bar dataKey="completionPercentage" fill="url(#projectCompletionFill)" radius={[12, 12, 4, 4]} maxBarSize={56} />
+            <CartesianGrid strokeDasharray="4 4" stroke={GRID} vertical={false} />
+            <XAxis dataKey="projectName" tickLine={false} axisLine={false} interval={0} height={42} tick={<AxisTick />} />
+            <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tickLine={false} axisLine={false} stroke={AXIS} fontSize={11} width={42} tickFormatter={(v) => `${v}%`} />
+            <ReferenceLine y={100} stroke="#adb5bd" strokeDasharray="3 3" />
+            <Tooltip cursor={{ fill: 'rgba(15,23,42,0.04)' }} contentStyle={tooltipStyle} formatter={(v: unknown) => [`${Math.round(Number(v))}%`, t('chart.completion')]} />
+            <Bar dataKey="completionPercentage" fill="url(#pcFill)" radius={[8, 8, 2, 2]} maxBarSize={48} />
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {data.map((item) => (
-          <article key={item.projectName} className="rounded-2xl bg-slate-50 px-4 py-3">
-            <p className="text-sm font-medium text-slate-950">{item.projectName}</p>
-            <div className="mt-2 flex items-center justify-between text-sm text-slate-500">
-              <span>{formatPercent(item.completionPercentage)}</span>
-              {typeof item.assignedWorkers === 'number' ? <span>{item.assignedWorkers} workers</span> : null}
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
+    </div>
   );
 }

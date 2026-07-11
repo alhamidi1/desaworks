@@ -75,6 +75,13 @@ const id = {
     new: 'Baru',
     none: 'Belum ada',
     active: '{count} aktif',
+    utilization: 'Pemanfaatan Tenaga Kerja',
+    ofResidents: '{active}/{total} warga',
+    delayedProjects: 'Proyek Terlambat',
+    needAttention: 'Perlu perhatian',
+    understaffed: 'Kurang Pekerja',
+    portfolioCompletion: 'Penyelesaian Portofolio',
+    weighted: 'Tertimbang per kebutuhan pekerja',
   },
 
   // Projects
@@ -232,6 +239,58 @@ const id = {
     progressOverTime: 'Kemajuan Sepanjang Waktu',
     projectTimelines: 'Jadwal Proyek',
     recentActivity: 'Aktivitas Terbaru',
+    workforce: 'Tenaga Kerja',
+    completionAxis: 'Penyelesaian (%)',
+    avgProgress: 'Rata-rata kemajuan',
+    completion: 'Penyelesaian',
+    target: 'Target',
+    projectsUnit: 'proyek',
+    noData: 'Belum ada data untuk ditampilkan.',
+    showingTop: 'Menampilkan {shown} teratas dari {total} proyek',
+    viewAll: 'Lihat semua',
+  },
+
+  // Alerts (decision layer)
+  alert: {
+    title: 'Perlu Perhatian',
+    none: 'Semua proyek berjalan baik. Tidak ada peringatan.',
+    delayed: 'Terlambat: {completion}% selesai vs {elapsed}% jadwal',
+    understaffed: 'Kurang pekerja: {have}/{need} terisi',
+    stale: 'Tidak ada pembaruan lebih dari {days} hari',
+    overBudget: 'Pendapatan {pct}% dari anggaran',
+    view: 'Lihat',
+  },
+
+  // Project health (RAG)
+  health: {
+    on_track: 'Sesuai Jadwal',
+    at_risk: 'Berisiko',
+    delayed: 'Terlambat',
+    completed: 'Selesai',
+    inactive: 'Belum Aktif',
+  },
+
+  // Village-head impact dashboard
+  impact: {
+    title: 'Dampak untuk Desa',
+    subtitle: 'Ringkasan kontribusi BUMDes bagi masyarakat desa.',
+    residentsEmployed: 'Warga Bekerja',
+    ofTotal: 'dari {total} warga',
+    incomeGenerated: 'Pendapatan Dihasilkan',
+    participation: 'Tingkat Partisipasi',
+    activeProjects: 'Proyek Aktif',
+    completedProjects: 'Proyek Selesai',
+    hoursContributed: 'Total Jam Kerja',
+  },
+
+  // Timeframe selector
+  timeframe: {
+    label: 'Rentang',
+    '7d': '7 Hari',
+    '30d': '30 Hari',
+    '90d': '90 Hari',
+    '365d': '1 Tahun',
+    all: 'Semua',
   },
 
   // Common

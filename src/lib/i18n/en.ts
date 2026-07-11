@@ -75,6 +75,13 @@ const en: TranslationDict = {
     new: 'New',
     none: 'None',
     active: '{count} active',
+    utilization: 'Workforce Utilization',
+    ofResidents: '{active}/{total} residents',
+    delayedProjects: 'Delayed Projects',
+    needAttention: 'Need attention',
+    understaffed: 'Understaffed',
+    portfolioCompletion: 'Portfolio Completion',
+    weighted: 'Weighted by workers needed',
   },
 
   // Projects
@@ -232,6 +239,58 @@ const en: TranslationDict = {
     progressOverTime: 'Progress Over Time',
     projectTimelines: 'Project Timelines',
     recentActivity: 'Recent Activity',
+    workforce: 'Workforce',
+    completionAxis: 'Completion (%)',
+    avgProgress: 'Average progress',
+    completion: 'Completion',
+    target: 'Target',
+    projectsUnit: 'projects',
+    noData: 'No data to display yet.',
+    showingTop: 'Showing top {shown} of {total} projects',
+    viewAll: 'View all',
+  },
+
+  // Alerts (decision layer)
+  alert: {
+    title: 'Needs Attention',
+    none: 'All projects are on track. No alerts.',
+    delayed: 'Delayed: {completion}% done vs {elapsed}% of schedule',
+    understaffed: 'Understaffed: {have}/{need} filled',
+    stale: 'No update in over {days} days',
+    overBudget: 'Revenue at {pct}% of budget',
+    view: 'View',
+  },
+
+  // Project health (RAG)
+  health: {
+    on_track: 'On Track',
+    at_risk: 'At Risk',
+    delayed: 'Delayed',
+    completed: 'Completed',
+    inactive: 'Not Active',
+  },
+
+  // Village-head impact dashboard
+  impact: {
+    title: 'Impact for the Village',
+    subtitle: 'A summary of the BUMDes contribution to the community.',
+    residentsEmployed: 'Residents Employed',
+    ofTotal: 'of {total} residents',
+    incomeGenerated: 'Income Generated',
+    participation: 'Participation Rate',
+    activeProjects: 'Active Projects',
+    completedProjects: 'Completed Projects',
+    hoursContributed: 'Total Hours Worked',
+  },
+
+  // Timeframe selector
+  timeframe: {
+    label: 'Range',
+    '7d': '7 Days',
+    '30d': '30 Days',
+    '90d': '90 Days',
+    '365d': '1 Year',
+    all: 'All',
   },
 
   // Common
