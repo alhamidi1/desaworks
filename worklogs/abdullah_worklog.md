@@ -69,3 +69,26 @@ the format below. Do not delete previous entries. This log is part of the assign
   - [package.json](file:///Users/abdullah/Desktop/DesaWorks/project/package.json)
   - [package-lock.json](file:///Users/abdullah/Desktop/DesaWorks/project/package-lock.json)
 
+---
+
+## Session 4 — 2026-07-12
+
+### Action: V2 Refinement — Senior review + Phase 0 foundation
+- **AI Agent Used**: Claude (Opus)
+- **Prompt Given**: "Full senior-developer refinement of the project — fix logic/graph/flow flaws, turn the prototype into a real MIS, add a new UI, and execute my (Abdullah's) part phase by phase."
+- **Result**:
+  - Produced the full refinement plan at `.planning/REFINEMENT_PLAN_V2.md` (flaw assessment verified against code + live Supabase, MIS decision layer, corrected metric dictionary, graph redesign incl. lecturer's limits/timeframe fixes, Soft-UI/Neumorphism-lite design system, Add/Modify/Remove list, Abdullah↔Dani execution plan).
+  - Created branch `feature/v2-mis-core` for the backend/data workstream (only Abdullah has Supabase access; Dani builds presentation independently against fixtures).
+  - **Phase 0 migration `003_foundation_auth_and_perf`** applied to Supabase and verified:
+    - `handle_new_user` trigger auto-creates a `profiles` row on `auth.users` INSERT — **fixes the registration dead-end**. Smoke-tested: profile created, consent captured, and a client-supplied `role: manager` was correctly forced to `resident` (privilege-escalation guard).
+    - Added covering indexes on the 4 unindexed FKs; pinned `search_path` on both trigger functions; revoked API `EXECUTE` on the SECURITY DEFINER trigger fn; ran `ANALYZE`.
+    - Advisors cleared: `function_search_path_mutable` and both `*_security_definer_function_executable`. Remaining (deferred to Phase 3 / manual): notifications `WITH CHECK(true)` INSERT policy, leaked-password protection toggle.
+- **Decisions Made**:
+  - UI direction: **Soft-UI / Neumorphism-lite (high-clarity)** instead of pure neumorphism (accessibility for low-literacy village users).
+  - Scope: **production-leaning** (real auth registration + PII lockdown + multi-village tenancy), tiered A/B/C.
+  - `handle_new_user` never trusts client-supplied role — residents only; managers promoted separately.
+- **Files Changed**:
+  - `.planning/REFINEMENT_PLAN_V2.md` (new)
+  - `supabase/migrations/003_foundation_auth_and_perf.sql` (new)
+  - `.gitignore`
+
