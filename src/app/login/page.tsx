@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { loginAction } from './actions';
 
@@ -51,11 +52,8 @@ export default function LoginPage() {
         <div className="rounded-3xl glass p-8 sm:p-10 shadow-xl">
           {/* Logo & Header */}
           <div className="text-center space-y-3">
-            <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#05c8ae] to-[#058074] text-white shadow-lg shadow-[#05c8ae]/25">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-7 w-7">
-                <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" />
-                <path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z" />
-              </svg>
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-lg shadow-[#05c8ae]/20">
+              <Image src="/icon.png" alt="DesaWorks" width={48} height={48} className="h-12 w-12 object-contain" priority />
             </div>
             <div>
               <h1 className="text-2xl font-bold tracking-tight text-[#1a1d23]">

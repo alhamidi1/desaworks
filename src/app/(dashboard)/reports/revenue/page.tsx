@@ -87,7 +87,7 @@ export default async function RevenueReportPage() {
 
       {/* Summary stats */}
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="nm-raised p-5">
           <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
             {t('revenueReport.totalRevenue')}
           </p>
@@ -95,7 +95,7 @@ export default async function RevenueReportPage() {
             {formatIDR(totalRevenue)}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="nm-raised p-5">
           <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
             {t('revenueReport.projectsWithRevenue')}
           </p>
@@ -103,7 +103,7 @@ export default async function RevenueReportPage() {
             {projectsWithRevenue}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="nm-raised p-5">
           <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
             {t('revenueReport.avgBudgetUtilization')}
           </p>
@@ -149,7 +149,8 @@ export default async function RevenueReportPage() {
       )}
 
       {/* Revenue chart */}
-      <div className="mb-8">
+      <div className="mb-8 space-y-3">
+        <h2 className="text-lg font-bold text-ink">{t('chart.revenueTrend')}</h2>
         <RevenueChart data={revenueReport.monthlyTotals} />
       </div>
 

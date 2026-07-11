@@ -248,6 +248,7 @@ const id = {
     noData: 'Belum ada data untuk ditampilkan.',
     showingTop: 'Menampilkan {shown} teratas dari {total} proyek',
     viewAll: 'Lihat semua',
+    revenueTrend: 'Tren Pendapatan',
   },
 
   // Alerts (decision layer)

@@ -154,7 +154,7 @@ export default async function PerformanceReportPage() {
 
       {/* Summary stats */}
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="nm-raised p-5">
           <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
             {t('stats.totalProjects')}
           </p>
@@ -162,7 +162,7 @@ export default async function PerformanceReportPage() {
             {dashboard.projects.length}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="nm-raised p-5">
           <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
             {t('stats.activeWorkers')}
           </p>
@@ -170,7 +170,7 @@ export default async function PerformanceReportPage() {
             {workerData.length}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="nm-raised p-5">
           <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
             {t('stats.avgCompletion')}
           </p>
@@ -186,7 +186,7 @@ export default async function PerformanceReportPage() {
             %
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="nm-raised p-5">
           <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
             {t('stats.totalHoursLogged')}
           </p>
@@ -201,8 +201,14 @@ export default async function PerformanceReportPage() {
 
       {/* Charts */}
       <div className="mb-8 grid gap-6 lg:grid-cols-2">
-        <ProjectCompletionChart data={completionChartData} />
-        <ProgressOverTimeChart data={progressTrendData} />
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-ink">{t('chart.projectCompletion')}</h2>
+          <ProjectCompletionChart data={completionChartData} />
+        </div>
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-ink">{t('chart.progressOverTime')}</h2>
+          <ProgressOverTimeChart data={progressTrendData} />
+        </div>
       </div>
 
       {/* Performance Table */}

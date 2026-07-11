@@ -248,6 +248,7 @@ const en: TranslationDict = {
     noData: 'No data to display yet.',
     showingTop: 'Showing top {shown} of {total} projects',
     viewAll: 'View all',
+    revenueTrend: 'Revenue Trend',
   },
 
   // Alerts (decision layer)

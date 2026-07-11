@@ -1,80 +1,67 @@
-"use client";
+'use client';
 
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { formatCurrency } from '@/lib/i18n';
+
+const GRID = '#dbe0e6';
+const AXIS = '#59626f';
+
+const tooltipStyle = {
+  borderRadius: '12px',
+  border: '1px solid #dee2e6',
+  background: '#ffffff',
+  boxShadow: '0 12px 32px rgba(15,23,42,0.12)',
+  fontSize: '12px',
+} as const;
 
 export interface RevenueTrendDatum {
   month: string;
   amount: number;
 }
 
-export interface RevenueChartProps {
-  data: RevenueTrendDatum[];
-  title?: string;
-  subtitle?: string;
+// Compact Rupiah for axis ticks: rb (ribu/thousand), jt (juta/million), M (miliar/billion).
+function compactIDR(v: number) {
+  if (v >= 1e9) return `Rp${(v / 1e9).toFixed(1)}M`;
+  if (v >= 1e6) return `Rp${Math.round(v / 1e6)}jt`;
+  if (v >= 1e3) return `Rp${Math.round(v / 1e3)}rb`;
+  return `Rp${v}`;
 }
 
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    maximumFractionDigits: 0,
-  }).format(value);
-}
+export function RevenueChart({ data }: { data: RevenueTrendDatum[] }) {
+  const { t, locale } = useLanguage();
 
-function ChartEmptyState({ title, subtitle }: Pick<RevenueChartProps, 'title' | 'subtitle'>) {
-  return (
-    <div className="flex min-h-[280px] flex-col justify-center rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-slate-500">
-      <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-400">{title ?? 'Revenue trend'}</p>
-      <p className="mt-3 max-w-sm text-sm leading-6">{subtitle ?? 'No revenue trend data is available yet.'}</p>
-    </div>
-  );
-}
-
-export function RevenueChart({ data, title = 'Revenue trend', subtitle = 'Monitor revenue by month and compare how projects contribute over time.' }: RevenueChartProps) {
-  if (data.length === 0) {
-    return <ChartEmptyState title={title} subtitle={subtitle} />;
+  if (!data.length) {
+    return <div className="nm-raised grid min-h-[240px] place-items-center p-6 text-sm text-ink-soft">{t('chart.noData')}</div>;
   }
 
+  const monthLabel = (m: string) => {
+    try {
+      return new Date(`${m}-01T00:00:00`).toLocaleDateString(locale === 'id' ? 'id-ID' : 'en-US', { month: 'short', year: 'numeric' });
+    } catch {
+      return m;
+    }
+  };
+
   return (
-    <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_12px_40px_rgba(15,23,42,0.08)]">
-      <div className="mb-5 flex flex-col gap-1">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-rose-700">Revenue</p>
-        <h2 className="text-2xl font-semibold tracking-tight text-slate-950">{title}</h2>
-        <p className="max-w-2xl text-sm leading-6 text-slate-500">{subtitle}</p>
-      </div>
-      <div className="h-[320px]">
+    <div className="nm-raised p-4 sm:p-5">
+      <div className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 8 }}>
+          <AreaChart data={data} margin={{ top: 8, right: 8, left: 6, bottom: 4 }}>
             <defs>
-              <linearGradient id="revenueTrendFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#be123c" stopOpacity={0.45} />
-                <stop offset="100%" stopColor="#be123c" stopOpacity={0.03} />
+              <linearGradient id="revFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#00a18f" stopOpacity={0.4} />
+                <stop offset="100%" stopColor="#00a18f" stopOpacity={0.02} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" vertical={false} />
-            <XAxis dataKey="month" tickLine={false} axisLine={false} stroke="#64748b" minTickGap={20} />
-            <YAxis tickLine={false} axisLine={false} stroke="#64748b" tickFormatter={formatCurrency} width={84} />
-            <Tooltip
-              contentStyle={{
-                borderRadius: '16px',
-                border: '1px solid #e2e8f0',
-                background: '#ffffff',
-                boxShadow: '0 16px 40px rgba(15, 23, 42, 0.14)',
-              }}
-              formatter={(value: any) => [formatCurrency(Number(value ?? 0)), 'Revenue']}
-            />
-            <Area type="monotone" dataKey="amount" stroke="#be123c" strokeWidth={3} fill="url(#revenueTrendFill)" />
+            <CartesianGrid strokeDasharray="4 4" stroke={GRID} vertical={false} />
+            <XAxis dataKey="month" tickLine={false} axisLine={false} stroke={AXIS} fontSize={11} minTickGap={20} tickFormatter={(m: unknown) => monthLabel(String(m))} />
+            <YAxis tickLine={false} axisLine={false} stroke={AXIS} fontSize={11} width={64} tickFormatter={(v: unknown) => compactIDR(Number(v))} />
+            <Tooltip contentStyle={tooltipStyle} labelFormatter={(m: unknown) => monthLabel(String(m))} formatter={(v: unknown) => [formatCurrency(Number(v)), t('project.revenue')]} />
+            <Area type="monotone" dataKey="amount" stroke="#00a18f" strokeWidth={3} fill="url(#revFill)" />
           </AreaChart>
         </ResponsiveContainer>
       </div>
-    </section>
+    </div>
   );
 }
