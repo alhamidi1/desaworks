@@ -121,6 +121,13 @@ export async function createProject(
   const { supabase, userId } = auth.data;
   const data = parsed.data;
 
+  // Tenant scoping: a project belongs to its creator's village (required by RLS WITH CHECK).
+  const { data: creatorProfile } = await supabase
+    .from('profiles')
+    .select('village_id')
+    .eq('id', userId)
+    .single();
+
   const { data: project, error: projectError } = await supabase
     .from('projects')
     .insert({
@@ -132,6 +139,7 @@ export async function createProject(
       end_date: data.end_date ?? null,
       budget: data.budget ?? 0,
       workers_needed: data.workers_needed ?? 1,
+      village_id: creatorProfile?.village_id ?? null,
     })
     .select()
     .single();

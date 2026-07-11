@@ -118,3 +118,14 @@ the format below. Do not delete previous entries. This log is part of the assign
 - **ACTION REQUIRED (Abdullah):** add `SUPABASE_SERVICE_ROLE_KEY` to `.env.local` (Supabase dashboard → Settings → API → service_role key) so `inviteResident` works at runtime. `.env` is permission-blocked so I could not edit it.
 - **Files Changed**: `supabase/migrations/007_join_requests.sql` (new), `src/lib/supabase/admin.ts` (new), `src/lib/validations/resident.ts`, `src/lib/actions/residents.ts` (rewrite), `src/app/api/residents/register/route.ts`
 
+### Action: V2 Phase 3 — Multi-village tenancy + RLS hardening
+- **AI Agent Used**: Claude (Opus)
+- **Result** (migration 008 applied + verified):
+  - `villages` table + `village_id` on `profiles`/`projects` (+ indexes), existing rows backfilled to a default village. `auth_village_id()` helper (SECURITY DEFINER, avoids RLS recursion).
+  - **Rewrote RLS across every table to scope by the caller's village.** This also fixes two standing flaws: `profiles`/`resident_skills` are no longer world-readable (PII), and the `notifications` INSERT `WITH CHECK(true)` hole is closed (managers only).
+  - `handle_new_user` now sets `village_id` from signup metadata; `inviteResident` passes the manager's village; `createProject` stamps the creator's village (required by RLS WITH CHECK).
+  - Added `village_id` to `Profile`/`Project` types + `Village`/`JoinRequest` interfaces.
+  - **Verified via simulated auth:** manager sees their whole village (6 projects incl. through the security_invoker metrics view); a resident sees village projects but 0 revenue; a non-member sees 0 of everything.
+  - Security advisors: notifications + PII flaws cleared. Remaining WARNs are acceptable-by-design (`auth_village_id`/`complete_assignment` are authz-guarded RPCs returning only the caller's own data) + the leaked-password toggle (enable in dashboard).
+- **Files Changed**: `supabase/migrations/008_multi_village_tenancy.sql` (new), `src/lib/actions/{residents,projects}.ts`, `src/lib/types/database.ts`
+

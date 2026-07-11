@@ -26,6 +26,7 @@ export interface Profile {
   role: UserRole;
   availability: AvailabilityStatus;
   bio: string | null;
+  village_id: string | null;
   agreed_to_tos: boolean;
   agreed_to_privacy: boolean;
   created_at: string;
@@ -61,6 +62,7 @@ export interface Project {
   budget: number;
   actual_revenue: number;
   workers_needed: number;
+  village_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -114,6 +116,30 @@ export interface Notification {
   message: string;
   read: boolean;
   link: string | null;
+  created_at: string;
+}
+
+export interface Village {
+  id: string;
+  name: string;
+  regency: string | null;
+  province: string | null;
+  created_at: string;
+}
+
+export type JoinRequestStatus = 'pending' | 'approved' | 'rejected';
+
+export interface JoinRequest {
+  id: string;
+  full_name: string;
+  phone: string | null;
+  email: string | null;
+  message: string | null;
+  agreed_to_tos: boolean;
+  agreed_to_privacy: boolean;
+  status: JoinRequestStatus;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
   created_at: string;
 }
 

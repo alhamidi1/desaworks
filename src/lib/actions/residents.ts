@@ -15,7 +15,7 @@ import {
 export type ResidentActionResult<T> = { ok: true; data: T } | { ok: false; error: string };
 
 type ManagerCtx =
-  | { ok: true; supabase: Awaited<ReturnType<typeof createClient>>; userId: string }
+  | { ok: true; supabase: Awaited<ReturnType<typeof createClient>>; userId: string; villageId: string | null }
   | { ok: false; error: string };
 
 async function requireManagerCtx(): Promise<ManagerCtx> {
@@ -24,11 +24,11 @@ async function requireManagerCtx(): Promise<ManagerCtx> {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'Unauthorized' };
-  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+  const { data: profile } = await supabase.from('profiles').select('role, village_id').eq('id', user.id).single();
   if (!profile || (profile.role !== 'manager' && profile.role !== 'admin')) {
     return { ok: false, error: 'Forbidden: manager access required' };
   }
-  return { ok: true, supabase, userId: user.id };
+  return { ok: true, supabase, userId: user.id, villageId: profile.village_id };
 }
 
 function generateTempPassword() {
@@ -78,6 +78,8 @@ export async function inviteResident(input: unknown): Promise<ResidentActionResu
       phone: d.phone ?? null,
       agreed_to_tos: true,
       agreed_to_privacy: true,
+      // New resident inherits the inviting manager's village (used by handle_new_user).
+      village_id: auth.villageId ?? undefined,
     },
   });
 
@@ -89,7 +91,12 @@ export async function inviteResident(input: unknown): Promise<ResidentActionResu
   // The handle_new_user trigger creates the profile row; fill the remaining fields.
   await admin
     .from('profiles')
-    .update({ address: d.address ?? null, date_of_birth: d.date_of_birth ?? null, bio: d.bio ?? null })
+    .update({
+      address: d.address ?? null,
+      date_of_birth: d.date_of_birth ?? null,
+      bio: d.bio ?? null,
+      village_id: auth.villageId,
+    })
     .eq('id', residentId);
 
   if (d.skills && d.skills.length) {
