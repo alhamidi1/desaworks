@@ -39,14 +39,13 @@ export default async function RevenueReportPage() {
   const projectsWithRevenue = revenueReport.projects.filter(
     (p) => p.revenueCount > 0
   ).length;
+  // Average only over projects that actually have a budget (exclude budget<=0 to avoid skew).
+  const budgetedProjects = revenueReport.projects.filter((p) => p.revenueVsBudgetPct !== null);
   const avgBudgetUtilization =
-    revenueReport.projects.length > 0
+    budgetedProjects.length > 0
       ? Math.round(
-          (revenueReport.projects.reduce(
-            (sum, p) => sum + p.budgetUtilization,
-            0
-          ) /
-            revenueReport.projects.length) *
+          (budgetedProjects.reduce((sum, p) => sum + (p.revenueVsBudgetPct ?? 0), 0) /
+            budgetedProjects.length) *
             10
         ) / 10
       : 0;

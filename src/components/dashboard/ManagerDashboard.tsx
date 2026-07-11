@@ -18,21 +18,17 @@ interface ManagerDashboardProps {
 export function ManagerDashboard({ report }: ManagerDashboardProps) {
   const { t } = useLanguage();
 
-  const totalProjects = report.projects.length;
+  // KPIs now come from the corrected metrics engine (distinct workers, weighted completion).
+  const totalProjects = report.kpis.totalProjects;
 
-  const activeWorkers = report.projects.reduce((sum, p) => sum + p.assignedWorkers, 0);
+  const activeWorkers = report.kpis.activeWorkersDistinct;
 
-  const averageCompletion =
-    report.projects.length > 0
-      ? Math.round(
-          report.projects.reduce((sum, p) => sum + p.completionPercentage, 0) /
-            report.projects.length
-        )
-      : 0;
+  const averageCompletion = Math.round(report.kpis.portfolioCompletion);
 
   const recentUpdates = report.recentActivity.length;
 
-  const completionChartData = report.projects.map((p) => ({
+  // Top-N most decision-relevant projects (keeps the chart readable at scale).
+  const completionChartData = report.topProjects.map((p) => ({
     projectName: p.project.name,
     completionPercentage: p.completionPercentage,
     assignedWorkers: p.assignedWorkers,

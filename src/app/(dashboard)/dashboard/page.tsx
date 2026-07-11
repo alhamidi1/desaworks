@@ -107,7 +107,10 @@ export default async function DashboardPage() {
     const proj = extractProject(a.projects);
     const latestProgress = latestProgressMap.get(a.id);
     const assignmentHours = hoursWorkedMap.get(a.id) ?? 0;
-    totalHoursWorked += assignmentHours;
+    // Don't count hours from voided assignments toward lifetime totals.
+    if (a.status !== 'void') {
+      totalHoursWorked += assignmentHours;
+    }
 
     if (a.status === 'completed') {
       completedAssignmentsCount++;
