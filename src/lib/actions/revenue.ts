@@ -160,6 +160,28 @@ export async function submitRevenueRecord(rawInput: RevenueRecordInput): Promise
   const projectedTotalRevenue = totalRevenue + parsedInput.data.amount;
   const warning = buildRevenueWarning(project, parsedInput.data.amount, projectedTotalRevenue);
 
+  const recordDate = parsedInput.data.recordDate ?? new Date().toISOString().slice(0, 10);
+
+  // Idempotency guard: an accidental resubmit (e.g. after seeing the >150% warning)
+  // must not double-count revenue. Treat an identical record from the last 2 minutes
+  // as the same submission and return it instead of inserting a duplicate.
+  const recentCutoff = new Date(Date.now() - 2 * 60 * 1000).toISOString();
+  const { data: duplicateRecord } = await supabase
+    .from('revenue_records')
+    .select(revenueRecordSelect)
+    .eq('project_id', project.id)
+    .eq('recorded_by', authData.user.id)
+    .eq('amount', parsedInput.data.amount)
+    .eq('record_date', recordDate)
+    .gte('created_at', recentCutoff)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (duplicateRecord) {
+    return { ok: true, record: duplicateRecord as RevenueRecord, warning };
+  }
+
   const { data: insertedRecord, error: insertError } = await supabase
     .from('revenue_records')
     .insert({
@@ -167,7 +189,7 @@ export async function submitRevenueRecord(rawInput: RevenueRecordInput): Promise
       recorded_by: authData.user.id,
       amount: parsedInput.data.amount,
       description: parsedInput.data.description,
-      record_date: parsedInput.data.recordDate ?? new Date().toISOString().slice(0, 10),
+      record_date: recordDate,
     })
     .select(revenueRecordSelect)
     .single();

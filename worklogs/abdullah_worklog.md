@@ -92,3 +92,20 @@ the format below. Do not delete previous entries. This log is part of the assign
   - `supabase/migrations/003_foundation_auth_and_perf.sql` (new)
   - `.gitignore`
 
+---
+
+## Session 5 — 2026-07-12
+
+### Action: V2 Phase 1 — Metrics engine + assignment lifecycle
+- **AI Agent Used**: Claude (Opus)
+- **Result**:
+  - **Metrics engine (migration 004 `project_metrics_v` + `reports.ts` rewrite):** single SQL view is now the source of truth for per-project metrics (distinct workers, workers_needed-weighted completion, schedule-vs-progress RAG health, revenue-vs-budget). `reports.ts` consumes the view and adds the decision layer — portfolio KPIs, alerts (delayed/understaffed/stale/over-budget), Top-N density control, and `{range, limit}` time-window params with WIB (UTC+7) day bucketing. Replaces the old full-table-scan-per-project pattern. Verified view math against live data; fixed dashboard/revenue/resident KPI computations (distinct active workers, weighted completion, exclude void hours).
+  - **Assignment lifecycle (migrations 005/006):** `set_project_status` RPC atomically changes project status AND cascades assignments (in_progress→active, completed→completed+timestamp, cancelled→void). `complete_assignment` SECURITY DEFINER RPC (with in-body authz) lets managers OR the assigned resident complete an assignment; wired into a new `completeAssignment` action and into `submitProgressUpdate` (reaching 100% auto-completes). **This is what finally produces the active/completed states the metrics need in real use (flaw #1).** Verified cascade end-to-end.
+  - **Write integrity:** capacity check now counts already-occupied slots; assignment-confirmation notifications are best-effort (won't fail committed assignments); revenue submit has a 2-minute idempotency guard against double-counting; progress duplicate-guard now uses WIB day bounds.
+  - `tsc --noEmit` clean throughout.
+- **Files Changed**:
+  - `supabase/migrations/004_metrics_view.sql`, `005_assignment_lifecycle.sql`, `006_complete_assignment.sql` (new)
+  - `src/lib/queries/reports.ts` (rewrite)
+  - `src/lib/actions/{projects,progress,revenue}.ts`
+  - `src/components/dashboard/ManagerDashboard.tsx`, `src/app/(dashboard)/{dashboard,reports/revenue}/page.tsx`
+

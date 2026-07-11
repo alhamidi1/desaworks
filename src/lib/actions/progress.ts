@@ -45,15 +45,22 @@ export interface SubmitProgressOptions {
 
 const progressUpdateSelect = 'id, assignment_id, reported_by, progress_percentage, status, description, hours_worked, created_at';
 
-function toUtcDayBounds(date: Date) {
-  const start = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
-  const end = new Date(start);
-  end.setUTCDate(end.getUTCDate() + 1);
-  return { start, end };
+const WIB_OFFSET_MS = 7 * 60 * 60 * 1000; // Asia/Jakarta = UTC+7
+
+// Bounds of the user's local (WIB) calendar day, expressed in UTC.
+function toWibDayBounds(date: Date) {
+  const wib = new Date(date.getTime() + WIB_OFFSET_MS);
+  const midnightUtcMs = Date.UTC(wib.getUTCFullYear(), wib.getUTCMonth(), wib.getUTCDate()) - WIB_OFFSET_MS;
+  return { start: new Date(midnightUtcMs), end: new Date(midnightUtcMs + 24 * 60 * 60 * 1000) };
 }
 
-function isSameUtcDay(firstValue: string, secondValue: Date) {
-  return firstValue.slice(0, 10) === secondValue.toISOString().slice(0, 10);
+function wibDay(value: string | Date) {
+  const d = typeof value === 'string' ? new Date(value) : value;
+  return new Date(d.getTime() + WIB_OFFSET_MS).toISOString().slice(0, 10);
+}
+
+function isSameWibDay(firstValue: string, secondValue: Date) {
+  return wibDay(firstValue) === wibDay(secondValue);
 }
 
 async function getCurrentUserProfile(supabase: Awaited<ReturnType<typeof createClient>>, userId: string) {
@@ -108,7 +115,7 @@ async function getDuplicateProgressForDay(
   progressPercentage: number,
   now: Date
 ) {
-  const { start, end } = toUtcDayBounds(now);
+  const { start, end } = toWibDayBounds(now);
 
   const { data, error } = await supabase
     .from('progress_updates')
@@ -229,7 +236,7 @@ export async function submitProgressUpdate(
       duplicateWarning: {
         existingUpdate: duplicateProgress,
         submittedPercentage: parsedInput.data.progressPercentage,
-        sameDay: isSameUtcDay(duplicateProgress.created_at, now),
+        sameDay: isSameWibDay(duplicateProgress.created_at, now),
       },
     };
   }
@@ -253,6 +260,17 @@ export async function submitProgressUpdate(
       code: 'DATABASE_ERROR',
       message: 'The progress update could not be saved.',
     };
+  }
+
+  // Worker-driven lifecycle: reaching 100% completes the assignment.
+  // Uses the authorization-checked RPC (RLS blocks residents from updating assignments directly).
+  if (parsedInput.data.progressPercentage === 100 && ['confirmed', 'active'].includes(assignment.status)) {
+    const { error: completeError } = await supabase.rpc('complete_assignment', {
+      p_assignment_id: assignment.id,
+    });
+    if (completeError) {
+      console.error('Auto-complete on 100% progress failed:', completeError.message);
+    }
   }
 
   return {

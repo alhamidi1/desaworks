@@ -274,21 +274,24 @@ export async function updateProjectStatus(
     };
   }
 
-  const { data: project, error: updateError } = await supabase
-    .from('projects')
-    .update({ status })
-    .eq('id', project_id)
-    .select()
-    .single();
+  // Atomic status change + assignment lifecycle cascade (see set_project_status RPC).
+  const { data: updated, error: updateError } = await supabase.rpc('set_project_status', {
+    p_project_id: project_id,
+    p_status: status,
+  });
 
-  if (updateError || !project) {
-    return {
-      success: false,
-      error: updateError?.message ?? 'Failed to update project status',
-    };
+  if (updateError) {
+    return { success: false, error: updateError.message ?? 'Failed to update project status' };
   }
 
-  return { success: true, data: project as Project };
+  const project = (Array.isArray(updated) ? updated[0] : updated) as Project | null;
+  if (!project) {
+    return { success: false, error: 'Failed to update project status' };
+  }
+
+  revalidatePath('/projects');
+  revalidatePath(`/projects/${project_id}`);
+  return { success: true, data: project };
 }
 
 export async function getProject(
@@ -373,16 +376,32 @@ export async function confirmAssignments(
     return { success: false, error: projectError?.message ?? 'Project not found' };
   }
 
-  if (resident_ids.length > project.workers_needed) {
-    return {
-      success: false,
-      error: `Cannot assign more than ${project.workers_needed} workers to this project`,
-    };
-  }
-
   const uniqueResidentIds = [...new Set(resident_ids)];
   if (uniqueResidentIds.length !== resident_ids.length) {
     return { success: false, error: 'Duplicate resident IDs in assignment list' };
+  }
+
+  // Capacity check must account for slots already occupied by OTHER residents,
+  // not just the size of this batch.
+  const { data: projectAssignments, error: projectAssignmentsError } = await supabase
+    .from('assignments')
+    .select('id, resident_id, status')
+    .eq('project_id', project_id);
+
+  if (projectAssignmentsError) {
+    return { success: false, error: projectAssignmentsError.message };
+  }
+
+  const batchSet = new Set(uniqueResidentIds);
+  const occupiedByOthers = (projectAssignments ?? []).filter(
+    (a) => !batchSet.has(a.resident_id) && ['pending', 'confirmed', 'active'].includes(a.status)
+  ).length;
+
+  if (occupiedByOthers + uniqueResidentIds.length > project.workers_needed) {
+    return {
+      success: false,
+      error: `This project needs ${project.workers_needed} worker(s); ${occupiedByOthers} slot(s) are already filled.`,
+    };
   }
 
   const conflictMap = new Map<string, SchedulingConflict[]>();
@@ -429,18 +448,10 @@ export async function confirmAssignments(
     return { success: false, error: 'Assignments can only target resident profiles' };
   }
 
-  const { data: existingAssignments, error: existingError } = await supabase
-    .from('assignments')
-    .select('id, resident_id, status')
-    .eq('project_id', project_id)
-    .in('resident_id', uniqueResidentIds);
-
-  if (existingError) {
-    return { success: false, error: existingError.message };
-  }
-
   const existingByResident = new Map(
-    (existingAssignments ?? []).map((a) => [a.resident_id, a])
+    (projectAssignments ?? [])
+      .filter((a) => batchSet.has(a.resident_id))
+      .map((a) => [a.resident_id, a])
   );
 
   const confirmedAt = new Date().toISOString();
@@ -517,12 +528,14 @@ export async function confirmAssignments(
     link: `/projects/${project_id}`,
   }));
 
+  // Best-effort: assignments are already committed, so a notification failure
+  // must not report the whole operation as failed.
   const { error: notificationError } = await supabase
     .from('notifications')
     .insert(notifications);
 
   if (notificationError) {
-    return { success: false, error: notificationError.message };
+    console.error('Assignment notifications failed (assignments saved):', notificationError.message);
   }
 
   revalidatePath('/projects');
@@ -595,4 +608,36 @@ export async function voidAssignment(
   revalidatePath(`/projects/${assignment.project_id}/assign`);
   
   return { success: true, data: assignment as Assignment };
+}
+
+export async function completeAssignment(
+  input: unknown
+): Promise<ActionResult<Assignment>> {
+  const parsed = voidAssignmentSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0]?.message ?? 'Invalid input' };
+  }
+
+  const auth = await requireManager();
+  if (!auth.success) return auth;
+
+  const { supabase } = auth.data;
+  const { assignment_id } = parsed.data;
+
+  const { data: completed, error } = await supabase.rpc('complete_assignment', {
+    p_assignment_id: assignment_id,
+  });
+
+  if (error) {
+    return { success: false, error: error.message ?? 'Failed to complete assignment' };
+  }
+
+  const assignment = (Array.isArray(completed) ? completed[0] : completed) as Assignment | null;
+  if (!assignment) {
+    return { success: false, error: 'Failed to complete assignment' };
+  }
+
+  revalidatePath('/projects');
+  revalidatePath(`/projects/${assignment.project_id}`);
+  return { success: true, data: assignment };
 }
