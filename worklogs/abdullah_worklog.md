@@ -109,3 +109,12 @@ the format below. Do not delete previous entries. This log is part of the assign
   - `src/lib/actions/{projects,progress,revenue}.ts`
   - `src/components/dashboard/ManagerDashboard.tsx`, `src/app/(dashboard)/{dashboard,reports/revenue}/page.tsx`
 
+### Action: V2 Phase 2 — Manager-invite registration + consent (backend)
+- **AI Agent Used**: Claude (Opus)
+- **Result**:
+  - Chose the **manager-invite** onboarding model. Added `join_requests` table (migration 007): the public `/register` page submits a consent-gated "request to join" (RLS: anyone may insert with consent=true; only managers read/triage). Verified anon-insert RLS.
+  - Added a **server-only service-role admin client** (`src/lib/supabase/admin.ts`) and rewrote `residents.ts`: `inviteResident` (manager-gated) creates a real auth account via `admin.auth.admin.createUser` — email optional (synthetic `r<phone>@desaworks.local` login when absent), returns a one-time temp password for the manager to relay; the `handle_new_user` trigger creates the profile, then extra fields + skills are filled via the admin client. Added `createJoinRequest`/`listJoinRequests`/`approveJoinRequest`/`rejectJoinRequest`. **Consent is now enforced** (rejected unless both booleans true) — replaces the old fabricated `agreed_to_tos:true`.
+  - Removed the broken `createProfile` (inserted profiles with no id/auth → could never log in). Public `/api/residents/register` now creates a join request.
+- **ACTION REQUIRED (Abdullah):** add `SUPABASE_SERVICE_ROLE_KEY` to `.env.local` (Supabase dashboard → Settings → API → service_role key) so `inviteResident` works at runtime. `.env` is permission-blocked so I could not edit it.
+- **Files Changed**: `supabase/migrations/007_join_requests.sql` (new), `src/lib/supabase/admin.ts` (new), `src/lib/validations/resident.ts`, `src/lib/actions/residents.ts` (rewrite), `src/app/api/residents/register/route.ts`
+
