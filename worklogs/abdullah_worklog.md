@@ -129,3 +129,12 @@ the format below. Do not delete previous entries. This log is part of the assign
   - Security advisors: notifications + PII flaws cleared. Remaining WARNs are acceptable-by-design (`auth_village_id`/`complete_assignment` are authz-guarded RPCs returning only the caller's own data) + the leaked-password toggle (enable in dashboard).
 - **Files Changed**: `supabase/migrations/008_multi_village_tenancy.sql` (new), `src/lib/actions/{residents,projects}.ts`, `src/lib/types/database.ts`
 
+### Action: V2 Phase 3 seed + impact report + Dani handoff
+- **AI Agent Used**: Claude (Opus)
+- **Result**:
+  - **Realistic seed** (`supabase/seed_v2.sql`, applied): replaces the ~IDR 1-trillion junk with 96 village-scale projects (6 curated showcase + 90 portfolio for chart-density testing), budgets ≤ ~155M IDR, ~2.1B total revenue, full lifecycle (57 active / 63 completed with completed_at), 26 delayed + 36 understaffed for the decision-layer demo.
+  - Added `getImpactReport()` to `reports.ts` (Village-Head persona: residents employed, income generated, participation rate, hours contributed).
+  - **Dani handoff**: `src/lib/fixtures/reports.fixtures.ts` (typechecked mock data for offline UI dev) + `.planning/DANI_HANDOFF.md` (data contract, searchParams convention, components + Props, i18n keys, registration-model change, gotchas).
+  - Abdullah's workstream complete on `feature/v2-mis-core` (8 migrations, metrics engine, lifecycle, auth, tenancy, seed). Ready to merge to `main`.
+- **Files Changed**: `supabase/seed_v2.sql` (new), `src/lib/queries/reports.ts`, `src/lib/fixtures/reports.fixtures.ts` (new), `.planning/DANI_HANDOFF.md` (new)
+

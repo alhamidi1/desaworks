@@ -600,3 +600,45 @@ export async function getRevenueReport(opts: ReportOptions = {}): Promise<Revenu
     records,
   };
 }
+
+// ============================================================================
+// Village-Head impact report (read-only community-impact dashboard)
+// ============================================================================
+export interface ImpactReport {
+  residentsEmployed: number; // distinct residents ever given real (non-void) work
+  totalResidents: number;
+  participationRate: number; // employed / total residents (%)
+  incomeGenerated: number; // total revenue booked (proxy for village income)
+  activeProjects: number;
+  completedProjects: number;
+  totalHoursContributed: number;
+}
+
+export async function getImpactReport(): Promise<ImpactReport> {
+  const supabase = await createClient();
+  const [metricsRes, assignmentsRes, residentsRes, hoursRes] = await Promise.all([
+    supabase.from('project_metrics_v').select('status, total_revenue'),
+    supabase.from('assignments').select('resident_id, status'),
+    supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'resident'),
+    supabase.from('progress_updates').select('hours_worked'),
+  ]);
+
+  const metricRows = (metricsRes.data ?? []) as { status: ProjectStatus; total_revenue: string | number }[];
+  const assignments = (assignmentsRes.data ?? []) as { resident_id: string; status: string }[];
+  const totalResidents = residentsRes.count ?? 0;
+
+  const employed = new Set(assignments.filter((a) => a.status !== 'void').map((a) => a.resident_id)).size;
+  const incomeGenerated = metricRows.reduce((s, m) => s + Number(m.total_revenue), 0);
+  const totalHoursContributed =
+    Math.round(((hoursRes.data ?? []) as { hours_worked: number | string }[]).reduce((s, h) => s + Number(h.hours_worked ?? 0), 0) * 10) / 10;
+
+  return {
+    residentsEmployed: employed,
+    totalResidents,
+    participationRate: totalResidents > 0 ? Math.round((employed / totalResidents) * 1000) / 10 : 0,
+    incomeGenerated,
+    activeProjects: metricRows.filter((m) => m.status === 'open' || m.status === 'in_progress').length,
+    completedProjects: metricRows.filter((m) => m.status === 'completed').length,
+    totalHoursContributed,
+  };
+}
