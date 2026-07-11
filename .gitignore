@@ -10,6 +10,8 @@
 !.yarn/releases
 !.yarn/versions
 
+/node_modules
+
 # testing
 /coverage
 
@@ -44,3 +46,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# assignment reports
+/reports-assignment
+
+# claude
+.claude
+.agents
+skills-lock.json
+.mcp.json
