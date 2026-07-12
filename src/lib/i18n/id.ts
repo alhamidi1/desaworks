@@ -330,6 +330,30 @@ const id = {
     managerPrivacy: 'Warga menyetujui Kebijakan Privasi',
   },
 
+  // Table headers
+  table: {
+    worker: 'Pekerja',
+    hours: 'Jam',
+    tasks: 'Tugas',
+    latestProgress: 'Kemajuan Terbaru',
+    status: 'Status',
+    project: 'Proyek',
+    completion: 'Penyelesaian',
+    workers: 'Pekerja',
+    active: 'Aktif',
+    noData: 'Belum ada data',
+    timeline: 'Jadwal',
+  },
+
+  // Resident availability self-service
+  availability: {
+    title: 'Ketersediaan',
+    available: 'Tersedia',
+    unavailable: 'Tidak Tersedia',
+    saving: 'Menyimpan...',
+    desc: 'Atur apakah Anda siap menerima proyek baru.',
+  },
+
   // Common
   common: {
     loading: 'Memuat...',

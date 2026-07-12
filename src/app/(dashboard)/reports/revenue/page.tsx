@@ -136,11 +136,10 @@ export default async function RevenueReportPage() {
               </svg>
               <div className="text-sm text-amber-800">
                 <p className="font-medium">{proj.project.name}</p>
-                <p className="mt-0.5">{proj.warning}</p>
+                <p className="mt-0.5">{t('alert.overBudget', { pct: proj.revenueVsBudgetPct ?? 0 })}</p>
                 <p className="mt-0.5 text-xs text-amber-600">
-                  Revenue: {formatIDR(proj.totalRevenue)} / Budget:{' '}
-                  {formatIDR(Number(proj.project.budget))} (
-                  {proj.budgetUtilization}%)
+                  {t('project.revenue')}: {formatIDR(proj.totalRevenue)} · {t('project.budget')}:{' '}
+                  {formatIDR(Number(proj.project.budget))} ({proj.budgetUtilization}%)
                 </p>
               </div>
             </div>

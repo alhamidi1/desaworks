@@ -330,6 +330,30 @@ const en: TranslationDict = {
     managerPrivacy: 'Resident agrees to the Privacy Policy',
   },
 
+  // Table headers
+  table: {
+    worker: 'Worker',
+    hours: 'Hours',
+    tasks: 'Tasks',
+    latestProgress: 'Latest Progress',
+    status: 'Status',
+    project: 'Project',
+    completion: 'Completion',
+    workers: 'Workers',
+    active: 'Active',
+    noData: 'No data',
+    timeline: 'Timeline',
+  },
+
+  // Resident availability self-service
+  availability: {
+    title: 'Availability',
+    available: 'Available',
+    unavailable: 'Unavailable',
+    saving: 'Saving...',
+    desc: 'Set whether you are ready to take on new projects.',
+  },
+
   // Common
   common: {
     loading: 'Loading...',

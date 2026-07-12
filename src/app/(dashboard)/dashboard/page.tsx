@@ -30,7 +30,7 @@ export default async function DashboardPage({
   // Get user profile role
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
-    .select('full_name, role')
+    .select('full_name, role, availability')
     .eq('id', user.id)
     .single();
 
@@ -146,6 +146,8 @@ export default async function DashboardPage({
   return (
     <ResidentDashboard
       userName={profile.full_name}
+      residentId={user.id}
+      availability={(profile.availability as 'available' | 'unavailable') ?? 'available'}
       activeAssignments={activeAssignments}
       completedAssignmentsCount={completedAssignmentsCount}
       totalHoursWorked={Math.round(totalHoursWorked * 10) / 10}

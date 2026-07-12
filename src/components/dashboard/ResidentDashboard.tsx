@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { formatDateShort } from '@/lib/i18n';
+import AvailabilityToggle from '@/components/residents/AvailabilityToggle';
 
 export interface ResidentAssignment {
   id: string;
@@ -30,6 +31,8 @@ export interface ResidentNotification {
 
 interface ResidentDashboardProps {
   userName: string;
+  residentId: string;
+  availability: 'available' | 'unavailable';
   activeAssignments: ResidentAssignment[];
   completedAssignmentsCount: number;
   totalHoursWorked: number;
@@ -38,6 +41,8 @@ interface ResidentDashboardProps {
 
 export default function ResidentDashboard({
   userName,
+  residentId,
+  availability,
   activeAssignments,
   completedAssignmentsCount,
   totalHoursWorked,
@@ -73,9 +78,12 @@ export default function ResidentDashboard({
         <div className="absolute -left-8 top-1/2 h-28 w-28 bg-[#f59e0b]/8 blur-[50px] rounded-full" />
 
         <div className="relative z-10 space-y-2">
-          <span className="inline-block text-[10px] font-bold uppercase tracking-[0.2em] text-[#51f7db] bg-[#05c8ae]/15 border border-[#05c8ae]/20 px-2.5 py-1 rounded-full">
-            {t('dashboard.residentPortal')}
-          </span>
+          <div className="flex items-center justify-between gap-3">
+            <span className="inline-block text-[10px] font-bold uppercase tracking-[0.2em] text-[#51f7db] bg-[#05c8ae]/15 border border-[#05c8ae]/20 px-2.5 py-1 rounded-full">
+              {t('dashboard.residentPortal')}
+            </span>
+            <AvailabilityToggle residentId={residentId} initial={availability} />
+          </div>
           <h1 className="text-xl font-bold tracking-tight sm:text-2xl lg:text-3xl">
             {t('dashboard.welcomeBack', { name: userName })}
           </h1>
