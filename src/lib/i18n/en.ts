@@ -294,6 +294,42 @@ const en: TranslationDict = {
     all: 'All',
   },
 
+  // Manager-invite account creation
+  invite: {
+    title: 'Create Resident Account',
+    subtitle: 'Create a login account for a resident, then share the sign-in details.',
+    needIdentifier: 'Enter an email or phone number for the resident login.',
+    consentRequired: 'The resident must agree to the Terms & Privacy Policy.',
+    submit: 'Create Account',
+    creating: 'Creating account...',
+    accountCreated: 'Account Created',
+    relayNote: 'Give these login details to the resident. The password is shown only once.',
+    loginEmail: 'Login Email',
+    tempPassword: 'Temporary Password',
+    copy: 'Copy',
+    copied: 'Copied!',
+    shareWa: 'Share via WhatsApp',
+    createAnother: 'Create Another',
+  },
+
+  // Join requests (public intake → manager approval)
+  requests: {
+    title: 'Join Requests',
+    none: 'No join requests yet.',
+    approve: 'Approve',
+    reject: 'Reject',
+    approving: 'Processing...',
+    loading: 'Loading requests...',
+  },
+
+  // Consent checkboxes
+  consent: {
+    tos: 'I agree to the Terms of Service',
+    privacy: 'I agree to the Privacy Policy',
+    managerTos: 'Resident agrees to the Terms of Service',
+    managerPrivacy: 'Resident agrees to the Privacy Policy',
+  },
+
   // Common
   common: {
     loading: 'Loading...',

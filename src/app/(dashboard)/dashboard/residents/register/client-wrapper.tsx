@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import RegistrationForm from '@/components/residents/RegistrationForm';
+import ManagerInviteForm from '@/components/residents/ManagerInviteForm';
+import JoinRequestsList from '@/components/residents/JoinRequestsList';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 export function RegisterPageClient() {
   const { t } = useLanguage();
-  const [tab, setTab] = useState<'manual' | 'link'>('manual');
+  const [tab, setTab] = useState<'manual' | 'link' | 'requests'>('manual');
   const [copied, setCopied] = useState(false);
   const [publicLink, setPublicLink] = useState('');
   const [whatsappMsg, setWhatsappMsg] = useState('');
@@ -72,23 +73,34 @@ export function RegisterPageClient() {
             Kirim via WhatsApp
           </span>
         </button>
+        <button
+          onClick={() => setTab('requests')}
+          className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
+            tab === 'requests' ? 'bg-white text-[#1a1d23] shadow-sm' : 'text-[#868e96] hover:text-[#495057]'
+          }`}
+        >
+          {t('requests.title')}
+        </button>
       </div>
 
-      {/* Manual tab */}
+      {/* Manual — create resident account */}
       {tab === 'manual' && (
-        <div className="rounded-3xl border border-[#e9ecef] bg-white p-6 sm:p-8 shadow-sm">
-          <div className="mb-6 flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[#05c8ae] to-[#058074] flex items-center justify-center flex-shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 w-5 text-white">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm font-bold text-[#1a1d23]">Tambah Warga Secara Manual</p>
-              <p className="text-xs text-[#868e96]">Petugas mengisi data warga langsung ke dalam sistem</p>
-            </div>
+        <div className="nm-raised p-6 sm:p-8">
+          <div className="mb-6">
+            <p className="text-sm font-bold text-ink">{t('invite.title')}</p>
+            <p className="text-xs text-ink-soft">{t('invite.subtitle')}</p>
           </div>
-          <RegistrationForm />
+          <ManagerInviteForm />
+        </div>
+      )}
+
+      {/* Join requests */}
+      {tab === 'requests' && (
+        <div className="nm-raised p-6 sm:p-8">
+          <div className="mb-4">
+            <p className="text-sm font-bold text-ink">{t('requests.title')}</p>
+          </div>
+          <JoinRequestsList />
         </div>
       )}
 

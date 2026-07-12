@@ -22,6 +22,8 @@ export default function RegistrationForm({ residentId, isPublic = false }: Regis
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [tos, setTos] = useState(false);
+  const [privacy, setPrivacy] = useState(false);
 
   useEffect(() => {
     fetch('/api/skills')
@@ -32,6 +34,10 @@ export default function RegistrationForm({ residentId, isPublic = false }: Regis
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (!residentId && (!tos || !privacy)) {
+      setError(t('invite.consentRequired'));
+      return;
+    }
     setLoading(true);
 
     try {
@@ -40,8 +46,8 @@ export default function RegistrationForm({ residentId, isPublic = false }: Regis
         email,
         phone,
         address,
-        agreed_to_tos: true,
-        agreed_to_privacy: true,
+        agreed_to_tos: residentId ? true : tos,
+        agreed_to_privacy: residentId ? true : privacy,
         skills: selected.map((s) => ({
           skill_id: s.skill_id,
           experience_years: s.experience_years,
@@ -177,6 +183,20 @@ export default function RegistrationForm({ residentId, isPublic = false }: Regis
         <p className="text-xs text-[#868e96]">{t('register.skillsDesc')}</p>
         <SkillSelector availableSkills={skills} value={selected} onChange={setSelected} />
       </div>
+
+      {/* Consent (required for new registrations) */}
+      {!residentId && (
+        <div className="space-y-2 rounded-xl bg-[#f8f9fa] p-3">
+          <label className="flex items-start gap-2.5 text-sm text-[#1a1d23]">
+            <input type="checkbox" checked={tos} onChange={(e) => setTos(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[#05c8ae]" />
+            {t('consent.tos')}
+          </label>
+          <label className="flex items-start gap-2.5 text-sm text-[#1a1d23]">
+            <input type="checkbox" checked={privacy} onChange={(e) => setPrivacy(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[#05c8ae]" />
+            {t('consent.privacy')}
+          </label>
+        </div>
+      )}
 
       {/* Submit */}
       <button

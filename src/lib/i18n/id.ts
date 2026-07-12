@@ -294,6 +294,42 @@ const id = {
     all: 'Semua',
   },
 
+  // Manager-invite account creation
+  invite: {
+    title: 'Buat Akun Warga',
+    subtitle: 'Buatkan akun login untuk warga, lalu bagikan info masuknya.',
+    needIdentifier: 'Isi email atau nomor HP untuk login warga.',
+    consentRequired: 'Warga harus menyetujui Ketentuan & Kebijakan Privasi.',
+    submit: 'Buat Akun',
+    creating: 'Membuat akun...',
+    accountCreated: 'Akun Berhasil Dibuat',
+    relayNote: 'Berikan info login ini kepada warga. Kata sandi hanya ditampilkan sekali.',
+    loginEmail: 'Email Login',
+    tempPassword: 'Kata Sandi Sementara',
+    copy: 'Salin',
+    copied: 'Disalin!',
+    shareWa: 'Bagikan via WhatsApp',
+    createAnother: 'Buat Akun Lain',
+  },
+
+  // Join requests (public intake → manager approval)
+  requests: {
+    title: 'Permintaan Bergabung',
+    none: 'Belum ada permintaan bergabung.',
+    approve: 'Setujui',
+    reject: 'Tolak',
+    approving: 'Memproses...',
+    loading: 'Memuat permintaan...',
+  },
+
+  // Consent checkboxes
+  consent: {
+    tos: 'Saya menyetujui Ketentuan Layanan',
+    privacy: 'Saya menyetujui Kebijakan Privasi',
+    managerTos: 'Warga menyetujui Ketentuan Layanan',
+    managerPrivacy: 'Warga menyetujui Kebijakan Privasi',
+  },
+
   // Common
   common: {
     loading: 'Memuat...',
