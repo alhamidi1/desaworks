@@ -48,7 +48,6 @@ function AxisTick({ x, y, payload }: { x?: number; y?: number; payload?: { value
 
 export function ProjectCompletionChart({ data }: { data: ProjectCompletionDatum[] }) {
   const { t } = useLanguage();
-  if (typeof window !== 'undefined') console.log('PCCHART_DATA', JSON.stringify(data));
 
   if (!data.length) {
     return <div className="nm-raised grid min-h-[240px] place-items-center p-6 text-sm text-ink-soft">{t('chart.noData')}</div>;
@@ -71,7 +70,7 @@ export function ProjectCompletionChart({ data }: { data: ProjectCompletionDatum[
               <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tickLine={false} axisLine={false} stroke={AXIS} fontSize={11} width={42} tickFormatter={(v) => `${v}%`} />
               <ReferenceLine y={100} stroke={chartPalette.ref} strokeDasharray="3 3" />
               <Tooltip cursor={{ fill: 'rgba(15,23,42,0.04)' }} contentStyle={tooltipStyle} formatter={(v: unknown) => [`${Math.round(Number(v))}%`, t('chart.completion')]} />
-              <Bar dataKey="completionPercentage" fill="url(#pcFill)" radius={[8, 8, 2, 2]} maxBarSize={48} />
+              <Bar dataKey="completionPercentage" fill="url(#pcFill)" radius={[8, 8, 2, 2]} maxBarSize={48} isAnimationActive={false} />
             </BarChart>
           </ChartBox>
         </div>
