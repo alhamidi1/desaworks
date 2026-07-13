@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from 'react';
 import type { Skill } from '@/lib/types/database';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 type SelectedSkill = {
   skill_id: string;
@@ -10,12 +11,6 @@ type SelectedSkill = {
   experience_years?: number;
   proficiency_level?: 'beginner' | 'intermediate' | 'advanced' | null;
   notes?: string | null;
-};
-
-const PROFICIENCY_LABELS = {
-  beginner: 'Pemula',
-  intermediate: 'Menengah',
-  advanced: 'Mahir',
 };
 
 export default function SkillSelector({
@@ -27,6 +22,7 @@ export default function SkillSelector({
   value: SelectedSkill[];
   onChange: (v: SelectedSkill[]) => void;
 }) {
+  const { t } = useLanguage();
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
 
@@ -71,7 +67,7 @@ export default function SkillSelector({
           onChange={(e) => { setQuery(e.target.value); setIsOpen(true); }}
           onFocus={() => setIsOpen(true)}
           onBlur={() => setTimeout(() => setIsOpen(false), 150)}
-          placeholder="Cari keahlian (mis: pertanian, kayu...)"
+          placeholder={t('skillSelector.searchPlaceholder')}
           className="w-full rounded-xl border border-neutral-200 bg-white pl-9 pr-4 py-3 text-sm text-ink placeholder:text-neutral-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors"
         />
         {isOpen && unselectedFiltered.length > 0 && (
@@ -115,7 +111,7 @@ export default function SkillSelector({
                   type="button"
                   onClick={() => removeSkill(sel.skill_id)}
                   className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500 transition-colors"
-                  aria-label="Hapus keahlian"
+                  aria-label={t('skillSelector.removeAria')}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -125,7 +121,7 @@ export default function SkillSelector({
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">Tahun Pengalaman</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">{t('skillSelector.yearsExp')}</label>
                   <input
                     type="number"
                     min={0}
@@ -136,15 +132,15 @@ export default function SkillSelector({
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">Tingkat</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">{t('skillSelector.level')}</label>
                   <select
                     value={sel.proficiency_level ?? ''}
                     onChange={(e) => updateSkill(sel.skill_id, { proficiency_level: (e.target.value as any) || null })}
                     className="w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm text-ink focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors"
                   >
-                    <option value="">Pilih tingkat</option>
-                    {Object.entries(PROFICIENCY_LABELS).map(([val, label]) => (
-                      <option key={val} value={val}>{label}</option>
+                    <option value="">{t('skillSelector.selectLevel')}</option>
+                    {['beginner', 'intermediate', 'advanced'].map((val) => (
+                      <option key={val} value={val}>{t(`proficiency.${val}` as any)}</option>
                     ))}
                   </select>
                 </div>
@@ -155,7 +151,7 @@ export default function SkillSelector({
       )}
 
       {value.length === 0 && (
-        <p className="text-xs text-neutral-400 text-center py-2">Belum ada keahlian dipilih. Cari dan tambahkan di atas.</p>
+        <p className="text-xs text-neutral-400 text-center py-2">{t('skillSelector.emptySelected')}</p>
       )}
     </div>
   );

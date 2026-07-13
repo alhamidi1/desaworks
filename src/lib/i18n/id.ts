@@ -485,9 +485,45 @@ const id = {
     dateHeader: 'Tanggal',
     recordedByHeader: 'Dicatat Oleh',
   },
+
+  // Register Resident Page
+  registerPage: {
+    category: 'Manajemen Warga',
+    title: 'Daftar Warga Baru',
+    subtitle: 'Tambahkan warga secara manual atau kirimkan tautan pendaftaran melalui WhatsApp.',
+    tabManual: 'Isi Manual',
+    tabWhatsApp: 'Kirim via WhatsApp',
+    tabRequests: 'Permintaan Gabung',
+    shareTitle: 'Kirim Tautan Pendaftaran',
+    shareSubtitle: 'Warga mengisi sendiri formulir dari HP mereka',
+    howItWorks: 'Cara Kerja',
+    step1: 'Salin tautan di bawah ini',
+    step2: 'Kirim ke warga melalui WhatsApp',
+    step3: 'Warga buka tautan dan isi formulir dari HP',
+    step4: 'Data langsung masuk ke sistem DesaWorks',
+    linkTitle: 'Tautan Pendaftaran',
+    copy: 'Salin',
+    copied: 'Disalin!',
+    shareBtn: 'Bagikan via WhatsApp',
+    shareFooter: 'Tautan ini bisa dibuka oleh siapa saja yang menerimanya.',
+    guideMessage: 'Halo! Silakan daftarkan diri Anda ke sistem DesaWorks melalui tautan berikut:\n{link}\n\nIsi formulir dengan data lengkap Anda. Terima kasih.',
+  },
+
+  // Skill Selector Component
+  skillSelector: {
+    searchPlaceholder: 'Cari keahlian (mis: pertanian, kayu...)',
+    removeAria: 'Hapus keahlian',
+    yearsExp: 'Tahun Pengalaman',
+    level: 'Tingkat',
+    selectLevel: 'Pilih tingkat',
+    notesLabel: 'Catatan Keahlian (opsional)',
+    notesPlaceholder: 'Misalnya: sertifikasi, proyek sebelumnya...',
+    emptySelected: 'Belum ada keahlian dipilih. Cari dan tambahkan di atas.',
+  },
 } as const;
 
 export default id;
+
 
 // Use a recursive type that widens literal strings to `string`
 // so the English dict can have different values

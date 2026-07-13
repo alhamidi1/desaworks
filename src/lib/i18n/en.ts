@@ -485,6 +485,42 @@ const en: TranslationDict = {
     dateHeader: 'Date',
     recordedByHeader: 'Recorded By',
   },
+
+  // Register Resident Page
+  registerPage: {
+    category: 'Resident Management',
+    title: 'Register New Resident',
+    subtitle: 'Add residents manually or send a registration link via WhatsApp.',
+    tabManual: 'Manual Intake',
+    tabWhatsApp: 'Share Link',
+    tabRequests: 'Join Requests',
+    shareTitle: 'Send Registration Link',
+    shareSubtitle: 'Residents fill in the form themselves from their phones',
+    howItWorks: 'How it works',
+    step1: 'Copy the link below',
+    step2: 'Send to residents via WhatsApp',
+    step3: 'Residents open the link and fill the form',
+    step4: 'Data is instantly saved in DesaWorks',
+    linkTitle: 'Registration Link',
+    copy: 'Copy',
+    copied: 'Copied!',
+    shareBtn: 'Share via WhatsApp',
+    shareFooter: 'Anyone who receives this link can register.',
+    guideMessage: 'Hello! Please register your account for DesaWorks using the following link:\n{link}\n\nFill in the form with your complete details. Thank you.',
+  },
+
+  // Skill Selector Component
+  skillSelector: {
+    searchPlaceholder: 'Search skills (e.g. agriculture, wood...)',
+    removeAria: 'Remove skill',
+    yearsExp: 'Years of Experience',
+    level: 'Proficiency Level',
+    selectLevel: 'Select level',
+    notesLabel: 'Skill Notes (optional)',
+    notesPlaceholder: 'e.g. certifications, past projects...',
+    emptySelected: 'No skills selected yet. Search and add above.',
+  },
 } as const;
 
 export default en;
+
