@@ -73,6 +73,8 @@ export function ResidentsDirectory({ residents }: Props) {
         setSelectedSkills(
           (profile.resident_skills || []).map((rs: any) => ({
             skill_id: rs.skill_id,
+            name: rs.skill?.name ?? 'Unknown Skill',
+            category: rs.skill?.category ?? '',
             experience_years: rs.experience_years,
             proficiency_level: rs.proficiency_level,
             notes: rs.notes,
