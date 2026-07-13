@@ -84,6 +84,8 @@ export default function RegistrationForm({ residentId, isPublic = false }: Regis
     }
   }
 
+  const isSubmitDisabled = loading || (!residentId && (!tos || !privacy));
+
   if (success) {
     return (
       <div className="flex flex-col items-center justify-center py-10 text-center gap-4">
@@ -201,8 +203,8 @@ export default function RegistrationForm({ residentId, isPublic = false }: Regis
       {/* Submit */}
       <button
         type="submit"
-        disabled={loading}
-        className="w-full rounded-xl bg-primary-600 px-6 py-3.5 text-sm font-bold text-white hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
+        disabled={isSubmitDisabled}
+        className="w-full rounded-xl bg-primary-600 px-6 py-3.5 text-sm font-bold text-white hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 disabled:bg-neutral-200 disabled:text-neutral-400 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
       >
         {loading ? (
           <span className="flex items-center justify-center gap-2">

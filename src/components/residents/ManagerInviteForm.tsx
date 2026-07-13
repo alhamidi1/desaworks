@@ -72,6 +72,8 @@ export default function ManagerInviteForm() {
     setPrivacy(false);
   }
 
+  const isSubmitDisabled = loading || !tos || !privacy;
+
   if (result) {
     const origin = typeof window !== 'undefined' ? window.location.origin : '';
     const guide = t('invite.waGuideMessage', {
@@ -169,7 +171,7 @@ export default function ManagerInviteForm() {
         </label>
       </div>
 
-      <button type="submit" disabled={loading} className="nm-pressable w-full rounded-xl bg-primary-600 px-6 py-3.5 text-sm font-bold text-white shadow-md transition hover:bg-primary-700 disabled:opacity-60">
+      <button type="submit" disabled={isSubmitDisabled} className="nm-pressable w-full rounded-xl bg-primary-600 px-6 py-3.5 text-sm font-bold text-white shadow-md transition hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 disabled:cursor-not-allowed disabled:shadow-none">
         {loading ? t('invite.creating') : t('invite.submit')}
       </button>
     </form>
