@@ -10,7 +10,7 @@ function CreateProjectLoading({ locale }: { locale: Locale }) {
   const t = createT(locale);
   return (
     <div className="space-y-4">
-      <div className="h-64 animate-pulse rounded-lg border border-[#e9ecef] bg-zinc-100" />
+      <div className="h-64 animate-pulse rounded-lg border border-neutral-200 bg-zinc-100" />
       <p className="text-sm text-zinc-500">{t('project.loadingForm')}</p>
     </div>
   );

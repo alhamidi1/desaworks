@@ -9,7 +9,7 @@ import { StatusDistributionChart } from '@/components/dashboard/StatusDistributi
 import { ProgressOverTimeChart } from '@/components/dashboard/ProgressOverTimeChart';
 import { ActivityFeed } from '@/components/monitoring/ActivityFeed';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
-import { formatCurrency } from '@/lib/i18n';
+import { formatCurrencyCompact } from '@/lib/i18n';
 import type { ImpactReport, ManagerDashboardReport } from '@/lib/queries/reports';
 
 interface ManagerDashboardProps {
@@ -50,7 +50,7 @@ export function ManagerDashboard({ report, impact }: ManagerDashboardProps) {
         />
         <StatsCard
           title={t('impact.incomeGenerated')}
-          value={impact ? formatCurrency(impact.incomeGenerated) : 'Rp 0'}
+          value={impact ? formatCurrencyCompact(impact.incomeGenerated) : 'Rp 0'}
           accent="success"
         />
         <StatsCard

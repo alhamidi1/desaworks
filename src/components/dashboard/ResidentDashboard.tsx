@@ -79,8 +79,8 @@ export default function ResidentDashboard({
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-fade-in">
-      {/* Welcome Header — clean branded deep-teal banner */}
-      <div className="rounded-2xl bg-gradient-to-br from-primary-800 to-primary-900 text-white p-5 sm:p-8">
+      {/* Welcome Header — original dark banner color */}
+      <div className="rounded-2xl bg-gradient-to-br from-[#16191d] via-[#1a2332] to-[#0d534d] text-white p-5 sm:p-8">
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-3">
             <span className="inline-block text-[10px] font-bold uppercase tracking-[0.2em] text-primary-200 bg-white/10 border border-white/20 px-2.5 py-1 rounded-full">

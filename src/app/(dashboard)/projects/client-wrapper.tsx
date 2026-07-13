@@ -25,8 +25,8 @@ export function ProjectsPageClient({ projects, error }: Props) {
     <main className="mx-auto max-w-4xl animate-fade-in">
       <header className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-[#1a1d23]">{t('project.title')}</h1>
-          <p className="mt-1 text-sm text-[#868e96]">
+          <h1 className="text-xl sm:text-2xl font-bold text-ink">{t('project.title')}</h1>
+          <p className="mt-1 text-sm text-ink-soft">
             {t('project.subtitle')}
           </p>
         </div>
@@ -42,17 +42,17 @@ export function ProjectsPageClient({ projects, error }: Props) {
       </header>
 
       {error ? (
-        <div className="rounded-2xl border border-[#f43f5e]/20 bg-[#f43f5e]/5 p-6 text-center">
-          <p className="font-bold text-[#e11d48]">{t('project.failedToLoad')}</p>
-          <p className="mt-1 text-sm text-[#f43f5e]">{error}</p>
+        <div className="rounded-2xl border border-danger/20 bg-danger/5 p-6 text-center">
+          <p className="font-bold text-danger">{t('project.failedToLoad')}</p>
+          <p className="mt-1 text-sm text-danger">{error}</p>
         </div>
       ) : projects.length === 0 ? (
-        <div className="rounded-2xl border-2 border-dashed border-[#e9ecef] p-12 text-center bg-white">
-          <svg className="mx-auto h-14 w-14 text-[#dee2e6]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <div className="rounded-2xl border-2 border-dashed border-neutral-200 p-12 text-center bg-white">
+          <svg className="mx-auto h-14 w-14 text-neutral-300" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
           </svg>
-          <p className="mt-4 font-bold text-[#1a1d23]">{t('project.noProjects')}</p>
-          <p className="mt-1 text-sm text-[#868e96]">
+          <p className="mt-4 font-bold text-ink">{t('project.noProjects')}</p>
+          <p className="mt-1 text-sm text-ink-soft">
             {t('project.noProjectsDesc')}
           </p>
           <Link
@@ -68,8 +68,8 @@ export function ProjectsPageClient({ projects, error }: Props) {
             <SearchInput value={query} onChange={setQuery} placeholder={t('project.searchPlaceholder')} />
           </div>
           {total === 0 ? (
-            <div className="rounded-2xl border-2 border-dashed border-[#e9ecef] bg-white p-10 text-center">
-              <p className="text-sm text-[#868e96]">{t('common.noResults')}</p>
+            <div className="rounded-2xl border-2 border-dashed border-neutral-200 bg-white p-10 text-center">
+              <p className="text-sm text-ink-soft">{t('common.noResults')}</p>
             </div>
           ) : (
             <div className="grid gap-4">

@@ -93,10 +93,10 @@ export default function RegistrationForm({ residentId, isPublic = false }: Regis
           </svg>
         </div>
         <div>
-          <h3 className="text-lg font-bold text-[#1a1d23]">
+          <h3 className="text-lg font-bold text-ink">
             {isPublic ? t('register.successTitle') : t('register.saveSuccessTitle')}
           </h3>
-          <p className="mt-1 text-sm text-[#868e96]">
+          <p className="mt-1 text-sm text-ink-soft">
             {isPublic
               ? t('register.publicSuccessDesc')
               : t('register.managerSuccessDesc')}
@@ -105,7 +105,7 @@ export default function RegistrationForm({ residentId, isPublic = false }: Regis
         {!isPublic && (
           <button
             onClick={() => setSuccess(false)}
-            className="rounded-xl border border-[#e9ecef] px-5 py-2.5 text-sm font-semibold text-[#495057] hover:border-[#05c8ae] hover:text-[#05c8ae] transition-colors"
+            className="rounded-xl border border-neutral-200 px-5 py-2.5 text-sm font-semibold text-ink-soft hover:border-primary-500 hover:text-primary-500 transition-colors"
           >
             {t('register.registerAnother')}
           </button>
@@ -127,7 +127,7 @@ export default function RegistrationForm({ residentId, isPublic = false }: Regis
 
       {/* Full name */}
       <div className="space-y-1.5">
-        <label className="block text-sm font-semibold text-[#1a1d23]">
+        <label className="block text-sm font-semibold text-ink">
           {t('register.fullName')} <span className="text-red-500">*</span>
         </label>
         <input
@@ -135,13 +135,13 @@ export default function RegistrationForm({ residentId, isPublic = false }: Regis
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
           placeholder={t('register.fullNamePlaceholder')}
-          className="w-full rounded-xl border border-[#e9ecef] bg-white px-4 py-3 text-sm text-[#1a1d23] placeholder:text-[#adb5bd] focus:border-[#05c8ae] focus:outline-none focus:ring-2 focus:ring-[#05c8ae]/20 transition-colors"
+          className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-ink placeholder:text-neutral-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors"
         />
       </div>
 
       {/* Email */}
       <div className="space-y-1.5">
-        <label className="block text-sm font-semibold text-[#1a1d23]">
+        <label className="block text-sm font-semibold text-ink">
           {t('register.email')} <span className="text-red-500">*</span>
         </label>
         <input
@@ -150,49 +150,49 @@ export default function RegistrationForm({ residentId, isPublic = false }: Regis
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder={t('register.emailPlaceholder')}
-          className="w-full rounded-xl border border-[#e9ecef] bg-white px-4 py-3 text-sm text-[#1a1d23] placeholder:text-[#adb5bd] focus:border-[#05c8ae] focus:outline-none focus:ring-2 focus:ring-[#05c8ae]/20 transition-colors"
+          className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-ink placeholder:text-neutral-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors"
         />
       </div>
 
       {/* Phone + Address */}
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <label className="block text-sm font-semibold text-[#1a1d23]">{t('register.phone')}</label>
+          <label className="block text-sm font-semibold text-ink">{t('register.phone')}</label>
           <input
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder={t('register.phonePlaceholder')}
-            className="w-full rounded-xl border border-[#e9ecef] bg-white px-4 py-3 text-sm text-[#1a1d23] placeholder:text-[#adb5bd] focus:border-[#05c8ae] focus:outline-none focus:ring-2 focus:ring-[#05c8ae]/20 transition-colors"
+            className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-ink placeholder:text-neutral-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors"
           />
         </div>
         <div className="space-y-1.5">
-          <label className="block text-sm font-semibold text-[#1a1d23]">{t('register.address')}</label>
+          <label className="block text-sm font-semibold text-ink">{t('register.address')}</label>
           <input
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             placeholder={t('register.addressPlaceholder')}
-            className="w-full rounded-xl border border-[#e9ecef] bg-white px-4 py-3 text-sm text-[#1a1d23] placeholder:text-[#adb5bd] focus:border-[#05c8ae] focus:outline-none focus:ring-2 focus:ring-[#05c8ae]/20 transition-colors"
+            className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-ink placeholder:text-neutral-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-colors"
           />
         </div>
       </div>
 
       {/* Skills */}
       <div className="space-y-1.5">
-        <label className="block text-sm font-semibold text-[#1a1d23]">{t('register.skills')}</label>
-        <p className="text-xs text-[#868e96]">{t('register.skillsDesc')}</p>
+        <label className="block text-sm font-semibold text-ink">{t('register.skills')}</label>
+        <p className="text-xs text-ink-soft">{t('register.skillsDesc')}</p>
         <SkillSelector availableSkills={skills} value={selected} onChange={setSelected} />
       </div>
 
       {/* Consent (required for new registrations) */}
       {!residentId && (
-        <div className="space-y-2 rounded-xl bg-[#f8f9fa] p-3">
-          <label className="flex items-start gap-2.5 text-sm text-[#1a1d23]">
-            <input type="checkbox" checked={tos} onChange={(e) => setTos(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[#05c8ae]" />
+        <div className="space-y-2 rounded-xl bg-neutral-50 p-3">
+          <label className="flex items-start gap-2.5 text-sm text-ink">
+            <input type="checkbox" checked={tos} onChange={(e) => setTos(e.target.checked)} className="mt-0.5 h-4 w-4 accent-primary-500" />
             {t('consent.tos')}
           </label>
-          <label className="flex items-start gap-2.5 text-sm text-[#1a1d23]">
-            <input type="checkbox" checked={privacy} onChange={(e) => setPrivacy(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[#05c8ae]" />
+          <label className="flex items-start gap-2.5 text-sm text-ink">
+            <input type="checkbox" checked={privacy} onChange={(e) => setPrivacy(e.target.checked)} className="mt-0.5 h-4 w-4 accent-primary-500" />
             {t('consent.privacy')}
           </label>
         </div>

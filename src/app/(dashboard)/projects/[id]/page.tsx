@@ -17,8 +17,8 @@ const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-
 function ProjectDetailLoading() {
   return (
     <div className="space-y-4 animate-pulse">
-      <div className="h-48 rounded-2xl border border-[#e9ecef] bg-[#f1f3f5]" />
-      <div className="h-32 rounded-2xl border border-[#e9ecef] bg-[#f1f3f5]" />
+      <div className="h-48 rounded-2xl border border-neutral-200 bg-neutral-100" />
+      <div className="h-32 rounded-2xl border border-neutral-200 bg-neutral-100" />
     </div>
   );
 }
@@ -85,12 +85,12 @@ async function ProjectDetailContent({ id, locale }: { id: string; locale: Locale
   return (
     <div className="space-y-5">
       {/* Project header */}
-      <section className="rounded-2xl border border-[#e9ecef] bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold text-[#1a1d23] leading-snug">{project.name}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-ink leading-snug">{project.name}</h1>
             {project.description && (
-              <p className="mt-2 text-sm leading-6 text-[#868e96]">{project.description}</p>
+              <p className="mt-2 text-sm leading-6 text-ink-soft">{project.description}</p>
             )}
           </div>
           <ProjectStatusBadge status={project.status} />
@@ -98,40 +98,40 @@ async function ProjectDetailContent({ id, locale }: { id: string; locale: Locale
 
         <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2">
           <div>
-            <dt className="text-[10px] font-bold uppercase tracking-wider text-[#adb5bd]">{t('project.schedule')}</dt>
-            <dd className="mt-1 font-medium text-[#1a1d23]">
+            <dt className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">{t('project.schedule')}</dt>
+            <dd className="mt-1 font-medium text-ink">
               {formatDate(project.start_date, locale)} → {formatDate(project.end_date, locale)}
             </dd>
           </div>
           <div>
-            <dt className="text-[10px] font-bold uppercase tracking-wider text-[#adb5bd]">{t('project.workersNeeded')}</dt>
-            <dd className="mt-1 font-bold text-[#1a1d23] text-lg">{project.workers_needed}</dd>
+            <dt className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">{t('project.workersNeeded')}</dt>
+            <dd className="mt-1 font-bold text-ink text-lg">{project.workers_needed}</dd>
           </div>
           <div>
-            <dt className="text-[10px] font-bold uppercase tracking-wider text-[#adb5bd]">{t('project.budget')}</dt>
-            <dd className="mt-1 font-medium text-[#1a1d23]">{formatCurrency(project.budget)}</dd>
+            <dt className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">{t('project.budget')}</dt>
+            <dd className="mt-1 font-medium text-ink">{formatCurrency(project.budget)}</dd>
           </div>
           <div>
-            <dt className="text-[10px] font-bold uppercase tracking-wider text-[#adb5bd]">{t('project.createdBy')}</dt>
-            <dd className="mt-1 font-medium text-[#1a1d23]">{project.creator?.full_name ?? '—'}</dd>
+            <dt className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">{t('project.createdBy')}</dt>
+            <dd className="mt-1 font-medium text-ink">{project.creator?.full_name ?? '—'}</dd>
           </div>
         </dl>
       </section>
 
       {/* Skill requirements */}
-      <section className="rounded-2xl border border-[#e9ecef] bg-white p-6 shadow-sm">
-        <h2 className="text-base font-bold text-[#1a1d23]">{t('project.skillRequirements')}</h2>
+      <section className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+        <h2 className="text-base font-bold text-ink">{t('project.skillRequirements')}</h2>
         {project.skill_requirements.length === 0 ? (
-          <p className="mt-3 text-sm text-[#868e96]">{t('project.noRequirements')}</p>
+          <p className="mt-3 text-sm text-ink-soft">{t('project.noRequirements')}</p>
         ) : (
           <ul className="mt-3 space-y-2">
             {project.skill_requirements.map((req) => (
               <li
                 key={req.id}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#f8f9fa] px-4 py-3 text-sm"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-neutral-50 px-4 py-3 text-sm"
               >
-                <span className="font-semibold text-[#1a1d23]">{req.skill.name}</span>
-                <span className="text-[#868e96]">
+                <span className="font-semibold text-ink">{req.skill.name}</span>
+                <span className="text-ink-soft">
                   {t('project.min')} {req.min_proficiency} · {req.workers_needed} {t('project.workers')}
                 </span>
               </li>
@@ -141,19 +141,19 @@ async function ProjectDetailContent({ id, locale }: { id: string; locale: Locale
       </section>
 
       {/* Assigned workers */}
-      <section className="rounded-2xl border border-[#e9ecef] bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-base font-bold text-[#1a1d23]">{t('project.assignedWorkers')}</h2>
+            <h2 className="text-base font-bold text-ink">{t('project.assignedWorkers')}</h2>
             {assignments.length > 0 && (
-              <p className="text-xs text-[#868e96] mt-0.5">
+              <p className="text-xs text-ink-soft mt-0.5">
                 {t('project.positionsFilled', { filled: assignments.length, total: project.workers_needed })}
               </p>
             )}
           </div>
           <Link
             href={`/projects/${project.id}/assign`}
-            className="rounded-xl border border-[#e9ecef] bg-white px-4 py-2 text-sm font-semibold text-[#495057] hover:border-[#05c8ae] hover:text-[#05c8ae] transition-colors shadow-sm"
+            className="rounded-xl border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-ink-soft hover:border-primary-500 hover:text-primary-500 transition-colors shadow-sm"
           >
             {t('project.assignWorkerBtn')}
           </Link>
@@ -178,7 +178,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
   return (
     <main className="mx-auto max-w-4xl animate-fade-in">
       <header className="mb-6">
-        <Link href="/projects" className="inline-flex items-center gap-1.5 text-sm text-[#868e96] hover:text-[#05c8ae] transition-colors font-medium">
+        <Link href="/projects" className="inline-flex items-center gap-1.5 text-sm text-ink-soft hover:text-primary-500 transition-colors font-medium">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
           </svg>

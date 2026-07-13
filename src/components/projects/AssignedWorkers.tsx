@@ -14,10 +14,10 @@ interface AssignedWorkersProps {
 }
 
 const statusColors: Record<string, string> = {
-  active: 'bg-[#effefb] text-[#05c8ae]',
+  active: 'bg-primary-50 text-primary-500',
   confirmed: 'bg-blue-50 text-blue-700',
   pending: 'bg-amber-50 text-amber-700',
-  completed: 'bg-[#f8f9fa] text-[#868e96]',
+  completed: 'bg-neutral-50 text-ink-soft',
 };
 
 const statusLabel: Record<string, string> = {
@@ -55,9 +55,9 @@ export function AssignedWorkers({ projectId, assignments, workersNeeded }: Assig
 
   if (assignments.length === 0) {
     return (
-      <div className="mt-4 rounded-xl border-2 border-dashed border-[#e9ecef] p-6 text-center">
-        <p className="text-sm text-[#868e96]">Belum ada pekerja ditugaskan.</p>
-        <p className="text-xs text-[#adb5bd] mt-1">Klik "+ Tugaskan Pekerja" untuk mencocokkan warga dengan proyek ini.</p>
+      <div className="mt-4 rounded-xl border-2 border-dashed border-neutral-200 p-6 text-center">
+        <p className="text-sm text-ink-soft">Belum ada pekerja ditugaskan.</p>
+        <p className="text-xs text-neutral-400 mt-1">Klik "+ Tugaskan Pekerja" untuk mencocokkan warga dengan proyek ini.</p>
       </div>
     );
   }
@@ -70,26 +70,26 @@ export function AssignedWorkers({ projectId, assignments, workersNeeded }: Assig
       {assignments.map((a) => (
         <div
           key={a.id}
-          className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#e9ecef] bg-[#f8f9fa] px-4 py-3"
+          className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3"
         >
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-full bg-primary-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
               {a.resident.full_name?.charAt(0) ?? '?'}
             </div>
             <div>
-              <p className="text-sm font-semibold text-[#1a1d23]">{a.resident.full_name}</p>
-              <p className="text-xs text-[#868e96]">{a.resident.email}</p>
+              <p className="text-sm font-semibold text-ink">{a.resident.full_name}</p>
+              <p className="text-xs text-ink-soft">{a.resident.email}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-            <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusColors[a.status] ?? 'bg-[#f1f3f5] text-[#868e96]'}`}>
+            <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusColors[a.status] ?? 'bg-neutral-100 text-ink-soft'}`}>
               {statusLabel[a.status] ?? a.status}
             </span>
             {a.status !== 'completed' && (
               <button
                 onClick={() => handleVoid(a.id, a.resident.full_name ?? 'pekerja ini')}
                 disabled={voidingId === a.id}
-                className="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-[#adb5bd] hover:bg-red-50 hover:text-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-transparent hover:border-red-200"
+                className="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-neutral-400 hover:bg-red-50 hover:text-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-transparent hover:border-red-200"
                 title="Batalkan penugasan"
               >
                 {voidingId === a.id ? '...' : 'Batalkan'}

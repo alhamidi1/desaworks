@@ -18,7 +18,7 @@ function ProjectsLoading() {
       {[1, 2, 3].map((i) => (
         <div
           key={i}
-          className="h-40 rounded-2xl border border-[#e9ecef] animate-shimmer"
+          className="h-40 rounded-2xl border border-neutral-200 animate-shimmer"
         />
       ))}
     </div>

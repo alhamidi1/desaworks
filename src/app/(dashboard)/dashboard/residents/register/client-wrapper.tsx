@@ -34,21 +34,21 @@ export function RegisterPageClient() {
     <div className="mx-auto max-w-2xl animate-fade-in">
       {/* Header */}
       <div className="mb-6">
-        <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#05c8ae]">Manajemen Warga</p>
-        <h1 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight text-[#1a1d23]">Daftar Warga Baru</h1>
-        <p className="mt-1 text-sm text-[#868e96]">
+        <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-primary-500">Manajemen Warga</p>
+        <h1 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight text-ink">Daftar Warga Baru</h1>
+        <p className="mt-1 text-sm text-ink-soft">
           Tambahkan warga secara manual atau kirimkan tautan pendaftaran melalui WhatsApp.
         </p>
       </div>
 
       {/* Tab switcher */}
-      <div className="mb-6 flex rounded-2xl border border-[#e9ecef] bg-[#f8f9fa] p-1.5 gap-1">
+      <div className="mb-6 flex rounded-2xl border border-neutral-200 bg-neutral-50 p-1.5 gap-1">
         <button
           onClick={() => setTab('manual')}
           className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
             tab === 'manual'
-              ? 'bg-white text-[#1a1d23] shadow-sm'
-              : 'text-[#868e96] hover:text-[#495057]'
+              ? 'bg-white text-ink shadow-sm'
+              : 'text-ink-soft hover:text-ink-soft'
           }`}
         >
           <span className="flex items-center justify-center gap-2">
@@ -62,8 +62,8 @@ export function RegisterPageClient() {
           onClick={() => setTab('link')}
           className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
             tab === 'link'
-              ? 'bg-white text-[#1a1d23] shadow-sm'
-              : 'text-[#868e96] hover:text-[#495057]'
+              ? 'bg-white text-ink shadow-sm'
+              : 'text-ink-soft hover:text-ink-soft'
           }`}
         >
           <span className="flex items-center justify-center gap-2">
@@ -76,7 +76,7 @@ export function RegisterPageClient() {
         <button
           onClick={() => setTab('requests')}
           className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
-            tab === 'requests' ? 'bg-white text-[#1a1d23] shadow-sm' : 'text-[#868e96] hover:text-[#495057]'
+            tab === 'requests' ? 'bg-white text-ink shadow-sm' : 'text-ink-soft hover:text-ink-soft'
           }`}
         >
           {t('requests.title')}
@@ -106,7 +106,7 @@ export function RegisterPageClient() {
 
       {/* WhatsApp link tab */}
       {tab === 'link' && (
-        <div className="rounded-3xl border border-[#e9ecef] bg-white p-6 sm:p-8 shadow-sm space-y-6">
+        <div className="rounded-3xl border border-neutral-200 bg-white p-6 sm:p-8 shadow-sm space-y-6">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-[#25D366] flex items-center justify-center flex-shrink-0">
               {/* WhatsApp icon */}
@@ -115,14 +115,14 @@ export function RegisterPageClient() {
               </svg>
             </div>
             <div>
-              <p className="text-sm font-bold text-[#1a1d23]">Kirim Tautan Pendaftaran</p>
-              <p className="text-xs text-[#868e96]">Warga mengisi sendiri formulir dari HP mereka</p>
+              <p className="text-sm font-bold text-ink">Kirim Tautan Pendaftaran</p>
+              <p className="text-xs text-ink-soft">Warga mengisi sendiri formulir dari HP mereka</p>
             </div>
           </div>
 
           {/* How it works */}
-          <div className="rounded-2xl bg-[#f8f9fa] p-4 space-y-3">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#adb5bd]">Cara Kerja</p>
+          <div className="rounded-2xl bg-neutral-50 p-4 space-y-3">
+            <p className="text-xs font-bold uppercase tracking-wider text-neutral-400">Cara Kerja</p>
             {[
               'Salin tautan di bawah ini',
               'Kirim ke warga melalui WhatsApp',
@@ -130,17 +130,17 @@ export function RegisterPageClient() {
               'Data langsung masuk ke sistem DesaWorks',
             ].map((step, i) => (
               <div key={i} className="flex items-start gap-3">
-                <span className="h-6 w-6 rounded-full bg-[#05c8ae]/10 text-[#05c8ae] text-xs font-bold flex items-center justify-center flex-shrink-0">{i + 1}</span>
-                <p className="text-sm text-[#495057]">{step}</p>
+                <span className="h-6 w-6 rounded-full bg-primary-500/10 text-primary-500 text-xs font-bold flex items-center justify-center flex-shrink-0">{i + 1}</span>
+                <p className="text-sm text-ink-soft">{step}</p>
               </div>
             ))}
           </div>
 
           {/* Link box */}
           <div className="space-y-2">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#adb5bd]">Tautan Pendaftaran</p>
-            <div className="flex items-center gap-2 rounded-xl border border-[#e9ecef] bg-[#f8f9fa] p-3">
-              <span className="flex-1 truncate text-sm font-mono text-[#495057]">{publicLink}</span>
+            <p className="text-xs font-bold uppercase tracking-wider text-neutral-400">Tautan Pendaftaran</p>
+            <div className="flex items-center gap-2 rounded-xl border border-neutral-200 bg-neutral-50 p-3">
+              <span className="flex-1 truncate text-sm font-mono text-ink-soft">{publicLink}</span>
               <button
                 type="button"
                 onClick={copyLink}
@@ -167,7 +167,7 @@ export function RegisterPageClient() {
             Bagikan via WhatsApp
           </a>
 
-          <p className="text-center text-xs text-[#adb5bd]">
+          <p className="text-center text-xs text-neutral-400">
             Tautan ini bisa dibuka oleh siapa saja yang menerimanya.
           </p>
         </div>

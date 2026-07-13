@@ -94,5 +94,18 @@ export function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
+/**
+ * Compact Rupiah for tight spaces (KPI cards): e.g. 2_113_399_533 → "Rp 2,1 M".
+ * Uses Indonesian compact units (rb/jt/M/T).
+ */
+export function formatCurrencyCompact(amount: number): string {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  }).format(amount);
+}
+
 export { id, en };
 export type { TranslationDict };

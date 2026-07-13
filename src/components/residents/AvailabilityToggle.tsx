@@ -32,7 +32,7 @@ export default function AvailabilityToggle({ residentId, initial }: { residentId
       aria-pressed={isAvailable}
       className="nm-pressable inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white ring-1 ring-white/20 disabled:opacity-60"
     >
-      <span className={`h-2.5 w-2.5 rounded-full ${isAvailable ? 'bg-[#51f7db]' : 'bg-neutral-400'}`} aria-hidden />
+      <span className={`h-2.5 w-2.5 rounded-full ${isAvailable ? 'bg-primary-300' : 'bg-neutral-400'}`} aria-hidden />
       {loading ? t('availability.saving') : isAvailable ? t('availability.available') : t('availability.unavailable')}
     </button>
   );

@@ -22,11 +22,11 @@ export interface AssignmentCardProps {
 }
 
 const STATUS_STYLES: Record<string, { bg: string; text: string; border: string }> = {
-  active: { bg: "bg-[#10b981]/10", text: "text-[#059669]", border: "border-[#10b981]/20" },
-  confirmed: { bg: "bg-[#3b82f6]/10", text: "text-[#2563eb]", border: "border-[#3b82f6]/20" },
-  pending: { bg: "bg-[#f59e0b]/10", text: "text-[#d97706]", border: "border-[#f59e0b]/20" },
-  completed: { bg: "bg-[#f1f3f5]", text: "text-[#495057]", border: "border-[#e9ecef]" },
-  void: { bg: "bg-[#f43f5e]/10", text: "text-[#e11d48]", border: "border-[#f43f5e]/20" },
+  active: { bg: "bg-success/10", text: "text-success", border: "border-success/20" },
+  confirmed: { bg: "bg-info/10", text: "text-info", border: "border-info/20" },
+  pending: { bg: "bg-warning/10", text: "text-warning", border: "border-warning/20" },
+  completed: { bg: "bg-neutral-100", text: "text-ink-soft", border: "border-neutral-200" },
+  void: { bg: "bg-danger/10", text: "text-danger", border: "border-danger/20" },
 };
 
 function getProgressColor(pct: number): string {
@@ -50,16 +50,16 @@ export default function AssignmentCard({ assignment }: AssignmentCardProps) {
   }, []);
 
   return (
-    <div className="rounded-2xl border border-[#e9ecef] bg-white shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md">
+    <div className="rounded-2xl border border-neutral-200 bg-white shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md">
       {/* Header */}
-      <div className="p-5 border-b border-[#f1f3f5]">
+      <div className="p-5 border-b border-neutral-100">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <h2 className="text-base sm:text-lg font-bold text-[#1a1d23] truncate">
+            <h2 className="text-base sm:text-lg font-bold text-ink truncate">
               {assignment.project_name}
             </h2>
             {assignment.notes && (
-              <p className="text-sm text-[#868e96] mt-1 line-clamp-2">{assignment.notes}</p>
+              <p className="text-sm text-ink-soft mt-1 line-clamp-2">{assignment.notes}</p>
             )}
           </div>
           <span
@@ -70,21 +70,21 @@ export default function AssignmentCard({ assignment }: AssignmentCardProps) {
         </div>
 
         {/* Dates Row */}
-        <div className="flex flex-wrap gap-x-5 gap-y-2 mt-4 text-xs text-[#868e96]">
+        <div className="flex flex-wrap gap-x-5 gap-y-2 mt-4 text-xs text-ink-soft">
           <span className="inline-flex items-center gap-1.5">
-            <svg className="h-4 w-4 text-[#adb5bd]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+            <svg className="h-4 w-4 text-neutral-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
             </svg>
             {t('date.start')}: {formatDateShort(assignment.project_start_date, locale)}
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <svg className="h-4 w-4 text-[#adb5bd]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+            <svg className="h-4 w-4 text-neutral-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
             {t('date.end')}: {formatDateShort(assignment.project_end_date, locale)}
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <svg className="h-4 w-4 text-[#adb5bd]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+            <svg className="h-4 w-4 text-neutral-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
             {assignment.total_hours_worked.toFixed(1)} {t('assignment.hrs')}
@@ -95,10 +95,10 @@ export default function AssignmentCard({ assignment }: AssignmentCardProps) {
       {/* Progress Section */}
       <div className="px-5 py-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold text-[#495057]">{t('progress.title')}</span>
-          <span className="text-sm font-bold text-[#1a1d23]">{currentProgress}%</span>
+          <span className="text-xs font-semibold text-ink-soft">{t('progress.title')}</span>
+          <span className="text-sm font-bold text-ink">{currentProgress}%</span>
         </div>
-        <div className="w-full bg-[#f1f3f5] rounded-full h-3 overflow-hidden">
+        <div className="w-full bg-neutral-100 rounded-full h-3 overflow-hidden">
           <div
             className={`h-full rounded-full ${getProgressColor(currentProgress)} transition-all duration-500`}
             style={{ width: `${currentProgress}%` }}
@@ -107,20 +107,20 @@ export default function AssignmentCard({ assignment }: AssignmentCardProps) {
 
         {/* Latest Update */}
         {assignment.latest_description && (
-          <div className="mt-3 rounded-xl bg-[#f8f9fa] p-3.5 border border-[#f1f3f5]">
-            <p className="text-[10px] font-bold text-[#adb5bd] uppercase tracking-wider mb-1">{t('progress.latestUpdate')}</p>
-            <p className="text-sm text-[#495057] line-clamp-2">{assignment.latest_description}</p>
+          <div className="mt-3 rounded-xl bg-neutral-50 p-3.5 border border-neutral-100">
+            <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-1">{t('progress.latestUpdate')}</p>
+            <p className="text-sm text-ink-soft line-clamp-2">{assignment.latest_description}</p>
           </div>
         )}
       </div>
 
       {/* Footer / Actions */}
       {!isCompleted && (
-        <div className="border-t border-[#f1f3f5]">
+        <div className="border-t border-neutral-100">
           <button
             type="button"
             onClick={() => setIsExpanded((prev) => !prev)}
-            className="w-full flex items-center justify-center gap-2 px-5 py-3.5 text-sm font-semibold text-[#05c8ae] hover:bg-[#effefb] active:bg-[#c7fff4] transition-colors touch-target"
+            className="w-full flex items-center justify-center gap-2 px-5 py-3.5 text-sm font-semibold text-primary-500 hover:bg-primary-50 active:bg-primary-100 transition-colors touch-target"
           >
             {isExpanded ? (
               <>
@@ -140,7 +140,7 @@ export default function AssignmentCard({ assignment }: AssignmentCardProps) {
           </button>
 
           {isExpanded && (
-            <div className="px-5 pb-5 border-t border-[#f1f3f5]">
+            <div className="px-5 pb-5 border-t border-neutral-100">
               <ProgressUpdateForm
                 assignmentId={assignment.id}
                 currentProgress={currentProgress}
