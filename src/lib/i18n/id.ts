@@ -412,8 +412,12 @@ const id = {
     skillsLabel: 'Keahlian & Pengalaman',
     cancel: 'Batal',
     loading: 'Memuat data warga...',
-    loadError: 'Gagal memuat profil warga',
     saveError: 'Gagal menyimpan perubahan',
+    deleteTitle: 'Hapus Warga',
+    deleteConfirm: 'Apakah Anda yakin ingin menghapus warga ini secara permanen? Semua tugas dan data login akan dihapus.',
+    yesDelete: 'Ya, Hapus',
+    deletingBtn: 'Menghapus...',
+    deleteError: 'Gagal menghapus warga.',
   },
 
   // Date/Time

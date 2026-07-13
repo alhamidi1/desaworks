@@ -480,3 +480,15 @@ export async function manageResident(residentId: string, input: unknown): Promis
 
   return { ok: true, data: undefined };
 }
+
+export async function deleteResident(residentId: string): Promise<ResidentActionResult<void>> {
+  const auth = await requireManagerCtx();
+  if (!auth.ok) return auth;
+
+  const admin = createAdminClient();
+  const { error } = await admin.auth.admin.deleteUser(residentId);
+  if (error) {
+    return { ok: false, error: error.message };
+  }
+  return { ok: true, data: undefined };
+}

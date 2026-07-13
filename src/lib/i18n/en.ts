@@ -412,8 +412,12 @@ const en: TranslationDict = {
     skillsLabel: 'Skills & Experience',
     cancel: 'Cancel',
     loading: 'Loading resident data...',
-    loadError: 'Failed to load resident profile',
     saveError: 'Failed to save changes',
+    deleteTitle: 'Delete Resident',
+    deleteConfirm: 'Are you sure you want to permanently delete this resident? All assignments and login credentials will be removed.',
+    yesDelete: 'Yes, Delete',
+    deletingBtn: 'Deleting...',
+    deleteError: 'Failed to delete resident.',
   },
 
   // Date/Time
