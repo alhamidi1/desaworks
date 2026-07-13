@@ -48,6 +48,7 @@ function AxisTick({ x, y, payload }: { x?: number; y?: number; payload?: { value
 
 export function ProjectCompletionChart({ data }: { data: ProjectCompletionDatum[] }) {
   const { t } = useLanguage();
+  if (typeof window !== 'undefined') console.log('PCCHART_DATA', JSON.stringify(data));
 
   if (!data.length) {
     return <div className="nm-raised grid min-h-[240px] place-items-center p-6 text-sm text-ink-soft">{t('chart.noData')}</div>;
