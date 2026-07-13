@@ -220,7 +220,7 @@ export default async function PerformanceReportPage() {
       </div>
 
       {/* Performance Table */}
-      <section className="mb-8">
+      <section className="mb-8 mt-10 sm:mt-12">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-xl font-semibold text-ink">
