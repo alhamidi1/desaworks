@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import ManagerInviteForm from '@/components/residents/ManagerInviteForm';
 import JoinRequestsList from '@/components/residents/JoinRequestsList';
+import SkillsManagement from '@/components/residents/SkillsManagement';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 export function RegisterPageClient() {
   const { t } = useLanguage();
-  const [tab, setTab] = useState<'manual' | 'link' | 'requests'>('manual');
+  const [tab, setTab] = useState<'manual' | 'link' | 'requests' | 'skills'>('manual');
   const [copied, setCopied] = useState(false);
   const [publicLink, setPublicLink] = useState('');
   const [whatsappMsg, setWhatsappMsg] = useState('');
@@ -42,16 +43,16 @@ export function RegisterPageClient() {
       </div>
 
       {/* Tab switcher */}
-      <div className="mb-6 flex rounded-2xl border border-neutral-200 bg-neutral-50 p-1.5 gap-1">
+      <div className="mb-6 flex rounded-2xl border border-neutral-200 bg-neutral-50 p-1.5 gap-1 overflow-x-auto">
         <button
           onClick={() => setTab('manual')}
-          className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
+          className={`flex-1 min-w-[90px] rounded-xl px-3 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-200 ${
             tab === 'manual'
               ? 'bg-white text-ink shadow-sm'
               : 'text-ink-soft hover:text-ink-soft'
           }`}
         >
-          <span className="flex items-center justify-center gap-2">
+          <span className="flex items-center justify-center gap-1.5">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
             </svg>
@@ -60,13 +61,13 @@ export function RegisterPageClient() {
         </button>
         <button
           onClick={() => setTab('link')}
-          className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
+          className={`flex-1 min-w-[90px] rounded-xl px-3 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-200 ${
             tab === 'link'
               ? 'bg-white text-ink shadow-sm'
               : 'text-ink-soft hover:text-ink-soft'
           }`}
         >
-          <span className="flex items-center justify-center gap-2">
+          <span className="flex items-center justify-center gap-1.5">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
             </svg>
@@ -75,11 +76,19 @@ export function RegisterPageClient() {
         </button>
         <button
           onClick={() => setTab('requests')}
-          className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
+          className={`flex-1 min-w-[90px] rounded-xl px-3 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-200 ${
             tab === 'requests' ? 'bg-white text-ink shadow-sm' : 'text-ink-soft hover:text-ink-soft'
           }`}
         >
-          {t('requests.title')}
+          {t('registerPage.tabRequests')}
+        </button>
+        <button
+          onClick={() => setTab('skills')}
+          className={`flex-1 min-w-[90px] rounded-xl px-3 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-200 ${
+            tab === 'skills' ? 'bg-white text-ink shadow-sm' : 'text-ink-soft hover:text-ink-soft'
+          }`}
+        >
+          {t('registerPage.tabSkills')}
         </button>
       </div>
 
@@ -170,6 +179,13 @@ export function RegisterPageClient() {
           <p className="text-center text-xs text-neutral-400">
             {t('registerPage.shareFooter')}
           </p>
+        </div>
+      )}
+
+      {/* Skills Management Tab */}
+      {tab === 'skills' && (
+        <div className="nm-raised p-6 sm:p-8">
+          <SkillsManagement />
         </div>
       )}
     </div>
