@@ -14,14 +14,15 @@ import {
 } from '@/lib/actions/revenue';
 
 interface RevenueFormProps {
-  projects: { id: string; name: string }[];
+  projects?: { id: string; name: string }[];
+  projectId?: string;
 }
 
 function getTodayString() {
   return new Date().toISOString().slice(0, 10);
 }
 
-export function RevenueForm({ projects }: RevenueFormProps) {
+export function RevenueForm({ projects = [], projectId }: RevenueFormProps) {
   const [serverError, setServerError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [warning, setWarning] = useState<RevenueWarning | null>(null);
@@ -35,7 +36,7 @@ export function RevenueForm({ projects }: RevenueFormProps) {
   } = useForm<RevenueRecordInput>({
     resolver: zodResolver(revenueRecordSchema),
     defaultValues: {
-      projectId: '',
+      projectId: projectId || '',
       amount: undefined,
       description: '',
       recordDate: getTodayString(),
@@ -69,7 +70,7 @@ export function RevenueForm({ projects }: RevenueFormProps) {
     } else {
       setSuccessMessage('Revenue record saved successfully.');
       reset({
-        projectId: '',
+        projectId: projectId || '',
         amount: undefined,
         description: '',
         recordDate: getTodayString(),
@@ -134,29 +135,33 @@ export function RevenueForm({ projects }: RevenueFormProps) {
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-5">
         {/* Project Select */}
-        <div>
-          <label
-            htmlFor="projectId"
-            className="block text-sm font-medium text-slate-700"
-          >
-            Project
-          </label>
-          <select
-            id="projectId"
-            {...register('projectId')}
-            className="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-          >
-            <option value="">Select a project…</option>
-            {projects.map((project) => (
-              <option key={project.id} value={project.id}>
-                {project.name}
-              </option>
-            ))}
-          </select>
-          {errors.projectId && (
-            <p className="mt-1 text-sm text-red-600">{errors.projectId.message}</p>
-          )}
-        </div>
+        {!projectId ? (
+          <div>
+            <label
+              htmlFor="projectId"
+              className="block text-sm font-medium text-slate-700"
+            >
+              Project
+            </label>
+            <select
+              id="projectId"
+              {...register('projectId')}
+              className="mt-1.5 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+            >
+              <option value="">Select a project…</option>
+              {projects.map((project) => (
+                <option key={project.id} value={project.id}>
+                  {project.name}
+                </option>
+              ))}
+            </select>
+            {errors.projectId && (
+              <p className="mt-1 text-sm text-red-600">{errors.projectId.message}</p>
+            )}
+          </div>
+        ) : (
+          <input type="hidden" value={projectId} {...register('projectId')} />
+        )}
 
         {/* Amount */}
         <div>
