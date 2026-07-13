@@ -466,6 +466,8 @@ const en: TranslationDict = {
     exportRevenue: 'Export Revenue',
     noRecords: 'No revenue records yet',
     noRecordsDesc: 'Use the form below to record your first revenue entry.',
+    overBudgetTitle: 'Projects Over Budget',
+    moreOverBudget: '+{count} more projects over budget',
     projectHeader: 'Project',
     amountHeader: 'Amount',
     descriptionHeader: 'Description',

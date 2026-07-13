@@ -466,6 +466,8 @@ const id = {
     exportRevenue: 'Ekspor Pendapatan',
     noRecords: 'Belum ada catatan pendapatan',
     noRecordsDesc: 'Gunakan formulir di bawah ini untuk mencatat pendapatan pertama Anda.',
+    overBudgetTitle: 'Proyek Melebihi Anggaran',
+    moreOverBudget: '+{count} proyek lain melebihi anggaran',
     projectHeader: 'Proyek',
     amountHeader: 'Jumlah',
     descriptionHeader: 'Keterangan',

@@ -1,9 +1,10 @@
 'use client';
 
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, CartesianGrid, Tooltip, XAxis, YAxis } from 'recharts';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { formatDateShort } from '@/lib/i18n';
 import { chartPalette, chartTooltipStyle } from '@/lib/charts/palette';
+import { ChartBox } from '@/components/charts/ChartBox';
 
 const GRID = chartPalette.grid;
 const AXIS = chartPalette.axis;
@@ -23,9 +24,9 @@ export function ProgressOverTimeChart({ data }: { data: ProgressTrendDatum[] }) 
 
   return (
     <div className="nm-raised p-4 sm:p-5">
-      <div className="h-[280px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 8, right: 8, left: -14, bottom: 4 }}>
+      <div>
+        <ChartBox height={280}>
+          <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 4 }}>
             <defs>
               <linearGradient id="ptFill" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor={chartPalette.primary} stopOpacity={0.4} />
@@ -38,7 +39,7 @@ export function ProgressOverTimeChart({ data }: { data: ProgressTrendDatum[] }) 
             <Tooltip contentStyle={tooltipStyle} labelFormatter={(label: unknown) => formatDateShort(String(label), locale)} formatter={(v: unknown) => [`${Math.round(Number(v))}%`, t('chart.avgProgress')]} />
             <Area type="monotone" dataKey="averageProgress" stroke={chartPalette.primary} strokeWidth={3} fill="url(#ptFill)" />
           </AreaChart>
-        </ResponsiveContainer>
+        </ChartBox>
       </div>
     </div>
   );

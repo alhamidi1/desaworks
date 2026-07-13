@@ -31,8 +31,9 @@ export default async function PerformanceReportPage() {
     status: metric.project.status,
   }));
 
-  // Build chart data for ProjectCompletionChart
-  const completionChartData = dashboard.projects.map((metric) => ({
+  // Build chart data for ProjectCompletionChart — Top-N only, so the bar chart
+  // stays readable instead of rendering all projects as a dense wall of bars.
+  const completionChartData = dashboard.topProjects.map((metric) => ({
     projectName: metric.project.name,
     completionPercentage: metric.completionPercentage,
     assignedWorkers: metric.assignedWorkers,
@@ -141,13 +142,13 @@ export default async function PerformanceReportPage() {
     <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
       {/* Page header */}
       <div className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-teal-700">
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary-700">
           {t('nav.reports')}
         </p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-950">
+        <h1 className="mt-1 text-3xl font-bold tracking-tight text-ink">
           {t('performanceReport.title')}
         </h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-soft">
           {t('performanceReport.subtitle')}
         </p>
       </div>
@@ -155,26 +156,26 @@ export default async function PerformanceReportPage() {
       {/* Summary stats */}
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="nm-raised p-5">
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
+          <p className="text-xs font-medium uppercase tracking-wider text-ink-mute">
             {t('stats.totalProjects')}
           </p>
-          <p className="mt-1 text-2xl font-bold text-slate-900">
+          <p className="mt-1 text-2xl font-bold text-ink">
             {dashboard.projects.length}
           </p>
         </div>
         <div className="nm-raised p-5">
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
+          <p className="text-xs font-medium uppercase tracking-wider text-ink-mute">
             {t('stats.activeWorkers')}
           </p>
-          <p className="mt-1 text-2xl font-bold text-blue-600">
+          <p className="mt-1 text-2xl font-bold text-info">
             {workerData.length}
           </p>
         </div>
         <div className="nm-raised p-5">
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
+          <p className="text-xs font-medium uppercase tracking-wider text-ink-mute">
             {t('stats.avgCompletion')}
           </p>
-          <p className="mt-1 text-2xl font-bold text-teal-600">
+          <p className="mt-1 text-2xl font-bold text-primary-600">
             {performanceData.length > 0
               ? (
                   performanceData.reduce(
@@ -187,10 +188,10 @@ export default async function PerformanceReportPage() {
           </p>
         </div>
         <div className="nm-raised p-5">
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
+          <p className="text-xs font-medium uppercase tracking-wider text-ink-mute">
             {t('stats.totalHoursLogged')}
           </p>
-          <p className="mt-1 text-2xl font-bold text-amber-600">
+          <p className="mt-1 text-2xl font-bold text-warning/80">
             {workerData
               .reduce((sum, r) => sum + r.totalHoursWorked, 0)
               .toFixed(1)}
@@ -202,7 +203,14 @@ export default async function PerformanceReportPage() {
       {/* Charts */}
       <div className="mb-8 grid gap-6 lg:grid-cols-2">
         <div className="space-y-3">
-          <h2 className="text-lg font-bold text-ink">{t('chart.projectCompletion')}</h2>
+          <div className="flex flex-col sm:flex-row sm:items-baseline gap-2">
+            <h2 className="text-lg font-bold text-ink">{t('chart.projectCompletion')}</h2>
+            {dashboard.projects.length > dashboard.topProjects.length ? (
+              <span className="text-xs font-normal text-ink-soft">
+                {t('chart.showingTop', { shown: dashboard.topProjects.length, total: dashboard.projects.length })}
+              </span>
+            ) : null}
+          </div>
           <ProjectCompletionChart data={completionChartData} />
         </div>
         <div className="space-y-3">
@@ -215,10 +223,10 @@ export default async function PerformanceReportPage() {
       <section className="mb-8">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-slate-900">
+            <h2 className="text-xl font-semibold text-ink">
               {t('performanceReport.projectPerformance')}
             </h2>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-ink-soft">
               {t('performanceReport.projectPerformanceDesc')}
             </p>
           </div>
@@ -235,10 +243,10 @@ export default async function PerformanceReportPage() {
       <section>
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-slate-900">
+            <h2 className="text-xl font-semibold text-ink">
               {t('performanceReport.workerContributions')}
             </h2>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-ink-soft">
               {t('performanceReport.workerContributionsDesc')}
             </p>
           </div>

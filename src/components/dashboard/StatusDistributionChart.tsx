@@ -1,8 +1,9 @@
 'use client';
 
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+import { Cell, Pie, PieChart, Tooltip } from 'recharts';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { chartPalette, chartTooltipStyle, statusColors, statusFallback } from '@/lib/charts/palette';
+import { ChartBox } from '@/components/charts/ChartBox';
 
 export interface StatusDistributionDatum {
   status: string;
@@ -24,8 +25,8 @@ export function StatusDistributionChart({ data }: { data: StatusDistributionDatu
   return (
     <div className="nm-raised p-4 sm:p-5 h-full flex flex-col justify-center">
       <div className="grid gap-4 sm:grid-cols-[minmax(0,220px)_1fr] sm:items-center">
-        <div className="h-[220px]">
-          <ResponsiveContainer width="100%" height="100%">
+        <div>
+          <ChartBox height={220}>
             <PieChart>
               <Tooltip contentStyle={tooltipStyle} formatter={(v: unknown, _n: unknown, item: unknown) => [`${v} ${t('chart.projectsUnit')}`, (item as { payload?: { label?: string } })?.payload?.label ?? '']} />
               <Pie data={colored} dataKey="count" nameKey="label" innerRadius={58} outerRadius={92} paddingAngle={3} stroke={chartPalette.pieStroke} strokeWidth={3}>
@@ -34,7 +35,7 @@ export function StatusDistributionChart({ data }: { data: StatusDistributionDatu
                 ))}
               </Pie>
             </PieChart>
-          </ResponsiveContainer>
+          </ChartBox>
         </div>
         <ul className="grid gap-2">
           {colored.map((item) => (

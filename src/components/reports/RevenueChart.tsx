@@ -1,9 +1,10 @@
 'use client';
 
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, CartesianGrid, Tooltip, XAxis, YAxis } from 'recharts';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { formatCurrency } from '@/lib/i18n';
 import { chartPalette, chartTooltipStyle } from '@/lib/charts/palette';
+import { ChartBox } from '@/components/charts/ChartBox';
 
 const GRID = chartPalette.grid;
 const AXIS = chartPalette.axis;
@@ -39,8 +40,8 @@ export function RevenueChart({ data }: { data: RevenueTrendDatum[] }) {
 
   return (
     <div className="nm-raised p-4 sm:p-5">
-      <div className="h-[300px]">
-        <ResponsiveContainer width="100%" height="100%">
+      <div>
+        <ChartBox height={300}>
           <AreaChart data={data} margin={{ top: 8, right: 8, left: 6, bottom: 4 }}>
             <defs>
               <linearGradient id="revFill" x1="0" y1="0" x2="0" y2="1">
@@ -54,7 +55,7 @@ export function RevenueChart({ data }: { data: RevenueTrendDatum[] }) {
             <Tooltip contentStyle={tooltipStyle} labelFormatter={(m: unknown) => monthLabel(String(m))} formatter={(v: unknown) => [formatCurrency(Number(v)), t('project.revenue')]} />
             <Area type="monotone" dataKey="amount" stroke={chartPalette.primary} strokeWidth={3} fill="url(#revFill)" />
           </AreaChart>
-        </ResponsiveContainer>
+        </ChartBox>
       </div>
     </div>
   );

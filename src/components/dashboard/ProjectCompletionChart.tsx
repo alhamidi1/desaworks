@@ -5,13 +5,13 @@ import {
   BarChart,
   CartesianGrid,
   ReferenceLine,
-  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from 'recharts';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { chartPalette, chartTooltipStyle } from '@/lib/charts/palette';
+import { ChartBox } from '@/components/charts/ChartBox';
 
 const GRID = chartPalette.grid;
 const AXIS = chartPalette.axis;
@@ -56,9 +56,9 @@ export function ProjectCompletionChart({ data }: { data: ProjectCompletionDatum[
   return (
     <div className="nm-raised p-4 sm:p-5 h-full flex flex-col justify-center overflow-hidden">
       <div className="w-full overflow-x-auto scrollbar-none pb-2">
-        <div className="h-[300px] min-w-[480px] lg:min-w-0">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} margin={{ top: 8, right: 8, left: -14, bottom: 20 }}>
+        <div className="min-w-[480px] lg:min-w-0">
+          <ChartBox height={300}>
+            <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 20 }}>
               <defs>
                 <linearGradient id="pcFill" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor={chartPalette.primary} stopOpacity={0.95} />
@@ -72,7 +72,7 @@ export function ProjectCompletionChart({ data }: { data: ProjectCompletionDatum[
               <Tooltip cursor={{ fill: 'rgba(15,23,42,0.04)' }} contentStyle={tooltipStyle} formatter={(v: unknown) => [`${Math.round(Number(v))}%`, t('chart.completion')]} />
               <Bar dataKey="completionPercentage" fill="url(#pcFill)" radius={[8, 8, 2, 2]} maxBarSize={48} />
             </BarChart>
-          </ResponsiveContainer>
+          </ChartBox>
         </div>
       </div>
     </div>
