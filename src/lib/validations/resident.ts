@@ -46,7 +46,18 @@ export const joinRequestSchema = z.object({
   agreed_to_privacy: z.boolean(),
 });
 
+export const residentManageSchema = z.object({
+  full_name: z.string().min(1),
+  email: z.string().email(),
+  phone: z.string().nullable().optional(),
+  address: z.string().nullable().optional(),
+  password: z.string().min(6).or(z.literal('')).nullable().optional(),
+  skills: z.array(residentSkillSchema).optional(),
+});
+
 export type ResidentProfileInput = z.infer<typeof residentProfileSchema>;
 export type ResidentSkillInput = z.infer<typeof residentSkillSchema>;
 export type ResidentInviteInput = z.infer<typeof residentInviteSchema>;
 export type JoinRequestInput = z.infer<typeof joinRequestSchema>;
+export type ResidentManageInput = z.infer<typeof residentManageSchema>;
+

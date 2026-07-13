@@ -10,6 +10,7 @@ import {
   residentSkillSchema,
   residentInviteSchema,
   joinRequestSchema,
+  residentManageSchema,
 } from '@/lib/validations/resident';
 
 export type ResidentActionResult<T> = { ok: true; data: T } | { ok: false; error: string };
@@ -356,4 +357,126 @@ export async function updateProfile(residentId: string, input: z.infer<typeof re
   }
 
   return updatedProfile;
+}
+
+export async function manageResident(residentId: string, input: unknown): Promise<ResidentActionResult<void>> {
+  const auth = await requireManagerCtx();
+  if (!auth.ok) return auth;
+
+  const parsed = residentManageSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Invalid input' };
+  }
+  const { skills, password, ...profileData } = parsed.data;
+
+  const admin = createAdminClient();
+
+  // 1. Update Auth settings (email, password) if requested
+  try {
+    const authUpdates: { email?: string; password?: string } = {};
+    if (password && password.trim()) {
+      authUpdates.password = password;
+    }
+    
+    // Check if email has changed from the database record
+    const { data: currentProfile, error: profileErr } = await admin
+      .from('profiles')
+      .select('email')
+      .eq('id', residentId)
+      .single();
+
+    if (profileErr) {
+      return { ok: false, error: profileErr.message };
+    }
+
+    if (currentProfile?.email !== profileData.email) {
+      authUpdates.email = profileData.email;
+    }
+
+    if (Object.keys(authUpdates).length > 0) {
+      const { error: authUpdateErr } = await admin.auth.admin.updateUserById(residentId, authUpdates);
+      if (authUpdateErr) {
+        return { ok: false, error: authUpdateErr.message };
+      }
+    }
+  } catch (err: any) {
+    return { ok: false, error: err.message || 'Failed to update authentication details.' };
+  }
+
+  // 2. Update Profile table
+  const { error: profileUpdateErr } = await admin
+    .from('profiles')
+    .update(profileData)
+    .eq('id', residentId);
+
+  if (profileUpdateErr) {
+    return { ok: false, error: profileUpdateErr.message };
+  }
+
+  // 3. Sync resident skills
+  try {
+    const { data: existingSkills, error: fetchSkillsErr } = await admin
+      .from('resident_skills')
+      .select('id, skill_id')
+      .eq('resident_id', residentId);
+
+    if (fetchSkillsErr) {
+      return { ok: false, error: fetchSkillsErr.message };
+    }
+
+    const existingSkillMap = new Map((existingSkills || []).map((s: { skill_id: string; id: string }) => [s.skill_id, s.id]));
+    const newSkillIds = new Set((skills || []).map(s => s.skill_id));
+
+    // Delete skills no longer present in the updated list
+    const toDeleteIds: string[] = [];
+    for (const [skillId, id] of existingSkillMap.entries()) {
+      if (!newSkillIds.has(skillId)) {
+        toDeleteIds.push(id);
+      }
+    }
+
+    if (toDeleteIds.length > 0) {
+      const { error: delErr } = await admin
+        .from('resident_skills')
+        .delete()
+        .in('id', toDeleteIds);
+      if (delErr) throw delErr;
+    }
+
+    // Insert or update remaining skills
+    const toInsert: Array<Record<string, unknown>> = [];
+    for (const s of skills || []) {
+      const existingId = existingSkillMap.get(s.skill_id);
+      if (existingId) {
+        const { error: updateSkillErr } = await admin
+          .from('resident_skills')
+          .update({
+            experience_years: s.experience_years ?? 0,
+            proficiency_level: s.proficiency_level ?? null,
+            notes: s.notes ?? null,
+          })
+          .eq('id', existingId);
+        if (updateSkillErr) throw updateSkillErr;
+      } else {
+        toInsert.push({
+          resident_id: residentId,
+          skill_id: s.skill_id,
+          experience_years: s.experience_years ?? 0,
+          proficiency_level: s.proficiency_level ?? null,
+          notes: s.notes ?? null,
+        });
+      }
+    }
+
+    if (toInsert.length > 0) {
+      const { error: insertSkillErr } = await admin
+        .from('resident_skills')
+        .insert(toInsert);
+      if (insertSkillErr) throw insertSkillErr;
+    }
+  } catch (err: any) {
+    return { ok: false, error: err.message || 'Failed to update skills.' };
+  }
+
+  return { ok: true, data: undefined };
 }
