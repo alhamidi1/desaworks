@@ -403,6 +403,17 @@ const id = {
     joined: 'Bergabung {date}',
     messageWa: 'Chat WhatsApp',
     noContact: 'Tidak ada kontak',
+    manageTitle: 'Kelola Profil Warga',
+    manageSubtitle: 'Sesuaikan kredensial, kontak, dan keahlian warga.',
+    newPassword: 'Kata Sandi Baru',
+    newPasswordPlaceholder: 'Biarkan kosong jika tidak diubah',
+    newPasswordHelp: 'Minimal 6 karakter jika ingin mengganti kata sandi login warga.',
+    addressLabel: 'Alamat Tinggal',
+    skillsLabel: 'Keahlian & Pengalaman',
+    cancel: 'Batal',
+    loading: 'Memuat data warga...',
+    loadError: 'Gagal memuat profil warga',
+    saveError: 'Gagal menyimpan perubahan',
   },
 
   // Date/Time

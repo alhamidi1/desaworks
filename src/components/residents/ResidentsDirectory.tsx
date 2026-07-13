@@ -82,7 +82,7 @@ export function ResidentsDirectory({ residents }: Props) {
         );
       }
     } catch (err: any) {
-      setModalError(err.message || 'Gagal memuat profil warga');
+      setModalError(err.message || t('residents.loadError'));
     } finally {
       setModalLoading(false);
     }
@@ -118,7 +118,7 @@ export function ResidentsDirectory({ residents }: Props) {
         router.refresh();
       }
     } catch (err: any) {
-      setModalError(err.message || 'Gagal menyimpan perubahan');
+      setModalError(err.message || t('residents.saveError'));
     } finally {
       setSubmitting(false);
     }
@@ -229,13 +229,16 @@ export function ResidentsDirectory({ residents }: Props) {
 
       {/* Edit Resident Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 animate-fade-in"
+          style={{ backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
+        >
           <div className="relative w-full max-w-xl rounded-3xl border border-neutral-200 bg-white p-6 shadow-xl space-y-5 animate-scale-up overflow-y-auto max-h-[90vh]">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b pb-3">
               <div>
-                <h3 className="text-lg font-bold text-ink">Kelola Profil Warga</h3>
-                <p className="text-xs text-ink-soft">Sesuaikan kredensial, kontak, dan keahlian warga.</p>
+                <h3 className="text-lg font-bold text-ink">{t('residents.manageTitle')}</h3>
+                <p className="text-xs text-ink-soft">{t('residents.manageSubtitle')}</p>
               </div>
               <button
                 type="button"
@@ -265,44 +268,44 @@ export function ResidentsDirectory({ residents }: Props) {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                 </svg>
-                <p className="text-xs text-ink-soft">Memuat data warga...</p>
+                <p className="text-xs text-ink-soft">{t('residents.loading')}</p>
               </div>
             ) : (
               <form onSubmit={saveEdit} className="space-y-4">
                 {/* Full Name */}
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-ink-soft">Nama Lengkap *</label>
-                  <input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Contoh: Budi Santoso" className={inputCls} />
+                  <label className="block text-xs font-bold uppercase tracking-wider text-ink-soft">{t('register.fullName')} *</label>
+                  <input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder={t('register.fullNamePlaceholder')} className={inputCls} />
                 </div>
 
                 {/* Contact grid */}
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-ink-soft">Email *</label>
-                    <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@domain.com" className={inputCls} />
+                    <label className="block text-xs font-bold uppercase tracking-wider text-ink-soft">{t('register.email')} *</label>
+                    <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t('register.emailPlaceholder')} className={inputCls} />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-ink-soft">Nomor WhatsApp</label>
-                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="08123456789" className={inputCls} />
+                    <label className="block text-xs font-bold uppercase tracking-wider text-ink-soft">{t('register.phone')}</label>
+                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={t('register.phonePlaceholder')} className={inputCls} />
                   </div>
                 </div>
 
                 {/* Password */}
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-ink-soft">Kata Sandi Baru</label>
-                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Biarkan kosong jika tidak diubah" className={inputCls} />
-                  <p className="text-[10px] text-ink-soft">Minimal 6 karakter jika ingin mengganti kata sandi login warga.</p>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-ink-soft">{t('residents.newPassword')}</label>
+                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t('residents.newPasswordPlaceholder')} className={inputCls} />
+                  <p className="text-[10px] text-ink-soft">{t('residents.newPasswordHelp')}</p>
                 </div>
 
                 {/* Address */}
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-ink-soft">Alamat Tinggal</label>
-                  <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="RT 03 RW 04, Dusun Krajan" className={inputCls} />
+                  <label className="block text-xs font-bold uppercase tracking-wider text-ink-soft">{t('residents.addressLabel')}</label>
+                  <input value={address} onChange={(e) => setAddress(e.target.value)} placeholder={t('register.addressPlaceholder')} className={inputCls} />
                 </div>
 
                 {/* Skills */}
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-ink-soft">Keahlian & Pengalaman</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-ink-soft">{t('residents.skillsLabel')}</label>
                   <SkillSelector availableSkills={availableSkills} value={selectedSkills} onChange={setSelectedSkills} />
                 </div>
 
@@ -313,7 +316,7 @@ export function ResidentsDirectory({ residents }: Props) {
                     onClick={() => setShowModal(false)}
                     className="rounded-xl border border-neutral-300 bg-white px-5 py-2.5 text-xs font-semibold text-ink-soft hover:bg-neutral-50 transition"
                   >
-                    Batal
+                    {t('residents.cancel')}
                   </button>
                   <button
                     type="submit"
@@ -326,10 +329,10 @@ export function ResidentsDirectory({ residents }: Props) {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                         </svg>
-                        Menyimpan...
+                        {t('register.saving')}
                       </>
                     ) : (
-                      'Simpan Perubahan'
+                      t('register.saveChanges')
                     )}
                   </button>
                 </div>

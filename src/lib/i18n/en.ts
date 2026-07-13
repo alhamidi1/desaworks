@@ -403,6 +403,17 @@ const en: TranslationDict = {
     joined: 'Joined {date}',
     messageWa: 'WhatsApp',
     noContact: 'No contact info',
+    manageTitle: 'Manage Resident Profile',
+    manageSubtitle: 'Adjust resident credentials, contacts, and skills.',
+    newPassword: 'New Password',
+    newPasswordPlaceholder: 'Leave blank if unchanged',
+    newPasswordHelp: 'Minimum 6 characters to update the resident\'s login password.',
+    addressLabel: 'Resident Address',
+    skillsLabel: 'Skills & Experience',
+    cancel: 'Cancel',
+    loading: 'Loading resident data...',
+    loadError: 'Failed to load resident profile',
+    saveError: 'Failed to save changes',
   },
 
   // Date/Time
