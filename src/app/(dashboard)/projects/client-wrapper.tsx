@@ -2,6 +2,9 @@
 
 import Link from 'next/link';
 import { ProjectCard } from '@/components/projects/ProjectCard';
+import { SearchInput } from '@/components/ui/SearchInput';
+import { Pagination } from '@/components/ui/Pagination';
+import { usePaginatedSearch } from '@/lib/hooks/usePaginatedSearch';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import type { Project } from '@/lib/types/database';
 
@@ -12,6 +15,11 @@ interface Props {
 
 export function ProjectsPageClient({ projects, error }: Props) {
   const { t } = useLanguage();
+
+  const { query, setQuery, pageItems, page, setPage, totalPages, total, from, to } = usePaginatedSearch(projects, {
+    pageSize: 10,
+    searchFields: (p) => [p.name, p.description],
+  });
 
   return (
     <main className="mx-auto max-w-4xl animate-fade-in">
@@ -55,15 +63,27 @@ export function ProjectsPageClient({ projects, error }: Props) {
           </Link>
         </div>
       ) : (
-        <div className="grid gap-4">
-          {projects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              href={`/projects/${project.id}`}
-            />
-          ))}
-        </div>
+        <>
+          <div className="mb-4">
+            <SearchInput value={query} onChange={setQuery} placeholder={t('project.searchPlaceholder')} />
+          </div>
+          {total === 0 ? (
+            <div className="rounded-2xl border-2 border-dashed border-[#e9ecef] bg-white p-10 text-center">
+              <p className="text-sm text-[#868e96]">{t('common.noResults')}</p>
+            </div>
+          ) : (
+            <div className="grid gap-4">
+              {pageItems.map((project) => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  href={`/projects/${project.id}`}
+                />
+              ))}
+            </div>
+          )}
+          <Pagination page={page} totalPages={totalPages} total={total} from={from} to={to} onPage={setPage} />
+        </>
       )}
     </main>
   );

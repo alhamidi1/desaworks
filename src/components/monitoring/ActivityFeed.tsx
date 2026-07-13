@@ -1,7 +1,13 @@
+'use client';
+
 import type { DashboardActivityItem } from '@/lib/queries/reports';
+import { Pagination } from '@/components/ui/Pagination';
+import { usePaginatedSearch } from '@/lib/hooks/usePaginatedSearch';
 
 export interface ActivityFeedProps {
   items: DashboardActivityItem[];
+  /** How many entries to show per page (default 10 — the app-wide "next 10" convention). */
+  pageSize?: number;
 }
 
 function formatRelativeTime(dateString: string): string {
@@ -67,14 +73,17 @@ function EmptyState() {
   );
 }
 
-export function ActivityFeed({ items }: ActivityFeedProps) {
+export function ActivityFeed({ items, pageSize = 10 }: ActivityFeedProps) {
+  const { pageItems, page, setPage, totalPages, total, from, to } = usePaginatedSearch(items, { pageSize });
+
   if (items.length === 0) {
     return <EmptyState />;
   }
 
   return (
+    <div>
     <div className="space-y-0 divide-y divide-slate-100 rounded-2xl border border-slate-200 bg-white shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
-      {items.map((item) => (
+      {pageItems.map((item) => (
         <article key={item.id} className="flex gap-3 px-5 py-4 transition-colors hover:bg-slate-50">
           {/* Status dot */}
           <div className="mt-1.5 flex-shrink-0">
@@ -106,6 +115,8 @@ export function ActivityFeed({ items }: ActivityFeedProps) {
           </div>
         </article>
       ))}
+    </div>
+    <Pagination page={page} totalPages={totalPages} total={total} from={from} to={to} onPage={setPage} />
     </div>
   );
 }

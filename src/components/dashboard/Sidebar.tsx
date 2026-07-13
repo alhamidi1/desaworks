@@ -3,9 +3,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+
+const SIDEBAR_COLLAPSED_KEY = 'desaworks:sidebar-collapsed';
 
 interface SidebarProps {
   role: 'resident' | 'manager' | 'admin';
@@ -45,6 +47,14 @@ function AssignmentsIcon({ className = "h-5 w-5" }: { className?: string }) {
   );
 }
 
+function ResidentsIcon({ className = "h-5 w-5" }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+    </svg>
+  );
+}
+
 function RegisterIcon({ className = "h-5 w-5" }: { className?: string }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
@@ -58,9 +68,25 @@ export default function Sidebar({ role, userName }: SidebarProps) {
   const router = useRouter();
   const { t, locale, setLocale } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const isManager = role === 'manager' || role === 'admin';
+
+  // Restore the desktop collapsed preference (set after mount to avoid hydration mismatch).
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    setCollapsed(window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === '1');
+  }, []);
+
+  function setCollapsedPersisted(next: boolean) {
+    setCollapsed(next);
+    try {
+      window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, next ? '1' : '0');
+    } catch {
+      // ignore storage failures (private mode, etc.)
+    }
+  }
 
   interface NavItem {
     label: string;
@@ -91,6 +117,12 @@ export default function Sidebar({ role, userName }: SidebarProps) {
             mobileIcon: <ReportsIcon className="h-6 w-6" />,
           },
           {
+            label: t('nav.residents'),
+            href: '/dashboard/residents',
+            icon: <ResidentsIcon />,
+            mobileIcon: <ResidentsIcon className="h-6 w-6" />,
+          },
+          {
             label: t('nav.registerResident'),
             href: '/dashboard/residents/register',
             icon: <RegisterIcon />,
@@ -109,6 +141,8 @@ export default function Sidebar({ role, userName }: SidebarProps) {
 
   function isActiveLink(href: string): boolean {
     if (href === '/dashboard') return pathname === '/dashboard';
+    // Exact match for the residents index so it doesn't also light up on /residents/register.
+    if (href === '/dashboard/residents') return pathname === '/dashboard/residents';
     return pathname.startsWith(href);
   }
 
@@ -170,12 +204,27 @@ export default function Sidebar({ role, userName }: SidebarProps) {
       )}
 
       {/* ==========================================
+          FLOATING RE-OPEN TAB (desktop, when collapsed)
+          ========================================== */}
+      {collapsed && (
+        <button
+          onClick={() => setCollapsedPersisted(false)}
+          aria-label={t('nav.expandSidebar')}
+          className="fixed left-0 top-4 z-40 hidden items-center rounded-r-xl bg-[#16191d] px-2 py-3 text-white/70 shadow-lg ring-1 ring-white/10 transition hover:bg-[#1a2332] hover:text-white lg:flex"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-5 w-5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+      )}
+
+      {/* ==========================================
           DESKTOP SIDEBAR
           ========================================== */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-[280px] flex-col glass-dark transition-transform duration-300 ease-out lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex w-[280px] flex-col glass-dark transition-all duration-300 ease-out lg:static ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        } ${collapsed ? 'lg:w-0 lg:-translate-x-full lg:overflow-hidden lg:opacity-0' : 'lg:w-[280px] lg:translate-x-0 lg:opacity-100'}`}
       >
         {/* Brand Header */}
         <div className="flex h-16 items-center gap-3 border-b border-white/10 px-6">
@@ -183,6 +232,18 @@ export default function Sidebar({ role, userName }: SidebarProps) {
             <Image src="/icon.png" alt="DesaWorks" width={32} height={32} className="h-8 w-8 object-contain" />
           </div>
           <span className="text-lg font-bold tracking-tight text-white">DesaWorks</span>
+
+          {/* Collapse button (desktop only) */}
+          <button
+            onClick={() => setCollapsedPersisted(true)}
+            className="ml-auto hidden rounded-lg p-2 text-white/50 transition-colors hover:bg-white/10 hover:text-white lg:flex"
+            aria-label={t('nav.collapseSidebar')}
+            title={t('nav.collapseSidebar')}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-5 w-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m15.75 19.5-7.5-7.5 7.5-7.5" />
+            </svg>
+          </button>
 
           {/* Close button (mobile only) */}
           <button

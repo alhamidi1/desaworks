@@ -11,6 +11,9 @@ import { StatusDistributionChart } from '@/components/dashboard/StatusDistributi
 import { ProgressOverTimeChart } from '@/components/dashboard/ProgressOverTimeChart';
 import { ImpactDashboard } from '@/components/dashboard/ImpactDashboard';
 import { ActivityFeed } from '@/components/monitoring/ActivityFeed';
+import { SearchInput } from '@/components/ui/SearchInput';
+import { Pagination } from '@/components/ui/Pagination';
+import { usePaginatedSearch } from '@/lib/hooks/usePaginatedSearch';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import type { ImpactReport, ManagerDashboardReport } from '@/lib/queries/reports';
 
@@ -29,8 +32,17 @@ export function ManagerDashboard({ report, impact }: ManagerDashboardProps) {
     assignedWorkers: p.assignedWorkers,
   }));
 
+  // Searchable + paginated project directory (10 per page).
+  const projects = usePaginatedSearch(report.projects, {
+    pageSize: 10,
+    searchFields: (p) => [p.project.name],
+  });
+
   return (
     <div className="animate-fade-in space-y-6">
+      {/* Village impact — surfaced at the very top for the village head */}
+      {impact ? <ImpactDashboard impact={impact} /> : null}
+
       {/* Header + timeframe */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
@@ -69,30 +81,42 @@ export function ManagerDashboard({ report, impact }: ManagerDashboardProps) {
         <ProgressOverTimeChart data={report.progressTrend} />
       </DashboardSection>
 
-      {/* Activity + project health quick links */}
+      {/* Activity + searchable project directory */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <DashboardSection title={t('chart.recentActivity')}>
           <ActivityFeed items={report.recentActivity} />
         </DashboardSection>
         <DashboardSection title={t('nav.projects')}>
-          <div className="nm-raised divide-y divide-neutral-200/70 p-2">
-            {report.topProjects.slice(0, 6).map((p) => (
-              <Link key={p.project.id} href={`/projects/${p.project.id}`} className="flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 transition hover:bg-surface">
-                <span className="min-w-0">
-                  <span className="block truncate text-sm font-semibold text-ink">{p.project.name}</span>
-                  <span className="text-xs text-ink-soft">
-                    {p.completionPercentage}% · {p.assignedWorkers} {t('project.workers')}
-                  </span>
-                </span>
-                <HealthBadge health={p.health} />
-              </Link>
-            ))}
+          <div className="mb-3">
+            <SearchInput value={projects.query} onChange={projects.setQuery} placeholder={t('project.searchPlaceholder')} />
           </div>
+          {projects.total === 0 ? (
+            <p className="py-8 text-center text-sm text-ink-soft">{t('common.noResults')}</p>
+          ) : (
+            <div className="nm-raised divide-y divide-neutral-200/70 p-2">
+              {projects.pageItems.map((p) => (
+                <Link key={p.project.id} href={`/projects/${p.project.id}`} className="flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 transition hover:bg-surface">
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-semibold text-ink">{p.project.name}</span>
+                    <span className="text-xs text-ink-soft">
+                      {p.completionPercentage}% · {p.assignedWorkers} {t('project.workers')}
+                    </span>
+                  </span>
+                  <HealthBadge health={p.health} />
+                </Link>
+              ))}
+            </div>
+          )}
+          <Pagination
+            page={projects.page}
+            totalPages={projects.totalPages}
+            total={projects.total}
+            from={projects.from}
+            to={projects.to}
+            onPage={projects.setPage}
+          />
         </DashboardSection>
       </div>
-
-      {/* Village impact */}
-      {impact ? <ImpactDashboard impact={impact} /> : null}
     </div>
   );
 }

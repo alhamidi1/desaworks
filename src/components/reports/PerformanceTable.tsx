@@ -1,6 +1,9 @@
 'use client';
 
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { SearchInput } from '@/components/ui/SearchInput';
+import { Pagination } from '@/components/ui/Pagination';
+import { usePaginatedSearch } from '@/lib/hooks/usePaginatedSearch';
 
 interface PerformanceRow {
   projectName: string;
@@ -27,13 +30,21 @@ function progressColor(p: number) {
 
 export function PerformanceTable({ data }: { data: PerformanceRow[] }) {
   const { t } = useLanguage();
+  const { query, setQuery, pageItems, page, setPage, totalPages, total, from, to } = usePaginatedSearch(data, {
+    pageSize: 10,
+    searchFields: (r) => [r.projectName],
+  });
 
   if (!data.length) {
     return <div className="nm-raised grid min-h-[160px] place-items-center p-6 text-sm text-ink-soft">{t('table.noData')}</div>;
   }
 
   return (
-    <div className="nm-raised overflow-x-auto">
+    <div className="space-y-3">
+      {data.length > 10 && (
+        <SearchInput value={query} onChange={setQuery} placeholder={t('project.searchPlaceholder')} className="max-w-xs" />
+      )}
+      <div className="nm-raised overflow-x-auto">
       <table className="w-full min-w-[640px] text-sm">
         <thead>
           <tr className="border-b border-neutral-200 text-ink-soft">
@@ -45,7 +56,11 @@ export function PerformanceTable({ data }: { data: PerformanceRow[] }) {
           </tr>
         </thead>
         <tbody>
-          {data.map((row) => (
+          {total === 0 ? (
+            <tr>
+              <td colSpan={5} className="px-4 py-8 text-center text-sm text-ink-soft">{t('common.noResults')}</td>
+            </tr>
+          ) : pageItems.map((row) => (
             <tr key={row.projectName} className="border-b border-neutral-100">
               <td className="px-4 py-3 font-medium text-ink">{row.projectName}</td>
               <td className="px-4 py-3">
@@ -67,6 +82,8 @@ export function PerformanceTable({ data }: { data: PerformanceRow[] }) {
           ))}
         </tbody>
       </table>
+      </div>
+      <Pagination page={page} totalPages={totalPages} total={total} from={from} to={to} onPage={setPage} />
     </div>
   );
 }

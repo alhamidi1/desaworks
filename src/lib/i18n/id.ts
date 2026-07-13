@@ -12,10 +12,13 @@ const id = {
     dashboard: 'Beranda',
     projects: 'Proyek',
     reports: 'Laporan',
+    residents: 'Warga',
     myAssignments: 'Tugas Saya',
     registerResident: 'Daftar Warga',
     signOut: 'Keluar',
     signingOut: 'Keluar...',
+    collapseSidebar: 'Sembunyikan menu',
+    expandSidebar: 'Tampilkan menu',
   },
 
   // Roles
@@ -88,6 +91,7 @@ const id = {
   project: {
     title: 'Proyek',
     subtitle: 'Kelola proyek desa dan penugasan tenaga kerja',
+    searchPlaceholder: 'Cari proyek berdasarkan nama...',
     createProject: 'Buat Proyek',
     noProjects: 'Belum ada proyek',
     noProjectsDesc: 'Buat proyek pertama untuk mulai menugaskan pekerja.',
@@ -310,6 +314,8 @@ const id = {
     copied: 'Disalin!',
     shareWa: 'Bagikan via WhatsApp',
     createAnother: 'Buat Akun Lain',
+    waGuideMessage:
+      'Halo {name}! 👋\n\nAkun DesaWorks Anda sudah dibuat. Berikut panduan singkat untuk masuk:\n\n1. Buka {link}\n2. Masukkan email & kata sandi di bawah ini\n3. Ganti kata sandi Anda setelah berhasil masuk\n\nEmail: {email}\nKata sandi sementara: {password}\n\nSimpan pesan ini baik-baik. Terima kasih!',
   },
 
   // Join requests (public intake → manager approval)
@@ -367,10 +373,36 @@ const id = {
     next: 'Selanjutnya',
     confirm: 'Konfirmasi',
     search: 'Cari',
+    searchPlaceholder: 'Cari...',
     filter: 'Saring',
     noResults: 'Tidak ada hasil',
     tryAgain: 'Coba Lagi',
     language: 'Bahasa',
+  },
+
+  // Pagination (app-wide "show 10, then next 10")
+  pagination: {
+    prev: 'Sebelumnya',
+    next: 'Berikutnya',
+    showing: 'Menampilkan {from}–{to} dari {total}',
+    page: 'Hal. {page}/{totalPages}',
+  },
+
+  // Manager: residents directory / management
+  residents: {
+    title: 'Kelola Warga',
+    subtitle: 'Cari, lihat, dan hubungi warga yang terdaftar di desa Anda.',
+    searchPlaceholder: 'Cari nama, HP, atau email...',
+    total: '{count} warga terdaftar',
+    empty: 'Belum ada warga terdaftar.',
+    emptyDesc: 'Tambahkan warga baru untuk mulai menugaskan pekerjaan.',
+    noResults: 'Tidak ada warga yang cocok dengan pencarian Anda.',
+    addResident: 'Tambah Warga',
+    skillsCount: '{count} keahlian',
+    noSkills: 'Belum ada keahlian',
+    joined: 'Bergabung {date}',
+    messageWa: 'Chat WhatsApp',
+    noContact: 'Tidak ada kontak',
   },
 
   // Date/Time

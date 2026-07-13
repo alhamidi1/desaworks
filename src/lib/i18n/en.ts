@@ -12,10 +12,13 @@ const en: TranslationDict = {
     dashboard: 'Dashboard',
     projects: 'Projects',
     reports: 'Reports',
+    residents: 'Residents',
     myAssignments: 'My Assignments',
     registerResident: 'Register Resident',
     signOut: 'Sign Out',
     signingOut: 'Signing out...',
+    collapseSidebar: 'Hide menu',
+    expandSidebar: 'Show menu',
   },
 
   // Roles
@@ -88,6 +91,7 @@ const en: TranslationDict = {
   project: {
     title: 'Projects',
     subtitle: 'Manage village projects and workforce assignments',
+    searchPlaceholder: 'Search projects by name...',
     createProject: 'Create Project',
     noProjects: 'No projects yet',
     noProjectsDesc: 'Create your first village project to start assigning workers.',
@@ -310,6 +314,8 @@ const en: TranslationDict = {
     copied: 'Copied!',
     shareWa: 'Share via WhatsApp',
     createAnother: 'Create Another',
+    waGuideMessage:
+      'Hello {name}! 👋\n\nYour DesaWorks account has been created. Here is a quick guide to sign in:\n\n1. Open {link}\n2. Enter the email & password below\n3. Change your password after signing in\n\nEmail: {email}\nTemporary password: {password}\n\nPlease keep this message safe. Thank you!',
   },
 
   // Join requests (public intake → manager approval)
@@ -367,10 +373,36 @@ const en: TranslationDict = {
     next: 'Next',
     confirm: 'Confirm',
     search: 'Search',
+    searchPlaceholder: 'Search...',
     filter: 'Filter',
     noResults: 'No results found',
     tryAgain: 'Try Again',
     language: 'Language',
+  },
+
+  // Pagination (app-wide "show 10, then next 10")
+  pagination: {
+    prev: 'Previous',
+    next: 'Next',
+    showing: 'Showing {from}–{to} of {total}',
+    page: 'Page {page}/{totalPages}',
+  },
+
+  // Manager: residents directory / management
+  residents: {
+    title: 'Manage Residents',
+    subtitle: 'Search, view, and contact the residents registered in your village.',
+    searchPlaceholder: 'Search by name, phone, or email...',
+    total: '{count} residents registered',
+    empty: 'No residents registered yet.',
+    emptyDesc: 'Add a new resident to start assigning work.',
+    noResults: 'No residents match your search.',
+    addResident: 'Add Resident',
+    skillsCount: '{count} skills',
+    noSkills: 'No skills yet',
+    joined: 'Joined {date}',
+    messageWa: 'WhatsApp',
+    noContact: 'No contact info',
   },
 
   // Date/Time

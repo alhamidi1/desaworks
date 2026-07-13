@@ -7,6 +7,9 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { formatDateShort } from '@/lib/i18n';
 import AvailabilityToggle from '@/components/residents/AvailabilityToggle';
+import { SearchInput } from '@/components/ui/SearchInput';
+import { Pagination } from '@/components/ui/Pagination';
+import { usePaginatedSearch } from '@/lib/hooks/usePaginatedSearch';
 
 export interface ResidentAssignment {
   id: string;
@@ -67,6 +70,12 @@ export default function ResidentDashboard({
 
   const activeCount = activeAssignments.length;
   const unreadNotifications = notifications.filter(n => !n.read);
+
+  // Searchable + paginated assignment list (10 per page).
+  const assignments = usePaginatedSearch(activeAssignments, {
+    pageSize: 10,
+    searchFields: (a) => [a.project_name],
+  });
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-fade-in">
@@ -142,8 +151,15 @@ export default function ResidentDashboard({
               <p className="mt-1 text-xs text-[#868e96]">{t('assignment.noActiveProjectsDesc')}</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4">
-              {activeAssignments.map((assignment) => (
+            <>
+              {activeAssignments.length > 5 && (
+                <SearchInput value={assignments.query} onChange={assignments.setQuery} placeholder={t('project.searchPlaceholder')} />
+              )}
+              {assignments.total === 0 ? (
+                <p className="rounded-2xl border-2 border-dashed border-[#e9ecef] bg-white py-10 text-center text-sm text-[#868e96]">{t('common.noResults')}</p>
+              ) : (
+                <div className="grid grid-cols-1 gap-4">
+                  {assignments.pageItems.map((assignment) => (
                 <article key={assignment.id} className="rounded-2xl border border-[#e9ecef] bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between">
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-2">
@@ -194,8 +210,18 @@ export default function ResidentDashboard({
                     </Link>
                   </div>
                 </article>
-              ))}
-            </div>
+                  ))}
+                </div>
+              )}
+              <Pagination
+                page={assignments.page}
+                totalPages={assignments.totalPages}
+                total={assignments.total}
+                from={assignments.from}
+                to={assignments.to}
+                onPage={assignments.setPage}
+              />
+            </>
           )}
         </section>
 

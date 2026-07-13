@@ -1,6 +1,9 @@
 'use client';
 
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { SearchInput } from '@/components/ui/SearchInput';
+import { Pagination } from '@/components/ui/Pagination';
+import { usePaginatedSearch } from '@/lib/hooks/usePaginatedSearch';
 
 interface WorkerContributionRow {
   workerName: string;
@@ -28,13 +31,21 @@ function progressColor(p: number) {
 
 export function WorkerContributionTable({ data }: { data: WorkerContributionRow[] }) {
   const { t } = useLanguage();
+  const { query, setQuery, pageItems, page, setPage, totalPages, total, from, to } = usePaginatedSearch(data, {
+    pageSize: 10,
+    searchFields: (r) => [r.workerName, r.email],
+  });
 
   if (!data.length) {
     return <div className="nm-raised grid min-h-[160px] place-items-center p-6 text-sm text-ink-soft">{t('table.noData')}</div>;
   }
 
   return (
-    <div className="nm-raised overflow-x-auto">
+    <div className="space-y-3">
+      {data.length > 10 && (
+        <SearchInput value={query} onChange={setQuery} placeholder={t('table.worker')} className="max-w-xs" />
+      )}
+      <div className="nm-raised overflow-x-auto">
       <table className="w-full min-w-[700px] text-sm">
         <thead>
           <tr className="border-b border-neutral-200 text-ink-soft">
@@ -46,7 +57,11 @@ export function WorkerContributionTable({ data }: { data: WorkerContributionRow[
           </tr>
         </thead>
         <tbody>
-          {data.map((row, index) => (
+          {total === 0 ? (
+            <tr>
+              <td colSpan={5} className="px-4 py-8 text-center text-sm text-ink-soft">{t('common.noResults')}</td>
+            </tr>
+          ) : pageItems.map((row, index) => (
             <tr key={`${row.workerName}-${row.email}-${index}`} className="border-b border-neutral-100">
               <td className="px-4 py-3">
                 <p className="font-medium text-ink">{row.workerName}</p>
@@ -75,6 +90,8 @@ export function WorkerContributionTable({ data }: { data: WorkerContributionRow[
           ))}
         </tbody>
       </table>
+      </div>
+      <Pagination page={page} totalPages={totalPages} total={total} from={from} to={to} onPage={setPage} />
     </div>
   );
 }

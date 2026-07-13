@@ -139,6 +139,48 @@ export async function createJoinRequest(input: unknown): Promise<ResidentActionR
   return { ok: true, data: { id: data.id } };
 }
 
+export interface ResidentListItem {
+  id: string;
+  full_name: string;
+  email: string | null;
+  phone: string | null;
+  address: string | null;
+  availability: 'available' | 'unavailable';
+  created_at: string;
+  skillCount: number;
+}
+
+/** Manager view: all residents in the manager's village (RLS scopes by village). */
+export async function listResidents(): Promise<ResidentActionResult<ResidentListItem[]>> {
+  const auth = await requireManagerCtx();
+  if (!auth.ok) return auth;
+
+  const { data, error } = await auth.supabase
+    .from('profiles')
+    .select('id, full_name, email, phone, address, availability, created_at, resident_skills(id)')
+    .eq('role', 'resident')
+    .order('full_name', { ascending: true });
+
+  if (error) return { ok: false, error: error.message };
+
+  const items: ResidentListItem[] = (data ?? []).map((p) => {
+    const row = p as Record<string, unknown>;
+    const skills = row.resident_skills;
+    return {
+      id: String(row.id),
+      full_name: (row.full_name as string) ?? '',
+      email: (row.email as string) ?? null,
+      phone: (row.phone as string) ?? null,
+      address: (row.address as string) ?? null,
+      availability: (row.availability as 'available' | 'unavailable') ?? 'available',
+      created_at: (row.created_at as string) ?? '',
+      skillCount: Array.isArray(skills) ? skills.length : 0,
+    };
+  });
+
+  return { ok: true, data: items };
+}
+
 export async function listJoinRequests(): Promise<ResidentActionResult<Record<string, unknown>[]>> {
   const auth = await requireManagerCtx();
   if (!auth.ok) return auth;
