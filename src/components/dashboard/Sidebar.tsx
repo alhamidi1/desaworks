@@ -166,10 +166,10 @@ export default function Sidebar({ role, userName }: SidebarProps) {
       {/* ==========================================
           MOBILE TOP BAR
           ========================================== */}
-      <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-[#e9ecef] glass px-4 lg:hidden">
+      <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-border bg-card px-4 lg:hidden">
         <button
           onClick={() => setSidebarOpen(true)}
-          className="rounded-xl p-2 text-[#495057] hover:bg-[#f1f3f5] active:bg-[#e9ecef] transition-colors touch-target"
+          className="rounded-xl p-2 text-ink-soft hover:bg-surface active:bg-neutral-200 transition-colors touch-target"
           aria-label="Open menu"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
@@ -178,16 +178,16 @@ export default function Sidebar({ role, userName }: SidebarProps) {
         </button>
 
         <div className="flex items-center gap-2 flex-1">
-          <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm">
+          <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-white ring-1 ring-border">
             <Image src="/icon.png" alt="DesaWorks" width={28} height={28} className="h-7 w-7 object-contain" />
           </div>
-          <span className="text-base font-bold text-[#1a1d23] tracking-tight">DesaWorks</span>
+          <span className="text-base font-bold text-ink tracking-tight">DesaWorks</span>
         </div>
 
         {/* Language toggle — mobile header */}
         <button
           onClick={() => setLocale(locale === 'id' ? 'en' : 'id')}
-          className="rounded-lg px-2.5 py-1.5 text-xs font-bold text-[#05c8ae] bg-[#effefb] border border-[#c7fff4] touch-target"
+          className="rounded-lg px-2.5 py-1.5 text-xs font-bold text-primary-700 bg-primary-50 border border-primary-100 touch-target"
         >
           {locale === 'id' ? 'EN' : 'ID'}
         </button>
@@ -198,7 +198,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
           ========================================== */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-30 bg-[#16191d]/50 backdrop-blur-sm lg:hidden transition-opacity"
+          className="fixed inset-0 z-30 bg-neutral-900/50 backdrop-blur-sm lg:hidden transition-opacity"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -210,7 +210,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
         <button
           onClick={() => setCollapsedPersisted(false)}
           aria-label={t('nav.expandSidebar')}
-          className="fixed left-0 top-4 z-40 hidden items-center rounded-r-xl bg-[#16191d] px-2 py-3 text-white/70 shadow-lg ring-1 ring-white/10 transition hover:bg-[#1a2332] hover:text-white lg:flex"
+          className="fixed left-0 top-4 z-40 hidden items-center rounded-r-xl bg-neutral-900 px-2 py-3 text-white/70 shadow-lg ring-1 ring-white/10 transition hover:bg-neutral-800 hover:text-white lg:flex"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-5 w-5">
             <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
@@ -222,13 +222,13 @@ export default function Sidebar({ role, userName }: SidebarProps) {
           DESKTOP SIDEBAR
           ========================================== */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-[280px] flex-col glass-dark transition-all duration-300 ease-out lg:static ${
+        className={`fixed inset-y-0 left-0 z-40 flex w-[280px] flex-col bg-neutral-900 transition-all duration-300 ease-out lg:static ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } ${collapsed ? 'lg:w-0 lg:-translate-x-full lg:overflow-hidden lg:opacity-0' : 'lg:w-[280px] lg:translate-x-0 lg:opacity-100'}`}
       >
         {/* Brand Header */}
         <div className="flex h-16 items-center gap-3 border-b border-white/10 px-6">
-          <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-white shadow-lg shadow-[#05c8ae]/20">
+          <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-white">
             <Image src="/icon.png" alt="DesaWorks" width={32} height={32} className="h-8 w-8 object-contain" />
           </div>
           <span className="text-lg font-bold tracking-tight text-white">DesaWorks</span>
@@ -268,7 +268,7 @@ export default function Sidebar({ role, userName }: SidebarProps) {
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 touch-target ${
                   active
-                    ? 'bg-[#05c8ae]/15 text-[#51f7db] shadow-[0_2px_8px_rgba(5,200,174,0.1)]'
+                    ? 'bg-primary-500/15 text-primary-300'
                     : 'text-white/60 hover:bg-white/8 hover:text-white'
                 }`}
               >
@@ -284,15 +284,15 @@ export default function Sidebar({ role, userName }: SidebarProps) {
         {/* User profile & Sign Out */}
         <div className="border-t border-white/10 p-4 space-y-3">
           <div className="flex items-center gap-3 px-2 py-1.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#05c8ae]/30 to-[#058074]/30 font-bold text-[#51f7db] text-sm border border-[#05c8ae]/20">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-500/20 font-bold text-primary-300 text-sm border border-primary-500/25">
               {userName.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-white leading-tight">{userName}</p>
               <span className={`inline-block text-[10px] font-bold uppercase tracking-wider mt-1 px-2 py-0.5 rounded-full ${
                 isManager
-                  ? 'bg-[#05c8ae]/15 text-[#51f7db] border border-[#05c8ae]/25'
-                  : 'bg-[#3b82f6]/15 text-[#93c5fd] border border-[#3b82f6]/25'
+                  ? 'bg-primary-500/15 text-primary-300 border border-primary-500/25'
+                  : 'bg-info/15 text-[#93c5fd] border border-info/25'
               }`}>
                 {roleLabel}
               </span>
@@ -321,7 +321,9 @@ export default function Sidebar({ role, userName }: SidebarProps) {
       {/* ==========================================
           MOBILE BOTTOM NAVIGATION BAR
           ========================================== */}
-      <nav className="fixed bottom-0 left-0 right-0 z-20 border-t border-[#e9ecef] glass safe-bottom lg:hidden">
+      {/* Shows the core destinations. For managers the 5th item (Register) is
+          reached via the Residents page "Add Resident" CTA or the hamburger drawer. */}
+      <nav className="fixed bottom-0 left-0 right-0 z-20 border-t border-border bg-card safe-bottom lg:hidden">
         <div className="flex items-center justify-around px-2 pt-1 pb-1">
           {navItems.slice(0, 4).map((item) => {
             const active = isActiveLink(item.href);
@@ -331,16 +333,16 @@ export default function Sidebar({ role, userName }: SidebarProps) {
                 href={item.href}
                 className={`flex flex-col items-center justify-center gap-0.5 px-2 py-2 rounded-xl min-w-[60px] transition-colors touch-target ${
                   active
-                    ? 'text-[#05c8ae]'
-                    : 'text-[#868e96] active:text-[#05c8ae]'
+                    ? 'text-primary-600'
+                    : 'text-ink-soft active:text-primary-600'
                 }`}
               >
                 {item.mobileIcon}
-                <span className={`text-[10px] font-semibold leading-tight ${active ? 'text-[#05c8ae]' : 'text-[#868e96]'}`}>
+                <span className={`text-[10px] font-semibold leading-tight ${active ? 'text-primary-600' : 'text-ink-soft'}`}>
                   {item.label.length > 10 ? item.label.split(' ')[0] : item.label}
                 </span>
                 {active && (
-                  <div className="h-1 w-5 rounded-full bg-[#05c8ae] mt-0.5" />
+                  <div className="h-1 w-5 rounded-full bg-primary-600 mt-0.5" />
                 )}
               </Link>
             );

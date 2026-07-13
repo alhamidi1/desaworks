@@ -108,7 +108,7 @@ async function AssignWorkersContent({ id, locale }: { id: string; locale: Locale
           <ul className="space-y-2">
             {existingAssignments.map((a: any) => (
               <li key={a.id} className="flex items-center gap-3 rounded-xl bg-[#effefb] px-4 py-2.5">
-                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#05c8ae] to-[#058074] flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+                <div className="h-8 w-8 rounded-full bg-primary-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
                   {a.resident?.full_name?.charAt(0) ?? '?'}
                 </div>
                 <div className="flex-1 min-w-0">

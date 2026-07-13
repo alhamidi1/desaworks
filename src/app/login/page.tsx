@@ -28,17 +28,12 @@ export default function LoginPage() {
   const showTestCredentials = process.env.NEXT_PUBLIC_HIDE_TEST_CREDENTIALS !== 'true';
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-4 relative overflow-hidden bg-gradient-to-br from-[#f0fdfa] via-[#f7f8fa] to-[#eff6ff]">
-      {/* Animated background blobs */}
-      <div className="absolute top-1/4 left-1/4 h-[500px] w-[500px] rounded-full bg-[#05c8ae]/8 blur-[100px] -translate-x-1/2 -translate-y-1/2 animate-pulse" />
-      <div className="absolute bottom-1/4 right-1/4 h-[400px] w-[400px] rounded-full bg-[#3b82f6]/8 blur-[80px] translate-x-1/2 translate-y-1/2 animate-pulse" />
-      <div className="absolute top-1/2 left-1/2 h-[300px] w-[300px] rounded-full bg-[#f59e0b]/5 blur-[80px] -translate-x-1/2 -translate-y-1/2" />
-
+    <main className="flex min-h-screen flex-col items-center justify-center px-4 relative bg-surface">
       {/* Language toggle — top right */}
       <div className="absolute top-4 right-4 z-20">
         <button
           onClick={() => setLocale(locale === 'id' ? 'en' : 'id')}
-          className="flex items-center gap-2 rounded-full glass px-4 py-2 text-sm font-medium text-[#495057] hover:text-[#05c8ae] transition-colors shadow-sm touch-target"
+          className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-ink-soft hover:text-primary-700 transition-colors touch-target"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
@@ -47,19 +42,19 @@ export default function LoginPage() {
         </button>
       </div>
 
-      <div className="relative w-full max-w-md space-y-5 animate-fade-in">
+      <div className="relative w-full max-w-md space-y-4 animate-fade-in">
         {/* Main card */}
-        <div className="rounded-3xl glass p-8 sm:p-10 shadow-xl">
+        <div className="rounded-2xl border border-border bg-card p-8 sm:p-10 shadow-[var(--shadow-lg)]">
           {/* Logo & Header */}
           <div className="text-center space-y-3">
-            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-lg shadow-[#05c8ae]/20">
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white ring-1 ring-border">
               <Image src="/icon.png" alt="DesaWorks" width={48} height={48} className="h-12 w-12 object-contain" priority />
             </div>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-[#1a1d23]">
+              <h1 className="text-2xl font-bold tracking-tight text-ink">
                 {t('login.title')}
               </h1>
-              <p className="text-sm text-[#868e96] mt-1">
+              <p className="text-sm text-ink-soft mt-1">
                 {t('login.subtitle')}
               </p>
             </div>
@@ -67,7 +62,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
             <div className="space-y-1.5">
-              <label htmlFor="email" className="text-xs font-semibold text-[#495057] uppercase tracking-wider block">
+              <label htmlFor="email" className="text-xs font-semibold text-ink-soft uppercase tracking-wider block">
                 {t('login.email')}
               </label>
               <input
@@ -77,12 +72,12 @@ export default function LoginPage() {
                 autoComplete="email"
                 required
                 placeholder={t('login.emailPlaceholder')}
-                className="w-full rounded-xl border border-[#dee2e6] bg-white px-4 py-3.5 text-sm text-[#1a1d23] placeholder-[#adb5bd] transition-all focus:border-[#05c8ae] focus:ring-2 focus:ring-[#05c8ae]/15 touch-target"
+                className="w-full rounded-xl border border-border bg-card px-4 py-3.5 text-sm text-ink placeholder-neutral-400 transition-all touch-target"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="password" className="text-xs font-semibold text-[#495057] uppercase tracking-wider block">
+              <label htmlFor="password" className="text-xs font-semibold text-ink-soft uppercase tracking-wider block">
                 {t('login.password')}
               </label>
               <input
@@ -92,21 +87,21 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 required
                 placeholder={t('login.passwordPlaceholder')}
-                className="w-full rounded-xl border border-[#dee2e6] bg-white px-4 py-3.5 text-sm text-[#1a1d23] placeholder-[#adb5bd] transition-all focus:border-[#05c8ae] focus:ring-2 focus:ring-[#05c8ae]/15 touch-target"
+                className="w-full rounded-xl border border-border bg-card px-4 py-3.5 text-sm text-ink placeholder-neutral-400 transition-all touch-target"
               />
             </div>
 
             {error && (
-              <div className="rounded-xl border border-red-100 bg-red-50/80 p-4 text-xs space-y-1 animate-fade-in">
-                <p className="font-bold text-red-700">{t('login.authFailed')}</p>
-                <p className="text-red-500 leading-normal">{error}</p>
+              <div className="rounded-xl border border-danger/20 bg-danger-soft p-4 text-xs space-y-1 animate-fade-in">
+                <p className="font-bold text-danger">{t('login.authFailed')}</p>
+                <p className="text-danger/80 leading-normal">{error}</p>
               </div>
             )}
 
             <button
               type="submit"
               disabled={isPending}
-              className="w-full rounded-xl bg-gradient-to-r from-[#05c8ae] to-[#058074] hover:from-[#00a18f] hover:to-[#0d534d] py-3.5 text-sm font-semibold text-white transition-all shadow-lg shadow-[#05c8ae]/20 disabled:cursor-not-allowed disabled:opacity-50 touch-target"
+              className="w-full rounded-xl bg-primary-600 hover:bg-primary-700 py-3.5 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 touch-target"
             >
               {isPending ? (
                 <span className="flex items-center justify-center gap-2">
@@ -125,21 +120,21 @@ export default function LoginPage() {
 
         {/* Test credentials — only in development */}
         {showTestCredentials && (
-          <div className="rounded-2xl glass p-5 shadow-md space-y-3 animate-slide-up">
-            <p className="text-xs font-bold text-[#495057] uppercase tracking-wider text-center">
+          <div className="rounded-2xl border border-border bg-card p-5 space-y-3 animate-slide-up">
+            <p className="text-xs font-bold text-ink-soft uppercase tracking-wider text-center">
               {t('login.testCredentials')}
             </p>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 text-xs">
-              <div className="p-3 bg-[#effefb] rounded-xl border border-[#c7fff4] space-y-1">
-                <span className="font-semibold text-[#058074] block">{t('login.managerRole')}</span>
-                <p className="text-[#495057] leading-tight">
+              <div className="p-3 bg-primary-50 rounded-xl border border-primary-100 space-y-1">
+                <span className="font-semibold text-primary-700 block">{t('login.managerRole')}</span>
+                <p className="text-ink-soft leading-tight">
                   <strong>Email:</strong> manager@desaworks.test<br />
                   <strong>Pass:</strong> Password123!
                 </p>
               </div>
-              <div className="p-3 bg-[#eff6ff] rounded-xl border border-[#bfdbfe] space-y-1">
-                <span className="font-semibold text-[#1d4ed8] block">{t('login.residentRole')}</span>
-                <p className="text-[#495057] leading-tight">
+              <div className="p-3 bg-info-soft rounded-xl border border-info/20 space-y-1">
+                <span className="font-semibold text-info block">{t('login.residentRole')}</span>
+                <p className="text-ink-soft leading-tight">
                   <strong>Email:</strong> siti.rahma@desaworks.test<br />
                   <strong>Pass:</strong> Password123!
                 </p>

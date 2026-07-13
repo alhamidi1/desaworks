@@ -32,7 +32,7 @@ export function ProjectsPageClient({ projects, error }: Props) {
         </div>
         <Link
           href="/projects/create"
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#05c8ae] to-[#058074] px-5 py-3 text-sm font-bold text-white shadow-lg shadow-[#05c8ae]/20 hover:from-[#00a18f] hover:to-[#0d534d] transition-all touch-target"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-5 py-3 text-sm font-bold text-white hover:bg-primary-700 transition-all touch-target"
         >
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -57,7 +57,7 @@ export function ProjectsPageClient({ projects, error }: Props) {
           </p>
           <Link
             href="/projects/create"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#05c8ae] to-[#058074] px-5 py-3 text-sm font-bold text-white shadow-lg shadow-[#05c8ae]/20 hover:from-[#00a18f] hover:to-[#0d534d] transition-all touch-target"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-5 py-3 text-sm font-bold text-white hover:bg-primary-700 transition-all touch-target"
           >
             {t('project.createProject')}
           </Link>

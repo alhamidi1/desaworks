@@ -408,7 +408,7 @@ export default function ProgressUpdateForm({
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#05c8ae] to-[#058074] px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#05c8ae]/20 hover:from-[#00a18f] hover:to-[#0d534d] focus:outline-none focus:ring-2 focus:ring-[#05c8ae]/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all touch-target"
+        className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-3.5 text-sm font-bold text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-[#05c8ae]/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all touch-target"
       >
         {isSubmitting && (
           <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">

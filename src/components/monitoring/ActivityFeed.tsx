@@ -81,42 +81,44 @@ export function ActivityFeed({ items, pageSize = 10 }: ActivityFeedProps) {
   }
 
   return (
-    <div>
-    <div className="space-y-0 divide-y divide-slate-100 rounded-2xl border border-slate-200 bg-white shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
-      {pageItems.map((item) => (
-        <article key={item.id} className="flex gap-3 px-5 py-4 transition-colors hover:bg-slate-50">
-          {/* Status dot */}
-          <div className="mt-1.5 flex-shrink-0">
-            <span className={`block h-2.5 w-2.5 rounded-full ${statusColor(item.status)}`} />
-          </div>
+    <div className="nm-raised p-4 sm:p-5 flex flex-col justify-start gap-3">
+      <div className="space-y-2">
+        {pageItems.map((item) => (
+          <article key={item.id} className="flex gap-3 rounded-xl bg-surface px-4 py-3.5 transition-colors hover:bg-surface-soft">
+            {/* Status dot */}
+            <div className="mt-1.5 flex-shrink-0">
+              <span className={`block h-2.5 w-2.5 rounded-full ${statusColor(item.status)}`} />
+            </div>
 
-          {/* Content */}
-          <div className="min-w-0 flex-1">
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <p className="text-sm font-medium text-slate-900">{item.workerName}</p>
-                <p className="text-xs text-slate-500">{item.projectName}</p>
+            {/* Content */}
+            <div className="min-w-0 flex-1">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-slate-900">{item.workerName}</p>
+                  <p className="text-xs text-slate-500">{item.projectName}</p>
+                </div>
+                <span className={`flex-shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${progressBadgeColor(item.progressPercentage)}`}>
+                  {item.progressPercentage}%
+                </span>
               </div>
-              <span className={`flex-shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${progressBadgeColor(item.progressPercentage)}`}>
-                {item.progressPercentage}%
-              </span>
-            </div>
-            {item.description && (
-              <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
-                {truncate(item.description, 120)}
-              </p>
-            )}
-            <div className="mt-2 flex items-center gap-3 text-xs text-slate-400">
-              <time dateTime={item.createdAt}>{formatRelativeTime(item.createdAt)}</time>
-              {item.hoursWorked > 0 && (
-                <span>• {item.hoursWorked}h worked</span>
+              {item.description && (
+                <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
+                  {truncate(item.description, 120)}
+                </p>
               )}
+              <div className="mt-2 flex items-center gap-3 text-xs text-slate-400">
+                <time dateTime={item.createdAt}>{formatRelativeTime(item.createdAt)}</time>
+                {item.hoursWorked > 0 && (
+                  <span>• {item.hoursWorked}h worked</span>
+                )}
+              </div>
             </div>
-          </div>
-        </article>
-      ))}
-    </div>
-    <Pagination page={page} totalPages={totalPages} total={total} from={from} to={to} onPage={setPage} />
+          </article>
+        ))}
+      </div>
+      <div className="mt-1">
+        <Pagination page={page} totalPages={totalPages} total={total} from={from} to={to} onPage={setPage} />
+      </div>
     </div>
   );
 }

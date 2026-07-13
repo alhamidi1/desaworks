@@ -87,7 +87,7 @@ export default function RegistrationForm({ residentId, isPublic = false }: Regis
   if (success) {
     return (
       <div className="flex flex-col items-center justify-center py-10 text-center gap-4">
-        <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-[#05c8ae] to-[#058074] flex items-center justify-center shadow-lg shadow-[#05c8ae]/25">
+        <div className="h-16 w-16 rounded-2xl bg-primary-600 flex items-center justify-center">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-8 w-8 text-white">
             <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
           </svg>
@@ -202,7 +202,7 @@ export default function RegistrationForm({ residentId, isPublic = false }: Regis
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-xl bg-gradient-to-r from-[#05c8ae] to-[#058074] px-6 py-3.5 text-sm font-bold text-white shadow-md shadow-[#05c8ae]/20 hover:shadow-lg hover:shadow-[#05c8ae]/30 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
+        className="w-full rounded-xl bg-primary-600 px-6 py-3.5 text-sm font-bold text-white hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
       >
         {loading ? (
           <span className="flex items-center justify-center gap-2">

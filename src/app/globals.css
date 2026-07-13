@@ -1,18 +1,23 @@
 @import "tailwindcss";
 
 /* ============================================================
-   DESAWORKS — Soft-UI / Neumorphism-lite design system
-   Soft, tactile surfaces + high-contrast content (WCAG AA).
+   DESAWORKS — "Clarity" design system
+   Flat surfaces, hairline borders, one soft elevation shadow.
+   High-contrast content (WCAG AA). Teal/green brand retained.
    ============================================================ */
 
 @theme {
   --font-sans: var(--font-inter), 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
 
-  /* Surfaces + text (promoted so bg-surface / text-ink / etc. exist) */
-  --color-surface: #e9edf2;   /* page background (mid-light so both shadows read) */
-  --color-card: #f3f6f9;      /* raised card surface (lighter than the page) */
-  --color-ink: #1a1d23;       /* primary text — AA on card/surface */
-  --color-ink-soft: #59626f;  /* secondary text — AA on card/surface */
+  /* Surfaces + text (promoted so bg-surface / bg-card / text-ink / border-border exist) */
+  --color-surface: #f6f8fa;       /* page background (light cool grey) */
+  --color-surface-soft: #eef1f5;  /* subtle row / hover / inset well */
+  --color-card: #ffffff;          /* flat card surface */
+  --color-ink: #101828;           /* primary text — AA on card/surface */
+  --color-ink-soft: #667085;      /* secondary text — AA on card/surface */
+  --color-ink-mute: #98a2b3;      /* tertiary text / hints */
+  --color-border: #e6e9ee;        /* hairline card + control border */
+  --color-border-strong: #d7dbe0; /* hover / emphasis border */
   --color-background: var(--color-surface);
   --color-foreground: var(--color-ink);
 
@@ -51,19 +56,18 @@
   --color-info-soft: #dbe7fe;
 
   --radius-sm: 0.5rem;
-  --radius-md: 0.75rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.25rem;
-  --radius-2xl: 1.5rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
 }
 
 :root {
-  /* Neumorphic dual shadows (light top-left, soft cool-gray bottom-right) */
-  --nm-raised: 6px 6px 14px rgba(174, 187, 205, 0.55), -6px -6px 14px rgba(255, 255, 255, 0.9);
-  --nm-raised-sm: 3px 3px 8px rgba(174, 187, 205, 0.5), -3px -3px 8px rgba(255, 255, 255, 0.9);
-  --nm-inset: inset 4px 4px 8px rgba(174, 187, 205, 0.55), inset -4px -4px 8px rgba(255, 255, 255, 0.95);
-  --nm-inset-sm: inset 2px 2px 5px rgba(174, 187, 205, 0.5), inset -2px -2px 5px rgba(255, 255, 255, 0.95);
-  --nm-glow: 0 0 0 3px rgba(5, 200, 174, 0.18);
+  /* Clarity elevation — single soft drop shadow */
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --shadow-md: 0 1px 3px rgba(16, 24, 40, 0.1), 0 1px 2px rgba(16, 24, 40, 0.06);
+  --shadow-lg: 0 8px 24px rgba(16, 24, 40, 0.08);
+  --nm-glow: 0 0 0 3px rgba(5, 200, 174, 0.25);
 }
 
 /* ============================================================
@@ -87,37 +91,44 @@ body {
 }
 
 /* ============================================================
-   NEUMORPHIC SURFACE UTILITIES
+   SURFACE UTILITIES — "Clarity" (flat cards, hairline borders)
+   Legacy .nm-* class names kept so existing markup restyles in
+   place; .card / .card-sm / .field are the preferred aliases.
    ============================================================ */
-.nm-raised {
+.nm-raised,
+.card {
   background: var(--color-card);
-  box-shadow: var(--nm-raised);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: var(--shadow-sm);
 }
-.nm-raised-sm {
+.nm-raised-sm,
+.card-sm {
   background: var(--color-card);
-  box-shadow: var(--nm-raised-sm);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.5);
 }
+/* Recessed well — a subtle grey block inside a white card */
 .nm-inset {
-  background: var(--color-surface);
-  box-shadow: var(--nm-inset);
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
 }
-.nm-inset-sm {
-  background: var(--color-surface);
-  box-shadow: var(--nm-inset-sm);
-  border-radius: var(--radius-sm);
+/* Form field */
+.nm-inset-sm,
+.field {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
 }
-/* Tactile press feedback for buttons/links */
-.nm-pressable {
-  transition: box-shadow 0.12s ease, transform 0.12s ease;
+/* Press feedback for buttons/links */
+.nm-pressable,
+.pressable {
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
 }
-.nm-pressable:active {
-  box-shadow: var(--nm-inset-sm);
-  transform: translateY(1px);
+.nm-pressable:active,
+.pressable:active {
+  transform: scale(0.98);
 }
 
 /* ============================================================
@@ -177,6 +188,7 @@ input:focus,
 textarea:focus,
 select:focus {
   outline: none;
+  border-color: var(--color-primary-500);
   box-shadow: var(--nm-glow);
 }
 
@@ -215,18 +227,4 @@ input[type="range"]::-moz-range-thumb {
 button, [role="button"] {
   user-select: none;
   -webkit-user-select: none;
-}
-
-/* Legacy glass helpers — retained until the sidebar is restyled (D3), then removed. */
-.glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-.glass-dark {
-  background: rgba(22, 25, 29, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
 }

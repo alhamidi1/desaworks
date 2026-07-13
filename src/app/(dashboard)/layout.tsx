@@ -33,11 +33,11 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-[#f7f8fa]">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-surface">
       {/* Sidebar with role-based navigation */}
       <Sidebar role={profile.role} userName={profile.full_name} />
 
-      {/* Main content area — pb-20 for mobile bottom nav */}
+      {/* Main content area — pb-24 clears the fixed mobile bottom nav */}
       <div className="flex flex-1 flex-col min-w-0">
         <DashboardHeader />
         <main className="flex-1 px-4 py-4 pb-24 sm:px-6 sm:py-6 lg:px-8 lg:py-8 lg:pb-8 overflow-y-auto">

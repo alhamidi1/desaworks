@@ -31,7 +31,7 @@ export function Pagination({ page, totalPages, total, from, to, onPage, classNam
             type="button"
             onClick={() => onPage(page - 1)}
             disabled={page <= 1}
-            className="nm-pressable rounded-lg border border-neutral-300 bg-card px-3 py-1.5 text-xs font-semibold text-ink-soft transition hover:text-ink disabled:cursor-not-allowed disabled:opacity-40"
+            className="nm-pressable inline-flex min-h-[40px] items-center rounded-lg border border-border bg-card px-3.5 text-xs font-semibold text-ink-soft transition hover:border-border-strong hover:text-ink disabled:cursor-not-allowed disabled:opacity-40"
           >
             {t('pagination.prev')}
           </button>
@@ -42,7 +42,7 @@ export function Pagination({ page, totalPages, total, from, to, onPage, classNam
             type="button"
             onClick={() => onPage(page + 1)}
             disabled={page >= totalPages}
-            className="nm-pressable rounded-lg border border-neutral-300 bg-card px-3 py-1.5 text-xs font-semibold text-primary-700 transition hover:text-primary-800 disabled:cursor-not-allowed disabled:opacity-40"
+            className="nm-pressable inline-flex min-h-[40px] items-center rounded-lg border border-border bg-card px-3.5 text-xs font-semibold text-primary-700 transition hover:border-border-strong hover:text-primary-800 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {t('pagination.next')}
           </button>

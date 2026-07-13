@@ -73,7 +73,7 @@ export function AssignedWorkers({ projectId, assignments, workersNeeded }: Assig
           className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#e9ecef] bg-[#f8f9fa] px-4 py-3"
         >
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-[#05c8ae] to-[#058074] flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+            <div className="h-9 w-9 rounded-full bg-primary-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
               {a.resident.full_name?.charAt(0) ?? '?'}
             </div>
             <div>

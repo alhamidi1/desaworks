@@ -1,20 +1,15 @@
 'use client';
 
-import Link from 'next/link';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { DashboardSection } from '@/components/dashboard/DashboardGrid';
 import { AlertsPanel } from '@/components/dashboard/AlertsPanel';
-import { HealthBadge } from '@/components/dashboard/HealthBadge';
 import { TimeframeSelector } from '@/components/dashboard/TimeframeSelector';
 import { ProjectCompletionChart } from '@/components/dashboard/ProjectCompletionChart';
 import { StatusDistributionChart } from '@/components/dashboard/StatusDistributionChart';
 import { ProgressOverTimeChart } from '@/components/dashboard/ProgressOverTimeChart';
-import { ImpactDashboard } from '@/components/dashboard/ImpactDashboard';
 import { ActivityFeed } from '@/components/monitoring/ActivityFeed';
-import { SearchInput } from '@/components/ui/SearchInput';
-import { Pagination } from '@/components/ui/Pagination';
-import { usePaginatedSearch } from '@/lib/hooks/usePaginatedSearch';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { formatCurrency } from '@/lib/i18n';
 import type { ImpactReport, ManagerDashboardReport } from '@/lib/queries/reports';
 
 interface ManagerDashboardProps {
@@ -32,17 +27,8 @@ export function ManagerDashboard({ report, impact }: ManagerDashboardProps) {
     assignedWorkers: p.assignedWorkers,
   }));
 
-  // Searchable + paginated project directory (10 per page).
-  const projects = usePaginatedSearch(report.projects, {
-    pageSize: 10,
-    searchFields: (p) => [p.project.name],
-  });
-
   return (
     <div className="animate-fade-in space-y-6">
-      {/* Village impact — surfaced at the very top for the village head */}
-      {impact ? <ImpactDashboard impact={impact} /> : null}
-
       {/* Header + timeframe */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
@@ -52,69 +38,106 @@ export function ManagerDashboard({ report, impact }: ManagerDashboardProps) {
         <TimeframeSelector current={report.range} />
       </div>
 
-      {/* KPI row */}
+      {/* Row 1: 8 Stats Cards Grid */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatsCard title={t('stats.totalProjects')} value={k.totalProjects} accent="primary" hint={t('stats.active', { count: k.activeProjects })} />
-        <StatsCard title={t('stats.utilization')} value={`${k.utilizationRate}%`} accent="info" hint={t('stats.ofResidents', { active: k.activeWorkersDistinct, total: k.totalResidents })} />
-        <StatsCard title={t('stats.portfolioCompletion')} value={`${Math.round(k.portfolioCompletion)}%`} accent="success" hint={t('stats.weighted')} />
-        <StatsCard title={t('stats.delayedProjects')} value={k.delayedCount} accent={k.delayedCount > 0 ? 'danger' : 'neutral'} hint={`${t('stats.understaffed')}: ${k.understaffedCount}`} />
+        {/* Village Impact Cards */}
+        <StatsCard
+          title={t('impact.residentsEmployed')}
+          value={String(impact?.residentsEmployed ?? 0)}
+          accent="primary"
+          hint={impact ? t('impact.ofTotal', { total: impact.totalResidents }) : undefined}
+          className="hidden sm:block"
+        />
+        <StatsCard
+          title={t('impact.incomeGenerated')}
+          value={impact ? formatCurrency(impact.incomeGenerated) : 'Rp 0'}
+          accent="success"
+        />
+        <StatsCard
+          title={t('impact.participation')}
+          value={impact ? `${impact.participationRate}%` : '0%'}
+          accent="info"
+          className="hidden sm:block"
+        />
+        <StatsCard
+          title={t('impact.hoursContributed')}
+          value={String(impact?.totalHoursContributed ?? 0)}
+          accent="warning"
+          className="hidden sm:block"
+        />
+
+        {/* Dashboard KPI Cards */}
+        <StatsCard
+          title={t('stats.totalProjects')}
+          value={k.totalProjects}
+          accent="neutral"
+          hint={t('stats.active', { count: k.activeProjects })}
+        />
+        <StatsCard
+          title={t('stats.utilization')}
+          value={`${k.utilizationRate}%`}
+          accent="info"
+          hint={t('stats.ofResidents', { active: k.activeWorkersDistinct, total: k.totalResidents })}
+          className="hidden sm:block"
+        />
+        <StatsCard
+          title={t('stats.portfolioCompletion')}
+          value={`${Math.round(k.portfolioCompletion)}%`}
+          accent="success"
+          hint={t('stats.weighted')}
+        />
+        <StatsCard
+          title={t('stats.delayedProjects')}
+          value={k.delayedCount}
+          accent={k.delayedCount > 0 ? 'danger' : 'neutral'}
+          hint={`${t('stats.understaffed')}: ${k.understaffedCount}`}
+        />
       </div>
 
-      {/* Alerts + status distribution */}
+      {/* Row 2: Project Completion + Status Distribution */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <AlertsPanel alerts={report.alerts} />
+        <DashboardSection
+          title={
+            <div className="flex flex-col sm:flex-row sm:items-baseline gap-2">
+              <span>{t('chart.projectCompletion')}</span>
+              {report.projects.length > report.topProjects.length ? (
+                <span className="text-xs font-normal text-ink-soft">
+                  {t('chart.showingTop', { shown: report.topProjects.length, total: report.projects.length })}
+                </span>
+              ) : null}
+            </div>
+          }
+        >
+          <ProjectCompletionChart data={completionData} />
+        </DashboardSection>
         <DashboardSection title={t('chart.statusDistribution')}>
           <StatusDistributionChart data={report.projectStatusDistribution} />
         </DashboardSection>
       </div>
 
-      {/* Completion (Top-N) */}
-      <DashboardSection title={t('chart.projectCompletion')}>
-        {report.projects.length > report.topProjects.length ? (
-          <p className="-mt-2 text-xs text-ink-soft">{t('chart.showingTop', { shown: report.topProjects.length, total: report.projects.length })}</p>
-        ) : null}
-        <ProjectCompletionChart data={completionData} />
-      </DashboardSection>
-
-      {/* Progress trend */}
+      {/* Row 3: Progress Over Time */}
       <DashboardSection title={t('chart.progressOverTime')}>
         <ProgressOverTimeChart data={report.progressTrend} />
       </DashboardSection>
 
-      {/* Activity + searchable project directory */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      {/* Row 4: Recent Activity + Needs Attention */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 items-start">
         <DashboardSection title={t('chart.recentActivity')}>
           <ActivityFeed items={report.recentActivity} />
         </DashboardSection>
-        <DashboardSection title={t('nav.projects')}>
-          <div className="mb-3">
-            <SearchInput value={projects.query} onChange={projects.setQuery} placeholder={t('project.searchPlaceholder')} />
-          </div>
-          {projects.total === 0 ? (
-            <p className="py-8 text-center text-sm text-ink-soft">{t('common.noResults')}</p>
-          ) : (
-            <div className="nm-raised divide-y divide-neutral-200/70 p-2">
-              {projects.pageItems.map((p) => (
-                <Link key={p.project.id} href={`/projects/${p.project.id}`} className="flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 transition hover:bg-surface">
-                  <span className="min-w-0">
-                    <span className="block truncate text-sm font-semibold text-ink">{p.project.name}</span>
-                    <span className="text-xs text-ink-soft">
-                      {p.completionPercentage}% · {p.assignedWorkers} {t('project.workers')}
-                    </span>
-                  </span>
-                  <HealthBadge health={p.health} />
-                </Link>
-              ))}
+        <DashboardSection
+          title={
+            <div className="flex items-center gap-2">
+              <span>{t('alert.title')}</span>
+              {report.alerts.length > 0 && (
+                <span className="rounded-full bg-danger-soft px-2 py-0.5 text-xs font-bold text-danger">
+                  {report.alerts.length}
+                </span>
+              )}
             </div>
-          )}
-          <Pagination
-            page={projects.page}
-            totalPages={projects.totalPages}
-            total={projects.total}
-            from={projects.from}
-            to={projects.to}
-            onPage={projects.setPage}
-          />
+          }
+        >
+          <AlertsPanel alerts={report.alerts} hideHeader />
         </DashboardSection>
       </div>
     </div>

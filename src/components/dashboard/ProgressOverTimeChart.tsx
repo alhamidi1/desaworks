@@ -3,17 +3,11 @@
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { formatDateShort } from '@/lib/i18n';
+import { chartPalette, chartTooltipStyle } from '@/lib/charts/palette';
 
-const GRID = '#dbe0e6';
-const AXIS = '#59626f';
-
-const tooltipStyle = {
-  borderRadius: '12px',
-  border: '1px solid #dee2e6',
-  background: '#ffffff',
-  boxShadow: '0 12px 32px rgba(15,23,42,0.12)',
-  fontSize: '12px',
-} as const;
+const GRID = chartPalette.grid;
+const AXIS = chartPalette.axis;
+const tooltipStyle = chartTooltipStyle;
 
 export interface ProgressTrendDatum {
   date: string;
@@ -34,15 +28,15 @@ export function ProgressOverTimeChart({ data }: { data: ProgressTrendDatum[] }) 
           <AreaChart data={data} margin={{ top: 8, right: 8, left: -14, bottom: 4 }}>
             <defs>
               <linearGradient id="ptFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#00a18f" stopOpacity={0.4} />
-                <stop offset="100%" stopColor="#00a18f" stopOpacity={0.02} />
+                <stop offset="0%" stopColor={chartPalette.primary} stopOpacity={0.4} />
+                <stop offset="100%" stopColor={chartPalette.primary} stopOpacity={0.02} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="4 4" stroke={GRID} vertical={false} />
             <XAxis dataKey="date" tickLine={false} axisLine={false} stroke={AXIS} fontSize={11} minTickGap={28} tickFormatter={(d: unknown) => formatDateShort(String(d), locale)} />
             <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tickLine={false} axisLine={false} stroke={AXIS} fontSize={11} width={42} tickFormatter={(v) => `${v}%`} />
             <Tooltip contentStyle={tooltipStyle} labelFormatter={(label: unknown) => formatDateShort(String(label), locale)} formatter={(v: unknown) => [`${Math.round(Number(v))}%`, t('chart.avgProgress')]} />
-            <Area type="monotone" dataKey="averageProgress" stroke="#00a18f" strokeWidth={3} fill="url(#ptFill)" />
+            <Area type="monotone" dataKey="averageProgress" stroke={chartPalette.primary} strokeWidth={3} fill="url(#ptFill)" />
           </AreaChart>
         </ResponsiveContainer>
       </div>

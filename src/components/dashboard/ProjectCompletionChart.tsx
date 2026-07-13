@@ -11,17 +11,11 @@ import {
   YAxis,
 } from 'recharts';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { chartPalette, chartTooltipStyle } from '@/lib/charts/palette';
 
-const GRID = '#dbe0e6';
-const AXIS = '#59626f';
-
-const tooltipStyle = {
-  borderRadius: '12px',
-  border: '1px solid #dee2e6',
-  background: '#ffffff',
-  boxShadow: '0 12px 32px rgba(15,23,42,0.12)',
-  fontSize: '12px',
-} as const;
+const GRID = chartPalette.grid;
+const AXIS = chartPalette.axis;
+const tooltipStyle = chartTooltipStyle;
 
 export interface ProjectCompletionDatum {
   projectName: string;
@@ -31,10 +25,20 @@ export interface ProjectCompletionDatum {
 
 function AxisTick({ x, y, payload }: { x?: number; y?: number; payload?: { value: string } }) {
   const name = String(payload?.value ?? '');
-  const short = name.length > 14 ? `${name.slice(0, 14)}…` : name;
+  const short = name.length > 12 ? `${name.slice(0, 12)}…` : name;
   return (
     <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={14} textAnchor="middle" fill={AXIS} fontSize={11}>
+      <text
+        x={0}
+        y={0}
+        dy={8}
+        dx={-4}
+        transform="rotate(-35)"
+        textAnchor="end"
+        fill={AXIS}
+        fontSize={10}
+        className="font-medium"
+      >
         <title>{name}</title>
         {short}
       </text>
@@ -50,24 +54,26 @@ export function ProjectCompletionChart({ data }: { data: ProjectCompletionDatum[
   }
 
   return (
-    <div className="nm-raised p-4 sm:p-5">
-      <div className="h-[300px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 8, right: 8, left: -14, bottom: 4 }}>
-            <defs>
-              <linearGradient id="pcFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#00a18f" stopOpacity={0.95} />
-                <stop offset="100%" stopColor="#51f7db" stopOpacity={0.75} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="4 4" stroke={GRID} vertical={false} />
-            <XAxis dataKey="projectName" tickLine={false} axisLine={false} interval={0} height={42} tick={<AxisTick />} />
-            <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tickLine={false} axisLine={false} stroke={AXIS} fontSize={11} width={42} tickFormatter={(v) => `${v}%`} />
-            <ReferenceLine y={100} stroke="#adb5bd" strokeDasharray="3 3" />
-            <Tooltip cursor={{ fill: 'rgba(15,23,42,0.04)' }} contentStyle={tooltipStyle} formatter={(v: unknown) => [`${Math.round(Number(v))}%`, t('chart.completion')]} />
-            <Bar dataKey="completionPercentage" fill="url(#pcFill)" radius={[8, 8, 2, 2]} maxBarSize={48} />
-          </BarChart>
-        </ResponsiveContainer>
+    <div className="nm-raised p-4 sm:p-5 h-full flex flex-col justify-center overflow-hidden">
+      <div className="w-full overflow-x-auto scrollbar-none pb-2">
+        <div className="h-[300px] min-w-[480px] lg:min-w-0">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={data} margin={{ top: 8, right: 8, left: -14, bottom: 20 }}>
+              <defs>
+                <linearGradient id="pcFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={chartPalette.primary} stopOpacity={0.95} />
+                  <stop offset="100%" stopColor={chartPalette.primaryLight} stopOpacity={0.75} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="4 4" stroke={GRID} vertical={false} />
+              <XAxis dataKey="projectName" tickLine={false} axisLine={false} interval={0} height={50} tick={<AxisTick />} />
+              <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tickLine={false} axisLine={false} stroke={AXIS} fontSize={11} width={42} tickFormatter={(v) => `${v}%`} />
+              <ReferenceLine y={100} stroke={chartPalette.ref} strokeDasharray="3 3" />
+              <Tooltip cursor={{ fill: 'rgba(15,23,42,0.04)' }} contentStyle={tooltipStyle} formatter={(v: unknown) => [`${Math.round(Number(v))}%`, t('chart.completion')]} />
+              <Bar dataKey="completionPercentage" fill="url(#pcFill)" radius={[8, 8, 2, 2]} maxBarSize={48} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );

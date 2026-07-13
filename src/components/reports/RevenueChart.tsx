@@ -3,17 +3,11 @@
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { formatCurrency } from '@/lib/i18n';
+import { chartPalette, chartTooltipStyle } from '@/lib/charts/palette';
 
-const GRID = '#dbe0e6';
-const AXIS = '#59626f';
-
-const tooltipStyle = {
-  borderRadius: '12px',
-  border: '1px solid #dee2e6',
-  background: '#ffffff',
-  boxShadow: '0 12px 32px rgba(15,23,42,0.12)',
-  fontSize: '12px',
-} as const;
+const GRID = chartPalette.grid;
+const AXIS = chartPalette.axis;
+const tooltipStyle = chartTooltipStyle;
 
 export interface RevenueTrendDatum {
   month: string;
@@ -50,15 +44,15 @@ export function RevenueChart({ data }: { data: RevenueTrendDatum[] }) {
           <AreaChart data={data} margin={{ top: 8, right: 8, left: 6, bottom: 4 }}>
             <defs>
               <linearGradient id="revFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#00a18f" stopOpacity={0.4} />
-                <stop offset="100%" stopColor="#00a18f" stopOpacity={0.02} />
+                <stop offset="0%" stopColor={chartPalette.primary} stopOpacity={0.4} />
+                <stop offset="100%" stopColor={chartPalette.primary} stopOpacity={0.02} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="4 4" stroke={GRID} vertical={false} />
             <XAxis dataKey="month" tickLine={false} axisLine={false} stroke={AXIS} fontSize={11} minTickGap={20} tickFormatter={(m: unknown) => monthLabel(String(m))} />
             <YAxis tickLine={false} axisLine={false} stroke={AXIS} fontSize={11} width={64} tickFormatter={(v: unknown) => compactIDR(Number(v))} />
             <Tooltip contentStyle={tooltipStyle} labelFormatter={(m: unknown) => monthLabel(String(m))} formatter={(v: unknown) => [formatCurrency(Number(v)), t('project.revenue')]} />
-            <Area type="monotone" dataKey="amount" stroke="#00a18f" strokeWidth={3} fill="url(#revFill)" />
+            <Area type="monotone" dataKey="amount" stroke={chartPalette.primary} strokeWidth={3} fill="url(#revFill)" />
           </AreaChart>
         </ResponsiveContainer>
       </div>

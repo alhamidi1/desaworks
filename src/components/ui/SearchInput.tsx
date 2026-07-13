@@ -27,14 +27,14 @@ export function SearchInput({ value, onChange, placeholder, className = '' }: Se
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder ?? t('common.searchPlaceholder')}
         aria-label={placeholder ?? t('common.search')}
-        className="nm-inset-sm w-full rounded-xl border border-neutral-300 bg-card py-2.5 pl-10 pr-9 text-sm text-ink placeholder:text-neutral-400 focus:outline-none"
+        className="field w-full min-h-[44px] rounded-xl bg-card py-2.5 pl-10 pr-11 text-sm text-ink placeholder:text-neutral-400 focus:outline-none"
       />
       {value && (
         <button
           type="button"
           onClick={() => onChange('')}
           aria-label={t('common.cancel')}
-          className="absolute inset-y-0 right-2.5 flex items-center text-neutral-400 transition hover:text-ink"
+          className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-neutral-400 transition hover:text-ink"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />

@@ -12,7 +12,7 @@ export function TimeframeSelector({ current }: { current: RangeKey }) {
   const pathname = usePathname();
 
   return (
-    <div className="nm-inset inline-flex gap-1 rounded-full p-1" role="group" aria-label={t('timeframe.label')}>
+    <div className="nm-inset flex w-full gap-1 rounded-full p-1" role="group" aria-label={t('timeframe.label')}>
       {RANGES.map((r) => {
         const activeState = current === r;
         return (
@@ -21,7 +21,7 @@ export function TimeframeSelector({ current }: { current: RangeKey }) {
             type="button"
             onClick={() => router.push(`${pathname}?range=${r}`)}
             aria-pressed={activeState}
-            className={`min-h-[36px] rounded-full px-3 text-xs font-semibold transition ${
+            className={`flex-1 text-center min-h-[36px] rounded-full px-2 text-xs font-semibold transition ${
               activeState ? 'nm-raised-sm nm-pressable bg-card text-primary-700' : 'text-ink-soft hover:text-ink'
             }`}
           >

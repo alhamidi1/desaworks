@@ -30,10 +30,10 @@ const STATUS_STYLES: Record<string, { bg: string; text: string; border: string }
 };
 
 function getProgressColor(pct: number): string {
-  if (pct >= 80) return "from-[#10b981] to-[#059669]";
-  if (pct >= 50) return "from-[#05c8ae] to-[#058074]";
-  if (pct >= 25) return "from-[#f59e0b] to-[#d97706]";
-  return "from-[#adb5bd] to-[#868e96]";
+  if (pct >= 80) return "bg-success";
+  if (pct >= 50) return "bg-primary-600";
+  if (pct >= 25) return "bg-warning";
+  return "bg-neutral-400";
 }
 
 export default function AssignmentCard({ assignment }: AssignmentCardProps) {
@@ -100,7 +100,7 @@ export default function AssignmentCard({ assignment }: AssignmentCardProps) {
         </div>
         <div className="w-full bg-[#f1f3f5] rounded-full h-3 overflow-hidden">
           <div
-            className={`h-full rounded-full bg-gradient-to-r ${getProgressColor(currentProgress)} transition-all duration-500`}
+            className={`h-full rounded-full ${getProgressColor(currentProgress)} transition-all duration-500`}
             style={{ width: `${currentProgress}%` }}
           />
         </div>

@@ -3,7 +3,7 @@ export interface DashboardGridProps {
 }
 
 export interface DashboardSectionProps {
-  title: string;
+  title: React.ReactNode;
   children: React.ReactNode;
 }
 
@@ -17,9 +17,9 @@ export function DashboardGrid({ children }: DashboardGridProps) {
 
 export function DashboardSection({ title, children }: DashboardSectionProps) {
   return (
-    <section className="space-y-4">
-      <h2 className="text-base sm:text-lg font-bold tracking-tight text-ink">{title}</h2>
-      {children}
+    <section className="space-y-4 h-full flex flex-col">
+      <div className="text-base sm:text-lg font-bold tracking-tight text-ink flex items-center justify-between">{title}</div>
+      <div className="flex-1">{children}</div>
     </section>
   );
 }
