@@ -2,6 +2,9 @@
 
 import AssignmentCard from "@/components/monitoring/AssignmentCard";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { SearchInput } from "@/components/ui/SearchInput";
+import { Pagination } from "@/components/ui/Pagination";
+import { usePaginatedSearch } from "@/lib/hooks/usePaginatedSearch";
 
 interface CardData {
   id: string;
@@ -25,6 +28,11 @@ interface Props {
 export function MyAssignmentsClientWrapper({ cardData, error }: Props) {
   const { t } = useLanguage();
 
+  const { query, setQuery, pageItems, page, setPage, totalPages, total, from, to } = usePaginatedSearch(cardData, {
+    pageSize: 10,
+    searchFields: (r) => [r.project_name, r.notes ?? ''],
+  });
+
   const activeCount = cardData.filter(
     (c) => c.status === "active" || c.status === "confirmed"
   ).length;
@@ -44,14 +52,16 @@ export function MyAssignmentsClientWrapper({ cardData, error }: Props) {
   }
 
   return (
-    <div className="max-w-4xl mx-auto animate-fade-in">
-      <h1 className="text-xl sm:text-2xl font-bold text-ink">{t('assignment.title')}</h1>
-      <p className="text-sm text-ink-soft mt-1 mb-6">
-        {t('assignment.subtitle')}
-      </p>
+    <div className="max-w-4xl mx-auto animate-fade-in space-y-5">
+      <div>
+        <h1 className="text-xl sm:text-2xl font-bold text-ink">{t('assignment.title')}</h1>
+        <p className="text-sm text-ink-soft mt-1">
+          {t('assignment.subtitle')}
+        </p>
+      </div>
 
       {/* Summary Banner */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="rounded-2xl bg-info/8 border border-info/15 p-4 text-center">
           <p className="text-2xl font-bold text-info">{cardData.length}</p>
           <p className="text-[10px] font-bold text-info mt-1 uppercase tracking-wider">{t('assignment.total')}</p>
@@ -69,6 +79,18 @@ export function MyAssignmentsClientWrapper({ cardData, error }: Props) {
           <p className="text-[10px] font-bold text-warning mt-1 uppercase tracking-wider">{t('assignment.pending')}</p>
         </div>
       </div>
+
+      {/* Search Input */}
+      {cardData.length > 10 && (
+        <div className="flex justify-end">
+          <SearchInput
+            value={query}
+            onChange={setQuery}
+            placeholder={t('project.searchPlaceholder')}
+            className="max-w-xs w-full"
+          />
+        </div>
+      )}
 
       {/* Assignment Cards */}
       {cardData.length === 0 ? (
@@ -91,13 +113,26 @@ export function MyAssignmentsClientWrapper({ cardData, error }: Props) {
             {t('assignment.noAssignmentsDesc')}
           </p>
         </div>
+      ) : total === 0 ? (
+        <div className="text-center py-12 px-6 border border-neutral-200 rounded-2xl bg-white animate-fade-in">
+          <p className="text-sm font-semibold text-ink-soft">{t('common.noResults')}</p>
+        </div>
       ) : (
         <div className="space-y-4">
-          {cardData.map((assignment) => (
+          {pageItems.map((assignment) => (
             <AssignmentCard key={assignment.id} assignment={assignment} />
           ))}
         </div>
       )}
+
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        from={from}
+        to={to}
+        onPage={setPage}
+      />
     </div>
   );
 }
