@@ -326,6 +326,13 @@ const en: TranslationDict = {
     reject: 'Reject',
     approving: 'Processing...',
     loading: 'Loading requests...',
+    viewDetails: 'View Details',
+    detailsTitle: 'Join Request Details',
+    createdAt: 'Request Date',
+    message: 'Message',
+    noMessage: 'No message',
+    consent: 'Consent',
+    close: 'Close',
   },
 
   // Consent checkboxes

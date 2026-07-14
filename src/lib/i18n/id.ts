@@ -326,6 +326,13 @@ const id = {
     reject: 'Tolak',
     approving: 'Memproses...',
     loading: 'Memuat permintaan...',
+    viewDetails: 'Lihat Detail',
+    detailsTitle: 'Detail Permintaan Bergabung',
+    createdAt: 'Tanggal Permintaan',
+    message: 'Pesan',
+    noMessage: 'Tidak ada pesan',
+    consent: 'Persetujuan',
+    close: 'Tutup',
   },
 
   // Consent checkboxes
