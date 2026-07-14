@@ -123,8 +123,8 @@ export async function createJoinRequest(input: unknown): Promise<ResidentActionR
   if (!d.agreed_to_tos || !d.agreed_to_privacy) {
     return { ok: false, error: 'You must agree to the Terms of Service and Privacy Policy.' };
   }
-  const supabase = await createClient();
-  const { data, error } = await supabase
+  const admin = createAdminClient();
+  const { data, error } = await admin
     .from('join_requests')
     .insert({
       full_name: d.full_name,
